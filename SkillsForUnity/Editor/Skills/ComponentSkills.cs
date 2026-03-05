@@ -894,23 +894,23 @@ namespace UnitySkills
         #endregion
 
         [UnitySkill("component_copy", "Copy a component from one GameObject to another")]
-        public static object ComponentCopy(string sourceObject, string targetObject, string componentType)
+        public static object ComponentCopy(string sourceName = null, int sourceInstanceId = 0, string sourcePath = null, string targetName = null, int targetInstanceId = 0, string targetPath = null, string componentType = null)
         {
             if (Validate.Required(componentType, "componentType") is object err) return err;
-            var (srcGo, srcErr) = GameObjectFinder.FindOrError(name: sourceObject);
+            var (srcGo, srcErr) = GameObjectFinder.FindOrError(name: sourceName, instanceId: sourceInstanceId, path: sourcePath);
             if (srcErr != null) return srcErr;
-            var (dstGo, dstErr) = GameObjectFinder.FindOrError(name: targetObject);
+            var (dstGo, dstErr) = GameObjectFinder.FindOrError(name: targetName, instanceId: targetInstanceId, path: targetPath);
             if (dstErr != null) return dstErr;
 
             var type = FindComponentType(componentType);
             if (type == null) return new { error = $"Component type not found: {componentType}" };
 
             var srcComp = srcGo.GetComponent(type);
-            if (srcComp == null) return new { error = $"No {componentType} on {sourceObject}" };
+            if (srcComp == null) return new { error = $"No {componentType} on {sourceName}" };
 
             UnityEditorInternal.ComponentUtility.CopyComponent(srcComp);
             UnityEditorInternal.ComponentUtility.PasteComponentAsNew(dstGo);
-            return new { success = true, source = sourceObject, target = targetObject, componentType };
+            return new { success = true, source = sourceName, target = targetName, componentType };
         }
 
         [UnitySkill("component_set_enabled", "Enable or disable a component (Behaviour, Renderer, Collider, etc.)")]

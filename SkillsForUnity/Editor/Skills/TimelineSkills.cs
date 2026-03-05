@@ -41,9 +41,9 @@ namespace UnitySkills
         }
 
         [UnitySkill("timeline_add_audio_track", "Add an Audio track to a Timeline")]
-        public static object TimelineAddAudioTrack(string directorObjectName, string trackName = "Audio Track")
+        public static object TimelineAddAudioTrack(string name = null, int instanceId = 0, string path = null, string trackName = "Audio Track")
         {
-            var (go, findErr) = GameObjectFinder.FindOrError(name: directorObjectName);
+            var (go, findErr) = GameObjectFinder.FindOrError(name: name, instanceId: instanceId, path: path);
             if (findErr != null) return findErr;
 
             var director = go.GetComponent<PlayableDirector>();
@@ -60,9 +60,9 @@ namespace UnitySkills
         }
 
         [UnitySkill("timeline_add_animation_track", "Add an Animation track to a Timeline, optionally binding an object")]
-        public static object TimelineAddAnimationTrack(string directorObjectName, string trackName = "Animation Track", string bindingObjectName = null)
+        public static object TimelineAddAnimationTrack(string name = null, int instanceId = 0, string path = null, string trackName = "Animation Track", string bindingObjectName = null)
         {
-            var (go, findErr) = GameObjectFinder.FindOrError(name: directorObjectName);
+            var (go, findErr) = GameObjectFinder.FindOrError(name: name, instanceId: instanceId, path: path);
             if (findErr != null) return findErr;
 
             var director = go.GetComponent<PlayableDirector>();
@@ -91,9 +91,9 @@ namespace UnitySkills
         }
 
         [UnitySkill("timeline_add_activation_track", "Add an Activation track to control object visibility")]
-        public static object TimelineAddActivationTrack(string directorObjectName, string trackName = "Activation Track")
+        public static object TimelineAddActivationTrack(string name = null, int instanceId = 0, string path = null, string trackName = "Activation Track")
         {
-            var (timeline, director, err) = GetTimeline(directorObjectName);
+            var (timeline, director, err) = GetTimeline(name, instanceId, path);
             if (err != null) return err;
             var track = timeline.CreateTrack<ActivationTrack>(null, trackName);
             AssetDatabase.SaveAssets();
@@ -101,9 +101,9 @@ namespace UnitySkills
         }
 
         [UnitySkill("timeline_add_control_track", "Add a Control track for nested Timelines or prefab spawning")]
-        public static object TimelineAddControlTrack(string directorObjectName, string trackName = "Control Track")
+        public static object TimelineAddControlTrack(string name = null, int instanceId = 0, string path = null, string trackName = "Control Track")
         {
-            var (timeline, director, err) = GetTimeline(directorObjectName);
+            var (timeline, director, err) = GetTimeline(name, instanceId, path);
             if (err != null) return err;
             var track = timeline.CreateTrack<ControlTrack>(null, trackName);
             AssetDatabase.SaveAssets();
@@ -111,9 +111,9 @@ namespace UnitySkills
         }
 
         [UnitySkill("timeline_add_signal_track", "Add a Signal track for event markers")]
-        public static object TimelineAddSignalTrack(string directorObjectName, string trackName = "Signal Track")
+        public static object TimelineAddSignalTrack(string name = null, int instanceId = 0, string path = null, string trackName = "Signal Track")
         {
-            var (timeline, director, err) = GetTimeline(directorObjectName);
+            var (timeline, director, err) = GetTimeline(name, instanceId, path);
             if (err != null) return err;
             var track = timeline.CreateTrack<SignalTrack>(null, trackName);
             AssetDatabase.SaveAssets();
@@ -121,9 +121,9 @@ namespace UnitySkills
         }
 
         [UnitySkill("timeline_remove_track", "Remove a track by name from a Timeline")]
-        public static object TimelineRemoveTrack(string directorObjectName, string trackName)
+        public static object TimelineRemoveTrack(string name = null, int instanceId = 0, string path = null, string trackName = null)
         {
-            var (timeline, director, err) = GetTimeline(directorObjectName);
+            var (timeline, director, err) = GetTimeline(name, instanceId, path);
             if (err != null) return err;
             var track = timeline.GetOutputTracks().FirstOrDefault(t => t.name == trackName);
             if (track == null) return new { error = $"Track not found: {trackName}" };
@@ -133,9 +133,9 @@ namespace UnitySkills
         }
 
         [UnitySkill("timeline_list_tracks", "List all tracks in a Timeline")]
-        public static object TimelineListTracks(string directorObjectName)
+        public static object TimelineListTracks(string name = null, int instanceId = 0, string path = null)
         {
-            var (timeline, director, err) = GetTimeline(directorObjectName);
+            var (timeline, director, err) = GetTimeline(name, instanceId, path);
             if (err != null) return err;
             var tracks = timeline.GetOutputTracks().Select(t => new
             {
@@ -146,9 +146,9 @@ namespace UnitySkills
         }
 
         [UnitySkill("timeline_add_clip", "Add a clip to a track by track name")]
-        public static object TimelineAddClip(string directorObjectName, string trackName, double start = 0, double duration = 1)
+        public static object TimelineAddClip(string name = null, int instanceId = 0, string path = null, string trackName = null, double start = 0, double duration = 1)
         {
-            var (timeline, director, err) = GetTimeline(directorObjectName);
+            var (timeline, director, err) = GetTimeline(name, instanceId, path);
             if (err != null) return err;
             var track = timeline.GetOutputTracks().FirstOrDefault(t => t.name == trackName);
             if (track == null) return new { error = $"Track not found: {trackName}" };
@@ -160,9 +160,9 @@ namespace UnitySkills
         }
 
         [UnitySkill("timeline_set_duration", "Set Timeline duration and wrap mode")]
-        public static object TimelineSetDuration(string directorObjectName, double duration, string wrapMode = null)
+        public static object TimelineSetDuration(string name = null, int instanceId = 0, string path = null, double duration = 0, string wrapMode = null)
         {
-            var (timeline, director, err) = GetTimeline(directorObjectName);
+            var (timeline, director, err) = GetTimeline(name, instanceId, path);
             if (err != null) return err;
             timeline.fixedDuration = duration;
             timeline.durationMode = TimelineAsset.DurationMode.FixedLength;
@@ -176,9 +176,9 @@ namespace UnitySkills
         }
 
         [UnitySkill("timeline_play", "Play, pause, or stop a Timeline (Editor preview)")]
-        public static object TimelinePlay(string directorObjectName, string action = "play")
+        public static object TimelinePlay(string name = null, int instanceId = 0, string path = null, string action = "play")
         {
-            var (go, findErr) = GameObjectFinder.FindOrError(name: directorObjectName);
+            var (go, findErr) = GameObjectFinder.FindOrError(name: name, instanceId: instanceId, path: path);
             if (findErr != null) return findErr;
             var director = go.GetComponent<PlayableDirector>();
             if (director == null) return new { error = "PlayableDirector not found" };
@@ -193,9 +193,9 @@ namespace UnitySkills
         }
 
         [UnitySkill("timeline_set_binding", "Set the binding object for a track")]
-        public static object TimelineSetBinding(string directorObjectName, string trackName, string bindingObjectName)
+        public static object TimelineSetBinding(string name = null, int instanceId = 0, string path = null, string trackName = null, string bindingObjectName = null)
         {
-            var (timeline, director, err) = GetTimeline(directorObjectName);
+            var (timeline, director, err) = GetTimeline(name, instanceId, path);
             if (err != null) return err;
             var track = timeline.GetOutputTracks().FirstOrDefault(t => t.name == trackName);
             if (track == null) return new { error = $"Track not found: {trackName}" };
@@ -205,9 +205,9 @@ namespace UnitySkills
             return new { success = true, trackName, boundTo = bindingObjectName };
         }
 
-        private static (TimelineAsset, PlayableDirector, object) GetTimeline(string directorObjectName)
+        private static (TimelineAsset, PlayableDirector, object) GetTimeline(string name, int instanceId, string path)
         {
-            var (go, findErr) = GameObjectFinder.FindOrError(name: directorObjectName);
+            var (go, findErr) = GameObjectFinder.FindOrError(name: name, instanceId: instanceId, path: path);
             if (findErr != null) return (null, null, findErr);
             var director = go.GetComponent<PlayableDirector>();
             if (director == null) return (null, null, new { error = "PlayableDirector not found" });

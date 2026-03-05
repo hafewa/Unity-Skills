@@ -751,14 +751,14 @@ namespace UnitySkills
 
         [UnitySkill("ui_layout_children", "Arrange child UI elements in a layout (Vertical, Horizontal, Grid)")]
         public static object UILayoutChildren(
-            string parentName = null, int parentInstanceId = 0,
+            string name = null, int instanceId = 0, string path = null,
             string layoutType = "Vertical",  // Vertical, Horizontal, Grid
             float spacing = 10f,
             float paddingLeft = 0, float paddingRight = 0, float paddingTop = 0, float paddingBottom = 0,
             int gridColumns = 3,
             bool childForceExpandWidth = false, bool childForceExpandHeight = false)
         {
-            var (parentGo, findErr) = GameObjectFinder.FindOrError(name: parentName, instanceId: parentInstanceId);
+            var (parentGo, findErr) = GameObjectFinder.FindOrError(name: name, instanceId: instanceId, path: path);
             if (findErr != null) return findErr;
 
             var rect = parentGo.GetComponent<RectTransform>();
