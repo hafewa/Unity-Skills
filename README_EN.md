@@ -3,7 +3,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Unity-2021.3%2B-black?style=for-the-badge&logo=unity" alt="Unity">
-  <img src="https://img.shields.io/badge/Skills-431-green?style=for-the-badge" alt="Skills">
+  <img src="https://img.shields.io/badge/Skills-444-green?style=for-the-badge" alt="Skills">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-orange?style=for-the-badge" alt="License"></a>
 </p>
 
@@ -25,7 +25,7 @@ This project is a deep refactoring and feature extension based on the excellent 
 ## 🚀 Core Features
 
 - ⚡ **Ultimate Efficiency**: Supports **Result Truncation** and **SKILL.md** optimization to maximize token savings.
-- 🛠️ **Comprehensive Toolkit**: Built-in 431 Skills with **Batch** operations, significantly reducing HTTP overhead and improving execution efficiency.
+- 🛠️ **Comprehensive Toolkit**: Built-in 444 Skills with **Batch** operations, significantly reducing HTTP overhead and improving execution efficiency.
 - 🛡️ **Safety First**: Supports **Transactional** (atomic operations) with automatic rollback on failure, leaving no residue in scenes.
 - 🌍 **Multi-Instance Support**: Automatic port discovery and global registry, enabling simultaneous control of multiple Unity projects.
 - 🤖 **Deep Integration**: Exclusive support for **Antigravity Slash Commands**, unlocking the `/unity-skills` interactive experience.
@@ -130,7 +130,7 @@ If you're using other tools that support Skills, install according to the Skills
 
 ---
 
-## 📦 Skills Category Overview (431)
+## 📦 Skills Category Overview (444)
 
 | Category | Count | Core Functions |
 | :--- | :---: | :--- |
@@ -140,6 +140,7 @@ If you're using other tools that support Skills, install according to the Skills
 | **GameObject** | 18 | Create/Find/Transform sync/Batch operations/Hierarchy management/Rename/Duplicate |
 | **Scene** | 18 | Multi-scene load/Unload/Activate/Screenshot/Context/Dependency analysis/Report export |
 | **UI System** | 16 | Canvas/Button/Text/Slider/Toggle/Anchors/Layout/Alignment/Distribution |
+| **UI Toolkit** | 13 | UXML/USS file management/UIDocument/PanelSettings/Template generation/Structure inspection/Batch create |
 | **Asset** | 15 | Asset import/Delete/Move/Copy/Search/Folders/Batch operations/Refresh |
 | **Editor** | 12 | Play mode/Selection/Undo-Redo/Context retrieval/Menu execution |
 | **Timeline** | 12 | Track create/Delete/Clip management/Playback control/Binding/Duration |

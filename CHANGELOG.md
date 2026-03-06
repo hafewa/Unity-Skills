@@ -2,6 +2,14 @@
 
 All notable changes to **UnitySkills** will be documented in this file.
 
+## [1.6.0] - 2026-03-06
+
+### Added
+- **UI Toolkit Module**: New `UIToolkitSkills.cs` with 13 `uitk_*` skills covering UXML/USS file operations, UIDocument scene management, PanelSettings creation, UXML structure inspection, 6 built-in templates (menu/hud/dialog/settings/inventory/list), and batch file creation.
+
+### Changed
+- **Skills count**: Total skills increased from 431 to 444.
+
 ## [1.5.5] - 2026-03-05
 
 ### Changed
