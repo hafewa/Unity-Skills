@@ -282,7 +282,35 @@ namespace UnitySkills
             int referenceResolutionX = 1920,
             int referenceResolutionY = 1080,
             string screenMatchMode = "MatchWidthOrHeight",
-            string themeStyleSheetPath = null)
+            string themeStyleSheetPath = null,
+            // General properties (Unity 2021.3+)
+            string textSettingsPath = null,
+            string targetTexturePath = null,
+            int? targetDisplay = null,
+            float? sortOrder = null,
+            float? scale = null,
+            float? match = null,
+            float? referenceDpi = null,
+            float? fallbackDpi = null,
+            float? referenceSpritePixelsPerUnit = null,
+            // Dynamic Atlas
+            int? dynamicAtlasMinSize = null,
+            int? dynamicAtlasMaxSize = null,
+            int? dynamicAtlasMaxSubTextureSize = null,
+            string dynamicAtlasFilters = null,
+            // Color Clear
+            bool? clearColor = null,
+            float? colorClearR = null,
+            float? colorClearG = null,
+            float? colorClearB = null,
+            float? colorClearA = null,
+            bool? clearDepthStencil = null,
+            // Unity 6+ (ignored on older versions)
+            string renderMode = null,
+            bool? forceGammaRendering = null,
+            string bindingLogLevel = null,
+            int? vertexBudget = null,
+            int? textureSlotCount = null)
         {
             if (Validate.SafePath(savePath, "savePath") is object pathErr) return pathErr;
             if (File.Exists(savePath))
@@ -309,6 +337,14 @@ namespace UnitySkills
                 if (tss != null) settings.themeStyleSheet = tss;
             }
 
+            var applyErr = ApplyPanelSettings(settings,
+                textSettingsPath, targetTexturePath, targetDisplay,
+                sortOrder, scale, match, referenceDpi, fallbackDpi, referenceSpritePixelsPerUnit,
+                dynamicAtlasMinSize, dynamicAtlasMaxSize, dynamicAtlasMaxSubTextureSize, dynamicAtlasFilters,
+                clearColor, colorClearR, colorClearG, colorClearB, colorClearA, clearDepthStencil,
+                renderMode, forceGammaRendering, bindingLogLevel, vertexBudget, textureSlotCount);
+            if (applyErr != null) return applyErr;
+
             AssetDatabase.CreateAsset(settings, savePath);
             AssetDatabase.SaveAssets();
             WorkflowManager.SnapshotObject(settings, SnapshotType.Created);
@@ -319,6 +355,166 @@ namespace UnitySkills
                 path = savePath,
                 scaleMode = settings.scaleMode.ToString(),
                 referenceResolution = $"{referenceResolutionX}x{referenceResolutionY}",
+                screenMatchMode = settings.screenMatchMode.ToString()
+            };
+        }
+
+        [UnitySkill("uitk_get_panel_settings", "Read all properties of a PanelSettings asset")]
+        public static object UitkGetPanelSettings(string assetPath)
+        {
+            if (Validate.SafePath(assetPath, "assetPath") is object pathErr) return pathErr;
+            var settings = AssetDatabase.LoadAssetAtPath<PanelSettings>(assetPath);
+            if (settings == null)
+                return new { error = $"PanelSettings not found: {assetPath}" };
+
+            var atlas = settings.dynamicAtlasSettings;
+            var cc = settings.colorClearValue;
+
+#if UNITY_6000_0_OR_NEWER
+            return new
+            {
+                path = assetPath,
+                scaleMode = settings.scaleMode.ToString(),
+                referenceResolution = new { x = settings.referenceResolution.x, y = settings.referenceResolution.y },
+                screenMatchMode = settings.screenMatchMode.ToString(),
+                themeStyleSheet = settings.themeStyleSheet != null ? AssetDatabase.GetAssetPath(settings.themeStyleSheet) : null,
+                textSettings = settings.textSettings != null ? AssetDatabase.GetAssetPath(settings.textSettings) : null,
+                targetTexture = settings.targetTexture != null ? AssetDatabase.GetAssetPath(settings.targetTexture) : null,
+                targetDisplay = settings.targetDisplay,
+                sortingOrder = settings.sortingOrder,
+                scale = settings.scale,
+                match = settings.match,
+                referenceDpi = settings.referenceDpi,
+                fallbackDpi = settings.fallbackDpi,
+                referenceSpritePixelsPerUnit = settings.referenceSpritePixelsPerUnit,
+                dynamicAtlasSettings = new
+                {
+                    minAtlasSize = atlas.minAtlasSize,
+                    maxAtlasSize = atlas.maxAtlasSize,
+                    maxSubTextureSize = atlas.maxSubTextureSize,
+                    activeFilters = atlas.activeFilters.ToString()
+                },
+                clearColor = settings.clearColor,
+                colorClearValue = new { r = cc.r, g = cc.g, b = cc.b, a = cc.a },
+                clearDepthStencil = settings.clearDepthStencil,
+                // Unity 6+ properties
+                renderMode = settings.renderMode.ToString(),
+                forceGammaRendering = settings.forceGammaRendering,
+                bindingLogLevel = settings.bindingLogLevel.ToString(),
+                vertexBudget = settings.vertexBudget,
+                textureSlotCount = settings.textureSlotCount
+            };
+#else
+            return new
+            {
+                path = assetPath,
+                scaleMode = settings.scaleMode.ToString(),
+                referenceResolution = new { x = settings.referenceResolution.x, y = settings.referenceResolution.y },
+                screenMatchMode = settings.screenMatchMode.ToString(),
+                themeStyleSheet = settings.themeStyleSheet != null ? AssetDatabase.GetAssetPath(settings.themeStyleSheet) : null,
+                textSettings = settings.textSettings != null ? AssetDatabase.GetAssetPath(settings.textSettings) : null,
+                targetTexture = settings.targetTexture != null ? AssetDatabase.GetAssetPath(settings.targetTexture) : null,
+                targetDisplay = settings.targetDisplay,
+                sortingOrder = settings.sortingOrder,
+                scale = settings.scale,
+                match = settings.match,
+                referenceDpi = settings.referenceDpi,
+                fallbackDpi = settings.fallbackDpi,
+                referenceSpritePixelsPerUnit = settings.referenceSpritePixelsPerUnit,
+                dynamicAtlasSettings = new
+                {
+                    minAtlasSize = atlas.minAtlasSize,
+                    maxAtlasSize = atlas.maxAtlasSize,
+                    maxSubTextureSize = atlas.maxSubTextureSize,
+                    activeFilters = atlas.activeFilters.ToString()
+                },
+                clearColor = settings.clearColor,
+                colorClearValue = new { r = cc.r, g = cc.g, b = cc.b, a = cc.a },
+                clearDepthStencil = settings.clearDepthStencil
+            };
+#endif
+        }
+
+        [UnitySkill("uitk_set_panel_settings", "Modify properties on an existing PanelSettings asset")]
+        public static object UitkSetPanelSettings(
+            string assetPath,
+            string scaleMode = null,
+            int? referenceResolutionX = null,
+            int? referenceResolutionY = null,
+            string screenMatchMode = null,
+            string themeStyleSheetPath = null,
+            string textSettingsPath = null,
+            string targetTexturePath = null,
+            int? targetDisplay = null,
+            float? sortOrder = null,
+            float? scale = null,
+            float? match = null,
+            float? referenceDpi = null,
+            float? fallbackDpi = null,
+            float? referenceSpritePixelsPerUnit = null,
+            int? dynamicAtlasMinSize = null,
+            int? dynamicAtlasMaxSize = null,
+            int? dynamicAtlasMaxSubTextureSize = null,
+            string dynamicAtlasFilters = null,
+            bool? clearColor = null,
+            float? colorClearR = null,
+            float? colorClearG = null,
+            float? colorClearB = null,
+            float? colorClearA = null,
+            bool? clearDepthStencil = null,
+            string renderMode = null,
+            bool? forceGammaRendering = null,
+            string bindingLogLevel = null,
+            int? vertexBudget = null,
+            int? textureSlotCount = null)
+        {
+            if (Validate.SafePath(assetPath, "assetPath") is object pathErr) return pathErr;
+            var settings = AssetDatabase.LoadAssetAtPath<PanelSettings>(assetPath);
+            if (settings == null)
+                return new { error = $"PanelSettings not found: {assetPath}" };
+
+            Undo.RecordObject(settings, "Set PanelSettings");
+
+            if (!string.IsNullOrEmpty(scaleMode) && System.Enum.TryParse<PanelScaleMode>(scaleMode, true, out var parsedScale))
+                settings.scaleMode = parsedScale;
+
+            if (referenceResolutionX.HasValue || referenceResolutionY.HasValue)
+            {
+                var cur = settings.referenceResolution;
+                settings.referenceResolution = new Vector2Int(
+                    referenceResolutionX ?? cur.x,
+                    referenceResolutionY ?? cur.y);
+            }
+
+            if (!string.IsNullOrEmpty(screenMatchMode) && System.Enum.TryParse<PanelScreenMatchMode>(screenMatchMode, true, out var parsedMatch))
+                settings.screenMatchMode = parsedMatch;
+
+            if (!string.IsNullOrEmpty(themeStyleSheetPath))
+            {
+                if (Validate.SafePath(themeStyleSheetPath, "themeStyleSheetPath") is object tssErr) return tssErr;
+                var tss = AssetDatabase.LoadAssetAtPath<ThemeStyleSheet>(themeStyleSheetPath);
+                if (tss == null) return new { error = $"ThemeStyleSheet not found: {themeStyleSheetPath}" };
+                settings.themeStyleSheet = tss;
+            }
+
+            var applyErr = ApplyPanelSettings(settings,
+                textSettingsPath, targetTexturePath, targetDisplay,
+                sortOrder, scale, match, referenceDpi, fallbackDpi, referenceSpritePixelsPerUnit,
+                dynamicAtlasMinSize, dynamicAtlasMaxSize, dynamicAtlasMaxSubTextureSize, dynamicAtlasFilters,
+                clearColor, colorClearR, colorClearG, colorClearB, colorClearA, clearDepthStencil,
+                renderMode, forceGammaRendering, bindingLogLevel, vertexBudget, textureSlotCount);
+            if (applyErr != null) return applyErr;
+
+            EditorUtility.SetDirty(settings);
+            AssetDatabase.SaveAssets();
+            WorkflowManager.SnapshotObject(settings);
+
+            return new
+            {
+                success = true,
+                path = assetPath,
+                scaleMode = settings.scaleMode.ToString(),
+                referenceResolution = $"{settings.referenceResolution.x}x{settings.referenceResolution.y}",
                 screenMatchMode = settings.screenMatchMode.ToString()
             };
         }
@@ -423,6 +619,104 @@ namespace UnitySkills
                 AssetDatabase.StartAssetEditing,
                 AssetDatabase.StopAssetEditing
             );
+        }
+
+        // ============================ PANEL SETTINGS HELPERS ============================
+
+        private static DynamicAtlasFilters ParseDynamicAtlasFilters(string filters)
+        {
+            if (string.IsNullOrEmpty(filters)) return DynamicAtlasFilters.None;
+            var trimmed = filters.Trim();
+            if (string.Equals(trimmed, "Everything", System.StringComparison.OrdinalIgnoreCase))
+                return (DynamicAtlasFilters)(-1);
+            if (string.Equals(trimmed, "None", System.StringComparison.OrdinalIgnoreCase))
+                return DynamicAtlasFilters.None;
+
+            DynamicAtlasFilters result = DynamicAtlasFilters.None;
+            foreach (var part in trimmed.Split(','))
+            {
+                if (System.Enum.TryParse<DynamicAtlasFilters>(part.Trim(), true, out var flag))
+                    result |= flag;
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Shared helper to apply extended PanelSettings properties (used by create and set).
+        /// Returns null on success, or an error object on failure.
+        /// </summary>
+        private static object ApplyPanelSettings(PanelSettings settings,
+            string textSettingsPath, string targetTexturePath, int? targetDisplay,
+            float? sortOrder, float? scale, float? match,
+            float? referenceDpi, float? fallbackDpi, float? referenceSpritePixelsPerUnit,
+            int? dynamicAtlasMinSize, int? dynamicAtlasMaxSize, int? dynamicAtlasMaxSubTextureSize,
+            string dynamicAtlasFilters,
+            bool? clearColor, float? colorClearR, float? colorClearG, float? colorClearB, float? colorClearA,
+            bool? clearDepthStencil,
+            string renderMode, bool? forceGammaRendering, string bindingLogLevel,
+            int? vertexBudget, int? textureSlotCount)
+        {
+            // --- Asset references ---
+            if (!string.IsNullOrEmpty(textSettingsPath))
+            {
+                if (Validate.SafePath(textSettingsPath, "textSettingsPath") is object tsErr) return tsErr;
+                var ts = AssetDatabase.LoadAssetAtPath<PanelTextSettings>(textSettingsPath);
+                if (ts == null) return new { error = $"PanelTextSettings not found: {textSettingsPath}" };
+                settings.textSettings = ts;
+            }
+
+            if (!string.IsNullOrEmpty(targetTexturePath))
+            {
+                if (Validate.SafePath(targetTexturePath, "targetTexturePath") is object ttErr) return ttErr;
+                var rt = AssetDatabase.LoadAssetAtPath<RenderTexture>(targetTexturePath);
+                if (rt == null) return new { error = $"RenderTexture not found: {targetTexturePath}" };
+                settings.targetTexture = rt;
+            }
+
+            // --- Numeric properties ---
+            if (targetDisplay.HasValue)  settings.targetDisplay = targetDisplay.Value;
+            if (sortOrder.HasValue)      settings.sortingOrder = sortOrder.Value;
+            if (scale.HasValue)          settings.scale = scale.Value;
+            if (match.HasValue)          settings.match = match.Value;
+            if (referenceDpi.HasValue)   settings.referenceDpi = referenceDpi.Value;
+            if (fallbackDpi.HasValue)    settings.fallbackDpi = fallbackDpi.Value;
+            if (referenceSpritePixelsPerUnit.HasValue) settings.referenceSpritePixelsPerUnit = referenceSpritePixelsPerUnit.Value;
+
+            // --- Dynamic Atlas Settings (struct: read → modify → write back) ---
+            if (dynamicAtlasMinSize.HasValue || dynamicAtlasMaxSize.HasValue ||
+                dynamicAtlasMaxSubTextureSize.HasValue || !string.IsNullOrEmpty(dynamicAtlasFilters))
+            {
+                var atlas = settings.dynamicAtlasSettings;
+                if (dynamicAtlasMinSize.HasValue)        atlas.minAtlasSize = dynamicAtlasMinSize.Value;
+                if (dynamicAtlasMaxSize.HasValue)        atlas.maxAtlasSize = dynamicAtlasMaxSize.Value;
+                if (dynamicAtlasMaxSubTextureSize.HasValue) atlas.maxSubTextureSize = dynamicAtlasMaxSubTextureSize.Value;
+                if (!string.IsNullOrEmpty(dynamicAtlasFilters)) atlas.activeFilters = ParseDynamicAtlasFilters(dynamicAtlasFilters);
+                settings.dynamicAtlasSettings = atlas;
+            }
+
+            // --- Color Clear ---
+            if (clearColor.HasValue)        settings.clearColor = clearColor.Value;
+            if (clearDepthStencil.HasValue) settings.clearDepthStencil = clearDepthStencil.Value;
+
+            if (colorClearR.HasValue || colorClearG.HasValue || colorClearB.HasValue || colorClearA.HasValue)
+            {
+                var c = settings.colorClearValue;
+                settings.colorClearValue = new Color(
+                    colorClearR ?? c.r, colorClearG ?? c.g, colorClearB ?? c.b, colorClearA ?? c.a);
+            }
+
+            // --- Unity 6+ properties ---
+#if UNITY_6000_0_OR_NEWER
+            if (!string.IsNullOrEmpty(renderMode) && System.Enum.TryParse<PanelRenderMode>(renderMode, true, out var parsedRenderMode))
+                settings.renderMode = parsedRenderMode;
+            if (forceGammaRendering.HasValue) settings.forceGammaRendering = forceGammaRendering.Value;
+            if (!string.IsNullOrEmpty(bindingLogLevel) && System.Enum.TryParse<UnityEngine.UIElements.BindingLogLevel>(bindingLogLevel, true, out var parsedLogLevel))
+                settings.bindingLogLevel = parsedLogLevel;
+            if (vertexBudget.HasValue)     settings.vertexBudget = vertexBudget.Value;
+            if (textureSlotCount.HasValue) settings.textureSlotCount = textureSlotCount.Value;
+#endif
+
+            return null; // success
         }
 
         // ============================ PRIVATE HELPERS ============================

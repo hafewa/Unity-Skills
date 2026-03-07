@@ -9,6 +9,8 @@ Work with Unity's web-style UI system: **UXML** (structure, like HTML) + **USS**
 
 > **Requires Unity 2021.3+**. This module is separate from `ui_*` skills (uGUI/Canvas). Use `uitk_*` for UI Toolkit only.
 
+> **Localization**: Match UI text language to the user's conversation language. When the user communicates in **Chinese (中文)**, use Chinese for all UXML text attributes — labels, buttons, titles, descriptions, tags, placeholders. Otherwise default to **English**. USS class names and CSS variables always stay in English.
+
 ## Skills Overview
 
 | Skill | Category | Description |
@@ -21,7 +23,9 @@ Work with Unity's web-style UI system: **UXML** (structure, like HTML) + **USS**
 | `uitk_find_files` | File | Search USS/UXML in project |
 | `uitk_create_document` | Scene | Create UIDocument GameObject |
 | `uitk_set_document` | Scene | Modify UIDocument properties |
-| `uitk_create_panel_settings` | Scene | Create PanelSettings asset |
+| `uitk_create_panel_settings` | Scene | Create PanelSettings asset (full property support) |
+| `uitk_get_panel_settings` | Scene | Read all PanelSettings properties |
+| `uitk_set_panel_settings` | Scene | Modify existing PanelSettings properties |
 | `uitk_list_documents` | Scene | List scene UIDocuments |
 | `uitk_inspect_uxml` | Inspect | Parse UXML element hierarchy |
 | `uitk_create_from_template` | Template | Create UXML+USS from template |
@@ -665,7 +669,9 @@ Modify UIDocument properties on an existing scene GameObject. Adds UIDocument if
 ---
 
 ### uitk_create_panel_settings
-Create a `PanelSettings` ScriptableObject asset.
+Create a `PanelSettings` ScriptableObject asset with full property support.
+
+**Core Parameters:**
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
@@ -675,6 +681,76 @@ Create a `PanelSettings` ScriptableObject asset.
 | `referenceResolutionY` | int | No | 1080 | Reference height (ScaleWithScreenSize) |
 | `screenMatchMode` | string | No | `"MatchWidthOrHeight"` | `MatchWidthOrHeight`, `Shrink`, `Expand` |
 | `themeStyleSheetPath` | string | No | null | ThemeStyleSheet asset path |
+
+**General Properties (Unity 2021.3+):**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `textSettingsPath` | string | null | PanelTextSettings asset path |
+| `targetTexturePath` | string | null | RenderTexture asset path (render to texture) |
+| `targetDisplay` | int | null | Target display 0-7 |
+| `sortOrder` | float | null | Rendering sort order |
+| `scale` | float | null | Panel scale factor |
+| `match` | float | null | Width/height match 0-1 (ScaleWithScreenSize) |
+| `referenceDpi` | float | null | Reference DPI (ConstantPhysicalSize) |
+| `fallbackDpi` | float | null | Fallback DPI |
+| `referenceSpritePixelsPerUnit` | float | null | Sprite pixels per unit |
+
+**Dynamic Atlas:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `dynamicAtlasMinSize` | int | null | Minimum atlas size |
+| `dynamicAtlasMaxSize` | int | null | Maximum atlas size |
+| `dynamicAtlasMaxSubTextureSize` | int | null | Max sub-texture size |
+| `dynamicAtlasFilters` | string | null | `"Everything"` / `"None"` / comma-separated: `"Readability,Size,Format,ColorSpace,FilterMode"` |
+
+**Color Clear:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `clearColor` | bool | null | Enable color clear |
+| `colorClearR` | float | null | Clear color red (0-1) |
+| `colorClearG` | float | null | Clear color green (0-1) |
+| `colorClearB` | float | null | Clear color blue (0-1) |
+| `colorClearA` | float | null | Clear color alpha (0-1) |
+| `clearDepthStencil` | bool | null | Enable depth/stencil clear |
+
+**Unity 6+ Only** (ignored on older versions):
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `renderMode` | string | `"ScreenSpaceOverlay"` / `"WorldSpace"` |
+| `forceGammaRendering` | bool | Force gamma rendering |
+| `bindingLogLevel` | string | Binding log level (`"None"`, `"Once"`, `"Always"`) |
+| `vertexBudget` | int | Vertex budget for buffer management |
+| `textureSlotCount` | int | Texture slot count for buffer management |
+
+**Returns**: `{success, path, scaleMode, referenceResolution, screenMatchMode}`
+
+---
+
+### uitk_get_panel_settings
+Read all properties of a `PanelSettings` asset.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `assetPath` | string | Yes | PanelSettings asset path |
+
+**Returns**: `{path, scaleMode, referenceResolution, screenMatchMode, themeStyleSheet, textSettings, targetTexture, targetDisplay, sortingOrder, scale, match, referenceDpi, fallbackDpi, referenceSpritePixelsPerUnit, dynamicAtlasSettings, clearColor, colorClearValue, clearDepthStencil}`
+
+On Unity 6+ also includes: `renderMode, forceGammaRendering, bindingLogLevel, vertexBudget, textureSlotCount`
+
+---
+
+### uitk_set_panel_settings
+Modify properties on an existing `PanelSettings` asset. Only explicitly provided parameters are changed; others remain untouched.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `assetPath` | string | Yes | PanelSettings asset path |
+
+All other parameters are the same as `uitk_create_panel_settings` (all optional). Pass only the properties you want to change.
 
 **Returns**: `{success, path, scaleMode, referenceResolution, screenMatchMode}`
 
@@ -974,3 +1050,5 @@ unity_skills.call_skill("uitk_write_file",
 5. **Read-Modify-Write**: Use `uitk_read_file` → edit content → `uitk_write_file` for incremental changes
 6. **Batch for efficiency**: Use `uitk_create_batch` when creating 2+ files to reduce API calls
 7. **Test in Game view**: USS changes are visible in Game view immediately — no domain reload needed
+8. **Localization**: Match UI text to the user's language. Chinese user → `text="开始"`, English user → `text="Start"`. Keep USS class names in English always
+9. **World Space (Unity 6+)**: Set `renderMode="WorldSpace"` in PanelSettings, then configure `worldCamera` on the UIDocument component in the scene

@@ -72,6 +72,7 @@ namespace UnitySkills
             "prefab_create_variant",
             "uitk_create_uss", "uitk_create_uxml", "uitk_write_file", "uitk_delete_file",
             "uitk_create_document", "uitk_set_document", "uitk_create_panel_settings",
+            "uitk_set_panel_settings",
             "uitk_create_from_template", "uitk_create_batch"
         };
 
