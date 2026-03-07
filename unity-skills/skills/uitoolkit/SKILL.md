@@ -723,6 +723,8 @@ Create a `PanelSettings` ScriptableObject asset with full property support.
 | `renderMode` | string | `"ScreenSpaceOverlay"` / `"WorldSpace"` |
 | `forceGammaRendering` | bool | Force gamma rendering |
 | `bindingLogLevel` | string | Binding log level (`"None"`, `"Once"`, `"Always"`) |
+| `colliderUpdateMode` | string | World Space collider mode (`"Match3DBoundingBox"`, `"NoUpdate"`) |
+| `colliderIsTrigger` | bool | World Space collider is trigger |
 | `vertexBudget` | int | Vertex budget for buffer management |
 | `textureSlotCount` | int | Texture slot count for buffer management |
 
@@ -739,7 +741,7 @@ Read all properties of a `PanelSettings` asset.
 
 **Returns**: `{path, scaleMode, referenceResolution, screenMatchMode, themeStyleSheet, textSettings, targetTexture, targetDisplay, sortingOrder, scale, match, referenceDpi, fallbackDpi, referenceSpritePixelsPerUnit, dynamicAtlasSettings, clearColor, colorClearValue, clearDepthStencil}`
 
-On Unity 6+ also includes: `renderMode, forceGammaRendering, bindingLogLevel, vertexBudget, textureSlotCount`
+On Unity 6+ also includes: `renderMode, forceGammaRendering, bindingLogLevel, colliderUpdateMode, colliderIsTrigger, vertexBudget, textureSlotCount`
 
 ---
 

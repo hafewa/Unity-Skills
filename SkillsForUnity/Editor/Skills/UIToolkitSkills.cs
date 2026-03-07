@@ -309,6 +309,8 @@ namespace UnitySkills
             string renderMode = null,
             bool? forceGammaRendering = null,
             string bindingLogLevel = null,
+            string colliderUpdateMode = null,
+            bool? colliderIsTrigger = null,
             int? vertexBudget = null,
             int? textureSlotCount = null)
         {
@@ -342,7 +344,8 @@ namespace UnitySkills
                 sortOrder, scale, match, referenceDpi, fallbackDpi, referenceSpritePixelsPerUnit,
                 dynamicAtlasMinSize, dynamicAtlasMaxSize, dynamicAtlasMaxSubTextureSize, dynamicAtlasFilters,
                 clearColor, colorClearR, colorClearG, colorClearB, colorClearA, clearDepthStencil,
-                renderMode, forceGammaRendering, bindingLogLevel, vertexBudget, textureSlotCount);
+                renderMode, forceGammaRendering, bindingLogLevel, colliderUpdateMode, colliderIsTrigger,
+                vertexBudget, textureSlotCount);
             if (applyErr != null) return applyErr;
 
             AssetDatabase.CreateAsset(settings, savePath);
@@ -401,6 +404,8 @@ namespace UnitySkills
                 renderMode = settings.renderMode.ToString(),
                 forceGammaRendering = settings.forceGammaRendering,
                 bindingLogLevel = settings.bindingLogLevel.ToString(),
+                colliderUpdateMode = settings.colliderUpdateMode.ToString(),
+                colliderIsTrigger = settings.colliderIsTrigger,
                 vertexBudget = settings.vertexBudget,
                 textureSlotCount = settings.textureSlotCount
             };
@@ -465,6 +470,8 @@ namespace UnitySkills
             string renderMode = null,
             bool? forceGammaRendering = null,
             string bindingLogLevel = null,
+            string colliderUpdateMode = null,
+            bool? colliderIsTrigger = null,
             int? vertexBudget = null,
             int? textureSlotCount = null)
         {
@@ -502,7 +509,8 @@ namespace UnitySkills
                 sortOrder, scale, match, referenceDpi, fallbackDpi, referenceSpritePixelsPerUnit,
                 dynamicAtlasMinSize, dynamicAtlasMaxSize, dynamicAtlasMaxSubTextureSize, dynamicAtlasFilters,
                 clearColor, colorClearR, colorClearG, colorClearB, colorClearA, clearDepthStencil,
-                renderMode, forceGammaRendering, bindingLogLevel, vertexBudget, textureSlotCount);
+                renderMode, forceGammaRendering, bindingLogLevel, colliderUpdateMode, colliderIsTrigger,
+                vertexBudget, textureSlotCount);
             if (applyErr != null) return applyErr;
 
             EditorUtility.SetDirty(settings);
@@ -654,6 +662,7 @@ namespace UnitySkills
             bool? clearColor, float? colorClearR, float? colorClearG, float? colorClearB, float? colorClearA,
             bool? clearDepthStencil,
             string renderMode, bool? forceGammaRendering, string bindingLogLevel,
+            string colliderUpdateMode, bool? colliderIsTrigger,
             int? vertexBudget, int? textureSlotCount)
         {
             // --- Asset references ---
@@ -712,6 +721,9 @@ namespace UnitySkills
             if (forceGammaRendering.HasValue) settings.forceGammaRendering = forceGammaRendering.Value;
             if (!string.IsNullOrEmpty(bindingLogLevel) && System.Enum.TryParse<UnityEngine.UIElements.BindingLogLevel>(bindingLogLevel, true, out var parsedLogLevel))
                 settings.bindingLogLevel = parsedLogLevel;
+            if (!string.IsNullOrEmpty(colliderUpdateMode) && System.Enum.TryParse<PanelColliderUpdateMode>(colliderUpdateMode, true, out var parsedCollider))
+                settings.colliderUpdateMode = parsedCollider;
+            if (colliderIsTrigger.HasValue) settings.colliderIsTrigger = colliderIsTrigger.Value;
             if (vertexBudget.HasValue)     settings.vertexBudget = vertexBudget.Value;
             if (textureSlotCount.HasValue) settings.textureSlotCount = textureSlotCount.Value;
 #endif
