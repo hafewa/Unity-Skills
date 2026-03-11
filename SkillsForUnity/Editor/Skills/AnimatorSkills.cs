@@ -14,6 +14,10 @@ namespace UnitySkills
         [UnitySkill("animator_create_controller", "Create a new Animator Controller")]
         public static object AnimatorCreateController(string name, string folder = "Assets/Animations")
         {
+            if (Validate.Required(name, "name") is object nameErr) return nameErr;
+            if (name.Contains("/") || name.Contains("\\") || name.Contains(".."))
+                return new { error = "name must not contain path separators" };
+
             var folderErr = Validate.SafePath(folder, "folder");
             if (folderErr != null) return folderErr;
 

@@ -12,6 +12,14 @@ namespace UnitySkills
     /// </summary>
     public static class DebugSkills
     {
+        internal sealed class LogEntryInfo
+        {
+            public string type;
+            public string message;
+            public string file;
+            public int line;
+        }
+
         // Unity LogEntry mode bits (from UnityCsReference)
         // Error=1, Assert=2, Log=4, Fatal=16,
         // DontPreprocessCondition=32, AssetImportError=64, AssetImportWarning=128,
@@ -97,9 +105,9 @@ namespace UnitySkills
             return ok;
         }
 
-        internal static List<object> ReadLogEntries(int targetMask, string filter, int limit)
+        internal static List<LogEntryInfo> ReadLogEntries(int targetMask, string filter, int limit)
         {
-            var results = new List<object>();
+            var results = new List<LogEntryInfo>();
             if (!EnsureReflection()) return results;
 
             var entry = System.Activator.CreateInstance(_logEntryType);
@@ -124,7 +132,7 @@ namespace UnitySkills
                                    : (mode & WarningModeMask) != 0 ? "Warning"
                                    : "Log";
 
-                    results.Add(new
+                    results.Add(new LogEntryInfo
                     {
                         type    = logType,
                         message = msg.Length > 500 ? msg.Substring(0, 500) + "..." : msg,
@@ -177,7 +185,14 @@ namespace UnitySkills
             // 2. Request Script Compilation (Target specific or all)
             CompilationPipeline.RequestScriptCompilation();
 
-            return new { success = true, message = "Compilation requested" };
+            return new
+            {
+                success = true,
+                message = "Compilation requested",
+                serverAvailability = ServerAvailabilityHelper.CreateTransientUnavailableNotice(
+                    "已主动请求脚本重新编译，REST 服务可能短暂不可用。",
+                    alwaysInclude: true)
+            };
         }
 
         [UnitySkill("debug_get_system_info", "Get Editor and System capabilities.")]
@@ -243,7 +258,15 @@ namespace UnitySkills
         {
             var group = EditorUserBuildSettings.selectedBuildTargetGroup;
             PlayerSettings.SetScriptingDefineSymbolsForGroup(group, defines);
-            return new { success = true, buildTargetGroup = group.ToString(), defines };
+            return new
+            {
+                success = true,
+                buildTargetGroup = group.ToString(),
+                defines,
+                serverAvailability = ServerAvailabilityHelper.CreateTransientUnavailableNotice(
+                    "Scripting define symbols changed. Unity may recompile assemblies immediately.",
+                    alwaysInclude: true)
+            };
         }
 
         [UnitySkill("debug_get_memory_info", "Get memory usage information")]

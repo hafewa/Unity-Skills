@@ -39,11 +39,18 @@ namespace UnitySkills
         private static readonly Queue<RequestJob> _jobQueue = new Queue<RequestJob>();
         private static readonly object _queueLock = new object();
         private static bool _updateHooked = false;
+        private static int _pendingRequests = 0;
         
         // Rate limiting (processed on main thread only)
         private static int _requestsThisSecond = 0;
         private static long _lastRateLimitResetTicks = 0;
         private const int MaxRequestsPerSecond = 100;
+        private const int MaxQueuedRequests = 200;
+        private const int MaxPendingRequests = 300;
+
+        // Admission limiting on listener thread to avoid queue/thread blowups before main-thread rate limiting kicks in
+        private static int _admittedThisSecond = 0;
+        private static long _lastAdmissionResetTicks = 0;
         
         // Keep-alive polling interval (ms) — how often the keep-alive thread checks for pending jobs
         private const int KeepAlivePollingMs = 50;
@@ -54,12 +61,12 @@ namespace UnitySkills
         /// <summary>
         /// How often (seconds) the keep-alive thread forces a main-thread wakeup,
         /// even when there are no pending jobs. Keeps watchdog and heartbeat alive
-        /// while Unity is unfocused. Default 30s, minimum 5s.
+        /// while Unity is unfocused. Default 10s, minimum 1s.
         /// </summary>
         public static int KeepAliveIntervalSeconds
         {
-            get => Mathf.Max(5, EditorPrefs.GetInt(PrefKeyKeepAliveInterval, 30));
-            set => EditorPrefs.SetInt(PrefKeyKeepAliveInterval, Mathf.Max(5, value));
+            get => Mathf.Max(1, EditorPrefs.GetInt(PrefKeyKeepAliveInterval, 10));
+            set => EditorPrefs.SetInt(PrefKeyKeepAliveInterval, Mathf.Max(1, value));
         }
         // Request processing timeout - cached for thread safety (EditorPrefs is main-thread only)
         private static int _cachedTimeoutMs = 60 * 60 * 1000;
@@ -72,11 +79,15 @@ namespace UnitySkills
         private static double _lastHeartbeatTime = 0;
 
         // Watchdog: periodically verify listener thread is alive and restart if not
-        private const double WatchdogInterval = 15.0;
+        private const double WatchdogInterval = 5.0;
+        private const double RecoveryRetryInterval = 1.0;
         private static double _lastWatchdogCheck = 0;
+        private static double _lastRecoveryAttemptTime = -999;
 
         // KeepAlive: unconditional wakeup interval (ticks; 5s = 50_000_000 ticks)
         private static long _lastForceWakeTicks = 0;
+        private static int _restartRequested = 0;
+        private static string _restartReason = "";
 
         // Statistics
         private static long _totalRequestsProcessed = 0;
@@ -137,11 +148,11 @@ namespace UnitySkills
 
         /// <summary>
         /// Gets or sets the request timeout in minutes.
-        /// Default 60 minutes. Minimum 1 minute.
+        /// Default 15 minutes. Minimum 1 minute.
         /// </summary>
         public static int RequestTimeoutMinutes
         {
-            get => Mathf.Max(1, EditorPrefs.GetInt(PrefKeyRequestTimeout, 60));
+            get => Mathf.Max(1, EditorPrefs.GetInt(PrefKeyRequestTimeout, 15));
             set
             {
                 EditorPrefs.SetInt(PrefKeyRequestTimeout, Mathf.Max(1, value));
@@ -173,6 +184,112 @@ namespace UnitySkills
 
         // Request ID counter
         private static long _requestIdCounter = 0;
+
+        private static bool TryReservePendingSlot()
+        {
+            int pending = Interlocked.Increment(ref _pendingRequests);
+            if (pending <= MaxPendingRequests)
+                return true;
+
+            ReleasePendingSlot();
+            return false;
+        }
+
+        private static void ReleasePendingSlot()
+        {
+            if (Interlocked.Decrement(ref _pendingRequests) < 0)
+                Interlocked.Exchange(ref _pendingRequests, 0);
+        }
+
+        private static bool CheckAdmissionRateLimit()
+        {
+            long now = DateTime.UtcNow.Ticks;
+
+            if (now - _lastAdmissionResetTicks >= TimeSpan.TicksPerSecond)
+            {
+                _admittedThisSecond = 0;
+                _lastAdmissionResetTicks = now;
+            }
+
+            _admittedThisSecond++;
+            return _admittedThisSecond <= MaxRequestsPerSecond;
+        }
+
+        private static bool IsListenerHealthy()
+        {
+            try
+            {
+                return _listenerThread != null &&
+                       _listenerThread.IsAlive &&
+                       _listener != null &&
+                       _listener.IsListening;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static void RequestServerRecovery(string reason)
+        {
+            if (_domainReloadPending)
+                return;
+
+            _restartReason = string.IsNullOrEmpty(reason) ? "Unknown reason" : reason;
+            Interlocked.Exchange(ref _restartRequested, 1);
+        }
+
+        private static void ClearRecoveryRequest()
+        {
+            _restartReason = "";
+            Interlocked.Exchange(ref _restartRequested, 0);
+        }
+
+        private static void AttemptServerRecovery(double now)
+        {
+            if (_domainReloadPending)
+                return;
+
+            if (now - _lastRecoveryAttemptTime < RecoveryRetryInterval)
+                return;
+
+            _lastRecoveryAttemptTime = now;
+            string reason = string.IsNullOrEmpty(_restartReason) ? "Unknown reason" : _restartReason;
+            int port = _port;
+
+            SkillsLogger.LogWarning($"Server recovery triggered: {reason}");
+
+            if (_isRunning)
+                Stop();
+
+            Start(port, fallbackToAuto: true);
+
+            if (_isRunning)
+            {
+                ClearRecoveryRequest();
+            }
+            else
+            {
+                ScheduleDelayedCall(RecoveryRetryInterval, () =>
+                {
+                    if (Interlocked.CompareExchange(ref _restartRequested, 0, 0) == 1)
+                        AttemptServerRecovery(EditorApplication.timeSinceStartup);
+                });
+            }
+        }
+
+        private static void SendImmediateJsonResponse(HttpListenerContext context, HttpListenerRequest request, int statusCode, object payload)
+        {
+            var job = new RequestJob
+            {
+                Context = context,
+                StatusCode = statusCode,
+                ResponseJson = JsonConvert.SerializeObject(payload, _jsonSettings),
+                RequestId = $"req_{Interlocked.Increment(ref _requestIdCounter):X8}",
+                AgentId = DetectAgent(request)
+            };
+            SendResponse(job);
+        }
 
         // Agent detection table - keyword to agent ID mapping
         private static readonly (string keyword, string agentId)[] _agentKeywords = new[]
@@ -442,6 +559,8 @@ namespace UnitySkills
                 }
 
                 _isRunning = true;
+                ClearRecoveryRequest();
+                _lastRecoveryAttemptTime = EditorApplication.timeSinceStartup;
 
                 // Persist state for Domain Reload recovery
                 EditorPrefs.SetBool(PREF_SERVER_SHOULD_RUN, true);
@@ -483,6 +602,7 @@ namespace UnitySkills
             if (permanent)
             {
                 EditorPrefs.SetBool(PREF_SERVER_SHOULD_RUN, false);
+                ClearRecoveryRequest();
             }
 
             // Unregister from global registry
@@ -541,8 +661,13 @@ namespace UnitySkills
                     {
                         hasPendingJobs = _jobQueue.Count > 0;
                     }
+
+                    if (_isRunning && !_domainReloadPending && !IsListenerHealthy())
+                    {
+                        RequestServerRecovery("KeepAlive detected unhealthy listener state");
+                    }
                     
-                    if (hasPendingJobs)
+                    if (hasPendingJobs || Interlocked.CompareExchange(ref _restartRequested, 0, 0) == 1)
                     {
                         // Thread-safe call to wake up Unity's main thread
                         EditorApplication.QueuePlayerLoopUpdate();
@@ -580,41 +705,42 @@ namespace UnitySkills
                     // Immediately capture raw data (no Unity API)
                     var request = context.Request;
                     string body = "";
+                    bool reservedPendingSlot = false;
+                    bool handedOffToResponder = false;
+
+                    if (!CheckAdmissionRateLimit())
+                    {
+                        SendImmediateJsonResponse(context, request, 429, new
+                        {
+                            error = "Rate limit exceeded",
+                            limit = MaxRequestsPerSecond,
+                            suggestion = "Please slow down requests"
+                        });
+                        continue;
+                    }
+
+                    reservedPendingSlot = TryReservePendingSlot();
+                    if (!reservedPendingSlot)
+                    {
+                        SendImmediateJsonResponse(context, request, 503, new
+                        {
+                            error = "Too many pending requests",
+                            pendingLimit = MaxPendingRequests,
+                            suggestion = "Please retry after current requests complete"
+                        });
+                        continue;
+                    }
                     
                     if (request.HttpMethod == "POST" && request.ContentLength64 > 0)
                     {
                         if (request.ContentLength64 > MaxBodySizeBytes)
                         {
-                            // Reject oversized request immediately
-                            ManualResetEventSlim rejectSignal = null;
-                            try
+                            SendImmediateJsonResponse(context, request, 413, new
                             {
-                                rejectSignal = new ManualResetEventSlim(true); // Already signaled
-                                var rejectJob = new RequestJob
-                                {
-                                    Context = context,
-                                    HttpMethod = request.HttpMethod,
-                                    Path = request.Url.AbsolutePath,
-                                    Body = "",
-                                    EnqueueTimeTicks = DateTime.UtcNow.Ticks,
-                                    RequestId = $"req_{Interlocked.Increment(ref _requestIdCounter):X8}",
-                                    AgentId = DetectAgent(request),
-                                    StatusCode = 413,
-                                    ResponseJson = JsonConvert.SerializeObject(new {
-                                        error = "Request body too large",
-                                        maxSizeBytes = MaxBodySizeBytes,
-                                        receivedBytes = request.ContentLength64
-                                    }, _jsonSettings),
-                                    IsProcessed = true,
-                                    CompletionSignal = rejectSignal
-                                };
-                                ThreadPool.QueueUserWorkItem(_ => WaitAndRespond(rejectJob));
-                                rejectSignal = null; // Ownership transferred
-                            }
-                            finally
-                            {
-                                rejectSignal?.Dispose();
-                            }
+                                error = "Request body too large",
+                                maxSizeBytes = MaxBodySizeBytes,
+                                receivedBytes = request.ContentLength64
+                            });
                             continue;
                         }
 
@@ -650,29 +776,54 @@ namespace UnitySkills
                         // Enqueue for main thread processing
                         lock (_queueLock)
                         {
-                            _jobQueue.Enqueue(job);
+                            if (_jobQueue.Count >= MaxQueuedRequests)
+                            {
+                                job.StatusCode = 503;
+                                job.ResponseJson = JsonConvert.SerializeObject(new
+                                {
+                                    error = "Request queue is full",
+                                    queueLimit = MaxQueuedRequests,
+                                    suggestion = "Please retry after current requests complete"
+                                }, _jsonSettings);
+                                job.IsProcessed = true;
+                                job.CompletionSignal.Set();
+                            }
+                            else
+                            {
+                                _jobQueue.Enqueue(job);
+                            }
                         }
 
                         // Wait for main thread to process (with timeout)
                         // This is thread-safe - just waiting on a signal
                         ThreadPool.QueueUserWorkItem(_ => WaitAndRespond(job));
+                        handedOffToResponder = true;
                         signal = null; // Ownership transferred to WaitAndRespond
                     }
                     finally
                     {
+                        if (reservedPendingSlot && !handedOffToResponder)
+                            ReleasePendingSlot();
                         signal?.Dispose(); // Only disposes if WaitAndRespond was never queued
                     }
                 }
-                catch (HttpListenerException)
+                catch (HttpListenerException ex)
                 {
                     if (!_isRunning) break;
-                    Thread.Sleep(500); // avoid tight exception loop; watchdog will restart if needed
+                    RequestServerRecovery($"HttpListener exception ({ex.ErrorCode}): {ex.Message}");
+                    break;
                 }
-                catch (ObjectDisposedException) { break; } // listener destroyed; watchdog will restart
-                catch (Exception)
+                catch (ObjectDisposedException)
                 {
                     if (!_isRunning) break;
-                    Thread.Sleep(1000); // back off on unknown error; watchdog will intervene
+                    RequestServerRecovery("Listener disposed unexpectedly");
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    if (!_isRunning) break;
+                    RequestServerRecovery($"Listener loop exception: {ex.GetType().Name}: {ex.Message}");
+                    break;
                 }
             }
         }
@@ -714,6 +865,7 @@ namespace UnitySkills
             finally
             {
                 job.CompletionSignal?.Dispose();
+                ReleasePendingSlot();
             }
         }
         
@@ -728,9 +880,9 @@ namespace UnitySkills
                 response = job.Context.Response;
 
                 // CORS headers
-                response.Headers.Add("Access-Control-Allow-Origin", "*");
                 response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
                 response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, X-Agent-Id");
+                response.Headers.Add("Access-Control-Allow-Origin", "*");
                 response.Headers.Add("X-Request-Id", job.RequestId);
                 response.Headers.Add("X-Agent-Id", job.AgentId);
 
@@ -797,11 +949,17 @@ namespace UnitySkills
                 
                 processed++;
             }
+
+            double now = EditorApplication.timeSinceStartup;
+
+            if (Interlocked.CompareExchange(ref _restartRequested, 0, 0) == 1)
+            {
+                AttemptServerRecovery(now);
+            }
             
             // Heartbeat for Registry
             if (_isRunning)
             {
-                double now = EditorApplication.timeSinceStartup;
                 if (now - _lastHeartbeatTime > HeartbeatInterval)
                 {
                     _lastHeartbeatTime = now;
@@ -812,15 +970,12 @@ namespace UnitySkills
                 if (now - _lastWatchdogCheck > WatchdogInterval)
                 {
                     _lastWatchdogCheck = now;
-                    bool listenerDead = _listenerThread == null || !_listenerThread.IsAlive;
-                    bool listenerNotListening = _listener == null || !_listener.IsListening;
+                    bool listenerHealthy = IsListenerHealthy();
 
-                    if (listenerDead || listenerNotListening)
+                    if (!listenerHealthy)
                     {
-                        SkillsLogger.LogWarning($"Watchdog: server unhealthy (threadAlive={!listenerDead}, listening={!listenerNotListening}), restarting...");
-                        int port = _port;
-                        Stop();
-                        Start(port, fallbackToAuto: true);
+                        RequestServerRecovery("Watchdog detected unhealthy listener");
+                        AttemptServerRecovery(now);
                     }
                 }
             }
@@ -856,6 +1011,10 @@ namespace UnitySkills
                     queuedRequests = QueuedRequests,
                     totalProcessed = _totalRequestsProcessed,
                     autoRestart = AutoStart,
+                    restartPending = Interlocked.CompareExchange(ref _restartRequested, 0, 0) == 1,
+                    listenerHealthy = IsListenerHealthy(),
+                    keepAliveIntervalSeconds = KeepAliveIntervalSeconds,
+                    watchdogIntervalSeconds = WatchdogInterval,
                     requestTimeoutMinutes = RequestTimeoutMinutes,
                     domainReloadRecovery = "enabled",
                     architecture = "Producer-Consumer (Thread-Safe)",

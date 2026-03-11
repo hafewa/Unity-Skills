@@ -280,6 +280,9 @@ namespace UnitySkills
         [UnitySkill("audio_create_mixer", "Create a new AudioMixer asset")]
         public static object AudioCreateMixer(string mixerName = "NewAudioMixer", string folder = "Assets")
         {
+            if (Validate.Required(mixerName, "mixerName") is object nameErr) return nameErr;
+            if (mixerName.Contains("/") || mixerName.Contains("\\") || mixerName.Contains(".."))
+                return new { error = "mixerName must not contain path separators" };
             if (Validate.SafePath(folder, "folder") is object pathErr) return pathErr;
             if (!System.IO.Directory.Exists(folder)) System.IO.Directory.CreateDirectory(folder);
 

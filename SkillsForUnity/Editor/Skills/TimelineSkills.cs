@@ -14,7 +14,12 @@ namespace UnitySkills
         [UnitySkill("timeline_create", "Create a new Timeline asset and Director instance")]
         public static object TimelineCreate(string name, string folder = "Assets/Timelines")
         {
-             if (!System.IO.Directory.Exists(folder))
+            if (Validate.Required(name, "name") is object nameErr) return nameErr;
+            if (name.Contains("/") || name.Contains("\\") || name.Contains(".."))
+                return new { error = "name must not contain path separators" };
+            if (Validate.SafePath(folder, "folder") is object folderErr) return folderErr;
+
+            if (!System.IO.Directory.Exists(folder))
                 System.IO.Directory.CreateDirectory(folder);
 
             string assetPath = System.IO.Path.Combine(folder, name + ".playable");

@@ -2,10 +2,19 @@
 
 All notable changes to **UnitySkills** will be documented in this file.
 
-## [1.6.1] - 2026-03-09
+## [1.6.1] - 2026-03-11
 
 ### Fixed
 - **Unity 2021.3 / 2022.3 early patch compatibility**: `PanelSettings.referenceSpritePixelsPerUnit` does not exist in Unity 2021.3 ~ 2022.3 early patches (e.g. 2022.3.17). Changed to reflection-based access to avoid CS1061 compile errors across all Unity versions.
+- **Server recovery hardening**: Reduced keep-alive wake interval default to 10s, reduced watchdog interval to 5s, added proactive listener health recovery, and exposed recovery state in `/health` for easier diagnosis.
+- **Safer script-domain disruption hints**: Added `serverAvailability` feedback for script edits, test script creation, forced recompilation, define changes, script-related asset reimport/import/move/delete, and package install/remove flows.
+- **Path validation coverage**: Added missing file-name/path validation for controller, mixer, and physics material creation; blocked `asset_import` directory misuse from turning into a 500; tightened cleaner preview/usage checks to stay inside `Assets/` or `Packages/`.
+- **Package startup stability**: Disabled automatic package auto-install on editor startup by default to avoid unexpected package-triggered recompilation and transient server drops.
+- **Workflow/history safety**: Re-validated restored history asset paths and cleaned up script/timeline/test/package helper edge cases discovered during the stability audit.
+
+### Changed
+- **Default request timeout**: Changed the configurable server request timeout default from 60 minutes to 15 minutes.
+- **Python helper version**: Aligned `unity_skills.py` client version metadata to `1.6.1`.
 
 ## [1.6.0] - 2026-03-06
 

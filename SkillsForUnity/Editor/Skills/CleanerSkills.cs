@@ -292,6 +292,19 @@ namespace UnitySkills
 
             foreach (var path in paths)
             {
+                if (Validate.SafePath(path, "path", isDelete: true) is object pathErr)
+                {
+                    previewResults.Add(new
+                    {
+                        path,
+                        exists = false,
+                        sizeBytes = 0L,
+                        sizeMB = 0d,
+                        error = ((dynamic)pathErr).error
+                    });
+                    continue;
+                }
+
                 var fileInfo = new FileInfo(path);
                 var exists = File.Exists(path) || Directory.Exists(path);
                 var size = fileInfo.Exists ? fileInfo.Length : 0;
@@ -317,7 +330,7 @@ namespace UnitySkills
             };
 
             // Clean up old tokens
-            var expiredTokens = _pendingDeletes.Where(kv => (System.DateTime.Now - kv.Value.CreatedAt).TotalMinutes > 10).Select(kv => kv.Key).ToList();
+            var expiredTokens = _pendingDeletes.Where(kv => (System.DateTime.Now - kv.Value.CreatedAt).TotalMinutes > 5).Select(kv => kv.Key).ToList();
             foreach (var expired in expiredTokens) _pendingDeletes.Remove(expired);
 
             return new
@@ -338,6 +351,7 @@ namespace UnitySkills
         [UnitySkill("cleaner_get_asset_usage", "Find what objects reference a specific asset")]
         public static object CleanerGetAssetUsage(string assetPath, int limit = 50)
         {
+            if (Validate.SafePath(assetPath, "assetPath") is object pathErr) return pathErr;
             if (!File.Exists(assetPath))
                 return new { success = false, error = $"Asset not found: {assetPath}" };
 

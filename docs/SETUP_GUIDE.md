@@ -36,9 +36,9 @@ https://github.com/Besty0728/Unity-Skills.git?path=/SkillsForUnity
 https://github.com/Besty0728/Unity-Skills.git?path=/SkillsForUnity#beta
 ```
 
-**指定版本安装 / Specific Version** (如 / e.g. v1.4.0):
+**指定版本安装 / Specific Version** (如 / e.g. v1.6.1):
 ```
-https://github.com/Besty0728/Unity-Skills.git?path=/SkillsForUnity#v1.4.0
+https://github.com/Besty0728/Unity-Skills.git?path=/SkillsForUnity#v1.6.1
 ```
 
 > 📦 所有版本均可在 [Releases](https://github.com/Besty0728/Unity-Skills/releases) 页面下载。
@@ -875,8 +875,8 @@ v1.5.1+ 已修复此问题，服务器会自动恢复到同一端口。
 Fixed in v1.5.1+. Server auto-recovers to the same port.
 
 ### Q: 超长任务超时？/ Long-running task timeout?
-在 Unity 设置面板调整请求超时（默认 60 分钟）。Python 客户端会自动同步此配置。
-Adjust request timeout in Unity settings panel (default: 60 minutes). Python client auto-syncs this config.
+在 Unity 设置面板调整请求超时（默认 15 分钟）。Python 客户端会自动同步此配置。
+Adjust request timeout in Unity settings panel (default: 15 minutes). Python client auto-syncs this config.
 
 ### Q: 支持多个 Unity 实例？/ Multiple Unity instances?
 支持。UnitySkills 使用全局注册表和自动端口发现，可同时控制多个 Unity 项目。

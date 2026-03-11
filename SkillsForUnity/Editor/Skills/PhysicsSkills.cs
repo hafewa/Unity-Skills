@@ -181,6 +181,11 @@ namespace UnitySkills
             string name = "New PhysicMaterial", string savePath = "Assets",
             float dynamicFriction = 0.6f, float staticFriction = 0.6f, float bounciness = 0f)
         {
+            if (Validate.Required(name, "name") is object nameErr) return nameErr;
+            if (name.Contains("/") || name.Contains("\\") || name.Contains(".."))
+                return new { error = "name must not contain path separators" };
+            if (Validate.SafePath(savePath, "savePath") is object pathErr) return pathErr;
+
 #if UNITY_6000_0_OR_NEWER
             var mat = new PhysicsMaterial(name)
 #else

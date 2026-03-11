@@ -18,6 +18,7 @@ description: "C# script management. Use when users want to create, read, or modi
 - `script_delete` - Delete script
 - `script_find_in_file` - Search in scripts
 - `script_append` - Append content to script
+- `script_get_compile_feedback` - Check compile errors for one script after Unity finishes compiling
 
 ---
 
@@ -35,7 +36,14 @@ Create a C# script from template.
 
 **Templates**: MonoBehaviour, ScriptableObject, Editor, EditorWindow
 
-**Returns**: `{success, path, className, template}`
+**Returns**: `{success, path, className, namespaceName, compilation?}`
+
+`compilation` includes:
+- `isCompiling`
+- `hasErrors`
+- `errorCount`
+- `errors[]`
+- `nextAction`
 
 ### script_create_batch
 Create multiple scripts in one call.
@@ -85,6 +93,14 @@ Append content to a script.
 | `content` | string | Yes | - | Content to append |
 | `atLine` | int | No | end | Line number to insert at |
 
+### script_get_compile_feedback
+Get compile diagnostics related to one script.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `scriptPath` | string | Yes | - | Script path |
+| `limit` | int | No | 20 | Max diagnostics |
+
 ---
 
 ## Example: Efficient Script Setup
@@ -109,15 +125,16 @@ unity_skills.call_skill("script_create_batch", items=[
 # Wait for Domain Reload once...
 ```
 
-## Important: Domain Reload
+## Important: Domain Reload And Compile Feedback
 
-After creating scripts, Unity triggers a Domain Reload (recompilation). Wait 3-5 seconds before making additional calls.
+After creating or editing scripts, Unity triggers a Domain Reload (recompilation). Use the returned `compilation` field first. If `isCompiling=true`, wait for Unity to finish and then call `script_get_compile_feedback`.
 
 ```python
 import time
 
-unity_skills.call_skill("script_create", scriptName="MyScript")
-time.sleep(5)  # Wait for Unity to recompile
+result = unity_skills.call_skill("script_create", scriptName="MyScript")
+time.sleep(5)  # Wait for Unity to recompile if result["compilation"]["isCompiling"] is true
+feedback = unity_skills.call_skill("script_get_compile_feedback", scriptPath=result["path"])
 unity_skills.call_skill("component_add", name="Player", componentType="MyScript")
 ```
 
@@ -127,5 +144,6 @@ unity_skills.call_skill("component_add", name="Player", componentType="MyScript"
 2. Organize scripts in logical folders
 3. Use templates for correct base class
 4. Wait for compilation after creating scripts
-5. Use regex search for complex patterns
-6. **Use batch creation to minimize Domain Reloads**
+5. After script edits, call `script_get_compile_feedback` and fix reported errors
+6. Use regex search for complex patterns
+7. **Use batch creation to minimize Domain Reloads**

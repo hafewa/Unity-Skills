@@ -19,7 +19,7 @@ import json
 import os
 from typing import Any, Dict, List, Optional
 
-__version__ = "1.5.1"
+__version__ = "1.6.1"
 
 UNITY_URL = "http://localhost:8090"
 DEFAULT_PORT = 8090
@@ -33,6 +33,28 @@ SCAN_TIMEOUT = 1
 
 def get_registry_path():
     return os.path.join(os.path.expanduser("~"), ".unity_skills", "registry.json")
+
+
+def _load_registry():
+    reg_path = get_registry_path()
+    if not os.path.exists(reg_path):
+        return {}
+    try:
+        with open(reg_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except (IOError, json.JSONDecodeError):
+        return {}
+
+
+def _get_agent_id():
+    try:
+        config_path = os.path.join(os.path.dirname(__file__), 'agent_config.json')
+        if os.path.exists(config_path):
+            with open(config_path, 'r', encoding='utf-8') as f:
+                return json.load(f).get('agentId', 'Python')
+    except (IOError, json.JSONDecodeError):
+        pass
+    return 'Python'
 
 
 def _version_matches(actual_version: str, target: str) -> bool:
@@ -86,7 +108,7 @@ class UnitySkills:
         Priority: url > port > target > version > default port 8090
         """
         self.url = url
-        self.agent_id = agent_id or "Python"
+        self.agent_id = agent_id or _get_agent_id()
         self.timeout = timeout or DEFAULT_CALL_TIMEOUT
         # 连接复用：使用 Session 保持 TCP 连接
         self._session = requests.Session()
@@ -142,24 +164,14 @@ class UnitySkills:
         raise ConnectionError(f"No Unity instance found on ports {PORT_RANGE_START}-{PORT_RANGE_END}. Is UnitySkills server running?")
 
     def _find_port_by_target(self, target: str) -> Optional[int]:
-        reg_path = get_registry_path()
-        if not os.path.exists(reg_path):
-            return None
-        try:
-            with open(reg_path, 'r') as f:
-                data = json.load(f)
-                # target can be ID or Name
-                # 1. Exact ID match
-                for path, info in data.items():
-                    if info.get('id') == target:
-                        return info.get('port')
-                # 2. Exact Name match (if unique?) - return first found
-                for path, info in data.items():
-                    if info.get('name') == target:
-                        return info.get('port')
-                return None
-        except (IOError, json.JSONDecodeError, KeyError):
-            return None
+        data = _load_registry()
+        for path, info in data.items():
+            if info.get('id') == target:
+                return info.get('port')
+        for path, info in data.items():
+            if info.get('name') == target:
+                return info.get('port')
+        return None
 
     def _find_port_by_version(self, version: str) -> Optional[int]:
         """
@@ -170,16 +182,7 @@ class UnitySkills:
         2. Probe health - when registry has no version info (old server), call /health on registered ports
         3. Scan ports - when registry is empty/missing, scan ports 8090-8100
         """
-        reg_path = get_registry_path()
-        registry_data = None
-
-        # Load registry if available
-        if os.path.exists(reg_path):
-            try:
-                with open(reg_path, 'r') as f:
-                    registry_data = json.load(f)
-            except (IOError, json.JSONDecodeError):
-                registry_data = None
+        registry_data = _load_registry() or None
 
         # Stage 1: Check registry unityVersion field
         if registry_data:
@@ -369,15 +372,11 @@ def set_unity_version(version: str):
 
 def list_instances() -> list:
     """Return list of active Unity instances from registry."""
-    reg_path = get_registry_path()
-    if not os.path.exists(reg_path):
-        return []
-    try:
-        with open(reg_path, 'r') as f:
-            data = json.load(f)
-            return list(data.values())
-    except (IOError, json.JSONDecodeError):
-        return []
+    data = _load_registry()
+    results = []
+    for info in data.values():
+        results.append(dict(info))
+    return results
 
 def call_skill(skill_name: str, **kwargs) -> Dict[str, Any]:
     """
@@ -474,7 +473,10 @@ def call_skill_with_retry(skill_name: str, max_retries: int = 3, retry_delay: fl
 def get_skills() -> Dict[str, Any]:
     """Get list of all available skills from the current default client."""
     try:
-        response = requests.get(f"{_get_default_client().url}/skills", timeout=_get_default_client().timeout)
+        response = _get_default_client()._session.get(
+            f"{_get_default_client().url}/skills",
+            timeout=_get_default_client().timeout
+        )
         response.encoding = 'utf-8'
         return response.json()
     except Exception as e:
@@ -488,6 +490,43 @@ def health() -> bool:
         return response.json().get("status") == "ok"
     except (requests.exceptions.RequestException, ValueError):
         return False
+
+
+def is_unity_running() -> bool:
+    """Alias for health()."""
+    return health()
+
+
+def wait_for_unity(timeout: float = 10.0, check_interval: float = 1.0) -> bool:
+    """Wait for Unity REST server to become available again."""
+    start_time = time.time()
+    while time.time() - start_time < timeout:
+        if health():
+            return True
+        time.sleep(check_interval)
+    return False
+
+
+def get_server_status() -> Dict[str, Any]:
+    """Get detailed health information from the current Unity server."""
+    try:
+        response = requests.get(f"{_get_default_client().url}/health", timeout=HEALTH_TIMEOUT)
+        response.encoding = 'utf-8'
+        return response.json()
+    except requests.exceptions.ConnectionError:
+        return {'status': 'offline', 'reason': 'Server not running or Unity recompiling'}
+    except Exception as e:
+        return {'status': 'error', 'reason': str(e)}
+
+
+def create_script(name: str, template: str = 'MonoBehaviour', wait_for_compile: bool = True) -> Dict[str, Any]:
+    """Create a script and optionally wait for recompilation to settle."""
+    result = call_skill('script_create', name=name, template=template)
+    compilation = result.get('compilation', {}) if isinstance(result, dict) else {}
+    if result.get('success') and wait_for_compile and compilation.get('isCompiling'):
+        time.sleep(2)
+        wait_for_unity(timeout=10)
+    return result
 
 # ============================================================
 # Main CLI Entry Point

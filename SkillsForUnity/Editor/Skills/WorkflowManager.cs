@@ -62,6 +62,7 @@ namespace UnitySkills
                     // Cleanup any null tasks if they somehow got in
                     _history.tasks.RemoveAll(t => t == null);
                     _history.undoneStack.RemoveAll(t => t == null);
+                    SanitizeHistory();
                 }
                 catch (Exception e)
                 {
@@ -94,6 +95,44 @@ namespace UnitySkills
             {
                 Debug.LogError($"{SkillsLogger.PREFIX_ERROR} Failed to save workflow history: {e.Message}");
             }
+        }
+
+        private static void SanitizeHistory()
+        {
+            SanitizeTaskCollection(_history.tasks, "tasks");
+            SanitizeTaskCollection(_history.undoneStack, "undoneStack");
+        }
+
+        private static void SanitizeTaskCollection(List<WorkflowTask> tasks, string source)
+        {
+            if (tasks == null) return;
+
+            foreach (var task in tasks)
+            {
+                if (task?.snapshots == null) continue;
+
+                foreach (var snapshot in task.snapshots)
+                {
+                    if (snapshot == null || string.IsNullOrEmpty(snapshot.assetPath)) continue;
+
+                    if (Validate.SafePath(snapshot.assetPath, "assetPath") is object)
+                    {
+                        SkillsLogger.LogWarning($"WorkflowManager: stripped unsafe assetPath from {source}: {snapshot.assetPath}");
+                        snapshot.assetPath = null;
+                        snapshot.assetBytesBase64 = null;
+                    }
+                }
+            }
+        }
+
+        private static bool TryGetSafeAssetFullPath(string assetPath, out string fullPath)
+        {
+            fullPath = null;
+            if (string.IsNullOrEmpty(assetPath)) return false;
+            if (Validate.SafePath(assetPath, "assetPath") is object) return false;
+
+            fullPath = Path.GetFullPath(Path.Combine(Application.dataPath, "..", assetPath));
+            return true;
         }
 
         public static WorkflowTask BeginTask(string tag, string description)
@@ -427,8 +466,13 @@ namespace UnitySkills
                     // Handle created assets - delete the asset file
                     if (!string.IsNullOrEmpty(snapshot.assetPath))
                     {
+                        if (!TryGetSafeAssetFullPath(snapshot.assetPath, out string fullPath))
+                        {
+                            SkillsLogger.LogWarning($"{SkillsLogger.PREFIX_WARNING} Skipping unsafe workflow asset delete path: {snapshot.assetPath}");
+                            continue;
+                        }
+
                         // Save asset bytes for redo before deleting
-                        string fullPath = Path.Combine(Application.dataPath, "..", snapshot.assetPath);
                         if (File.Exists(fullPath) && !snapshot.assetPath.EndsWith(".cs", StringComparison.OrdinalIgnoreCase))
                         {
                             var lastSnapshot = redoTask.snapshots.LastOrDefault();
@@ -545,8 +589,13 @@ namespace UnitySkills
                     }
                     else if (!string.IsNullOrEmpty(snapshot.assetPath) && !string.IsNullOrEmpty(snapshot.assetBytesBase64))
                     {
+                        if (!TryGetSafeAssetFullPath(snapshot.assetPath, out string fullPath))
+                        {
+                            SkillsLogger.LogWarning($"{SkillsLogger.PREFIX_WARNING} Skipping unsafe workflow asset recreate path: {snapshot.assetPath}");
+                            continue;
+                        }
+
                         // Re-create asset from backup bytes
-                        string fullPath = Path.Combine(Application.dataPath, "..", snapshot.assetPath);
                         string dir = Path.GetDirectoryName(fullPath);
                         if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
 
@@ -903,10 +952,9 @@ namespace UnitySkills
             string currentAssetBytes = "";
             if (!string.IsNullOrEmpty(snapshot.assetPath) && !snapshot.assetPath.EndsWith(".cs", StringComparison.OrdinalIgnoreCase))
             {
-                string fullPath = Path.Combine(Application.dataPath, "..", snapshot.assetPath);
-                if (File.Exists(fullPath))
+                if (TryGetSafeAssetFullPath(snapshot.assetPath, out string currentAssetPath) && File.Exists(currentAssetPath))
                 {
-                    currentAssetBytes = Convert.ToBase64String(File.ReadAllBytes(fullPath));
+                    currentAssetBytes = Convert.ToBase64String(File.ReadAllBytes(currentAssetPath));
                 }
             }
 
@@ -924,7 +972,12 @@ namespace UnitySkills
             // Restore from asset bytes backup if available
             if (!string.IsNullOrEmpty(snapshot.assetBytesBase64) && !string.IsNullOrEmpty(snapshot.assetPath))
             {
-                string fullPath = Path.Combine(Application.dataPath, "..", snapshot.assetPath);
+                if (!TryGetSafeAssetFullPath(snapshot.assetPath, out string fullPath))
+                {
+                    SkillsLogger.LogWarning($"{SkillsLogger.PREFIX_WARNING} Skipping unsafe workflow restore path: {snapshot.assetPath}");
+                    return false;
+                }
+
                 File.WriteAllBytes(fullPath, Convert.FromBase64String(snapshot.assetBytesBase64));
                 AssetDatabase.ImportAsset(snapshot.assetPath);
             }

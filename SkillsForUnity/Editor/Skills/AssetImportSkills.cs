@@ -30,7 +30,29 @@ namespace UnitySkills
             if (asset != null) WorkflowManager.SnapshotObject(asset);
 
             AssetDatabase.ImportAsset(assetPath, ImportAssetOptions.ForceUpdate);
-            return new { success = true, reimported = assetPath };
+
+            var result = new Dictionary<string, object>
+            {
+                ["success"] = true,
+                ["reimported"] = assetPath
+            };
+
+            if (ServerAvailabilityHelper.AffectsScriptDomain(assetPath))
+            {
+                ServerAvailabilityHelper.AttachTransientUnavailableNotice(
+                    result,
+                    $"已重导入脚本相关资源: {assetPath}。Unity 可能短暂重载脚本域。",
+                    alwaysInclude: true);
+            }
+            else
+            {
+                ServerAvailabilityHelper.AttachTransientUnavailableNotice(
+                    result,
+                    $"资源重导入后 Unity 仍在刷新: {assetPath}。",
+                    alwaysInclude: false);
+            }
+
+            return result;
         }
 
         [UnitySkill("asset_reimport_batch", "Reimport multiple assets matching a pattern")]
@@ -46,7 +68,29 @@ namespace UnitySkills
                 reimported.Add(path);
             }
 
-            return new { success = true, count = reimported.Count, assets = reimported };
+            var result = new Dictionary<string, object>
+            {
+                ["success"] = true,
+                ["count"] = reimported.Count,
+                ["assets"] = reimported
+            };
+
+            if (reimported.Any(ServerAvailabilityHelper.AffectsScriptDomain))
+            {
+                ServerAvailabilityHelper.AttachTransientUnavailableNotice(
+                    result,
+                    "批量重导入包含脚本相关资源，Unity 可能短暂重载脚本域。",
+                    alwaysInclude: true);
+            }
+            else
+            {
+                ServerAvailabilityHelper.AttachTransientUnavailableNotice(
+                    result,
+                    "批量重导入后 Unity 仍在刷新资源。",
+                    alwaysInclude: false);
+            }
+
+            return result;
         }
 
         [UnitySkill("texture_set_import_settings", "Set texture import settings (maxSize, compression, readable)")]

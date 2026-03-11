@@ -48,7 +48,11 @@ namespace UnitySkills
             return new {
                 success = true,
                 message = $"Installing {packageId}" + (version != null ? $"@{version}" : "") + "... Check Unity console for progress.",
-                async = true
+                async = true,
+                serverAvailability = ServerAvailabilityHelper.CreateTransientUnavailableNotice(
+                    $"正在安装包 {packageId}。包导入和程序集刷新期间，REST 服务可能短暂不可用。",
+                    alwaysInclude: true,
+                    retryAfterSeconds: 8)
             };
         }
 
@@ -71,7 +75,11 @@ namespace UnitySkills
             return new {
                 success = true,
                 message = $"Removing {packageId}... Check Unity console for progress.",
-                async = true
+                async = true,
+                serverAvailability = ServerAvailabilityHelper.CreateTransientUnavailableNotice(
+                    $"正在移除包 {packageId}。包导入和程序集刷新期间，REST 服务可能短暂不可用。",
+                    alwaysInclude: true,
+                    retryAfterSeconds: 8)
             };
         }
 
@@ -118,7 +126,11 @@ namespace UnitySkills
             return new {
                 success = true,
                 message = $"Installing Cinemachine {targetVersion}{depMsg}... Check Unity console for progress.",
-                async = true
+                async = true,
+                serverAvailability = ServerAvailabilityHelper.CreateTransientUnavailableNotice(
+                    $"正在安装 Cinemachine {targetVersion}{depMsg}。包导入和程序集刷新期间，REST 服务可能短暂不可用。",
+                    alwaysInclude: true,
+                    retryAfterSeconds: 8)
             };
         }
 
@@ -140,7 +152,11 @@ namespace UnitySkills
             return new {
                 success = true,
                 message = $"Installing Splines {targetVersion}" + (currentVersion != null ? $" (upgrading from {currentVersion})" : "") + "...",
-                async = true
+                async = true,
+                serverAvailability = ServerAvailabilityHelper.CreateTransientUnavailableNotice(
+                    $"正在安装 Splines {targetVersion}。包导入和程序集刷新期间，REST 服务可能短暂不可用。",
+                    alwaysInclude: true,
+                    retryAfterSeconds: 8)
             };
         }
 

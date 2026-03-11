@@ -35,7 +35,7 @@
 - 🤖 **深度集成**：独家支持 **Antigravity Slash Commands**，解锁 `/unity-skills` 交互新体验。
 - 🔌 **全环境兼容**：完美支持 Claude Code, Antigravity, Gemini CLI 等主流 AI 终端。
 - 🎥 **Cinemachine 2.x/3.x 双版本支持**：自动检测 Unity 版本并安装对应 Cinemachine，支持 **MixingCamera**, **ClearShot**, **TargetGroup**, **Spline** 等高级相机控制。
-- 🔗 **超长任务稳定连接**：请求超时用户可配置（默认 60 分钟），Domain Reload 后自动恢复同一端口，Python 客户端自动同步超时配置，长时间任务不再断连。
+- 🔗 **超长任务稳定连接**：请求超时用户可配置（默认 15 分钟），Domain Reload 后自动恢复同一端口，Python 客户端自动同步超时配置，长时间任务不再断连。
 - 🎨 **UI Toolkit**：全面支持 UXML/USS 模板生成，可引导 AI 构建规范的 UI 结构，辅助 UI 开发。
 
 ---
@@ -74,9 +74,9 @@ https://github.com/Besty0728/Unity-Skills.git?path=/SkillsForUnity
 https://github.com/Besty0728/Unity-Skills.git?path=/SkillsForUnity#beta
 ```
 
-**指定版本安装** (如 v1.4.0):
+**指定版本安装** (如 v1.6.1):
 ```
-https://github.com/Besty0728/Unity-Skills.git?path=/SkillsForUnity#v1.4.0
+https://github.com/Besty0728/Unity-Skills.git?path=/SkillsForUnity#v1.6.1
 ```
 
 > 📦 所有版本包可在 [Releases](https://github.com/Besty0728/Unity-Skills/releases) 页面下载

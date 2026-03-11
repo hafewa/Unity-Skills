@@ -149,7 +149,9 @@ namespace UnitySkills
 
             public void RunFinished(ITestResultAdaptor result)
             {
-                _runInfo.Status = "completed";
+                if (_runInfo.Status != "cancelled")
+                    _runInfo.Status = "completed";
+                TestSkills._api?.UnregisterCallbacks(this);
             }
 
             public void TestStarted(ITestAdaptor test) { }
@@ -217,6 +219,10 @@ namespace UnitySkills
         [UnitySkill("test_create_editmode", "Create an EditMode test script template")]
         public static object TestCreateEditMode(string testName, string folder = "Assets/Tests/Editor")
         {
+            if (Validate.Required(testName, "testName") is object nameErr) return nameErr;
+            if (testName.Contains("/") || testName.Contains("\\") || testName.Contains(".."))
+                return new { error = "testName must not contain path separators" };
+            if (Validate.SafePath(folder, "folder") is object folderErr) return folderErr;
             if (!System.IO.Directory.Exists(folder)) System.IO.Directory.CreateDirectory(folder);
             var path = System.IO.Path.Combine(folder, testName + ".cs");
             if (System.IO.File.Exists(path)) return new { error = $"File already exists: {path}" };
@@ -235,12 +241,24 @@ public class {testName}
 ";
             System.IO.File.WriteAllText(path, content);
             AssetDatabase.ImportAsset(path);
-            return new { success = true, path, testName };
+            return new
+            {
+                success = true,
+                path,
+                testName,
+                serverAvailability = ServerAvailabilityHelper.CreateTransientUnavailableNotice(
+                    $"已创建测试脚本: {path}。Unity 可能短暂重载脚本域。",
+                    alwaysInclude: true)
+            };
         }
 
         [UnitySkill("test_create_playmode", "Create a PlayMode test script template")]
         public static object TestCreatePlayMode(string testName, string folder = "Assets/Tests/Runtime")
         {
+            if (Validate.Required(testName, "testName") is object nameErr) return nameErr;
+            if (testName.Contains("/") || testName.Contains("\\") || testName.Contains(".."))
+                return new { error = "testName must not contain path separators" };
+            if (Validate.SafePath(folder, "folder") is object folderErr) return folderErr;
             if (!System.IO.Directory.Exists(folder)) System.IO.Directory.CreateDirectory(folder);
             var path = System.IO.Path.Combine(folder, testName + ".cs");
             if (System.IO.File.Exists(path)) return new { error = $"File already exists: {path}" };
@@ -261,7 +279,15 @@ public class {testName}
 ";
             System.IO.File.WriteAllText(path, content);
             AssetDatabase.ImportAsset(path);
-            return new { success = true, path, testName };
+            return new
+            {
+                success = true,
+                path,
+                testName,
+                serverAvailability = ServerAvailabilityHelper.CreateTransientUnavailableNotice(
+                    $"已创建测试脚本: {path}。Unity 可能短暂重载脚本域。",
+                    alwaysInclude: true)
+            };
         }
 
         [UnitySkill("test_get_summary", "Get aggregated test summary across all runs")]

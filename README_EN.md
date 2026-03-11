@@ -34,7 +34,7 @@ This project is a deep refactoring and feature extension based on the excellent 
 - 🤖 **Deep Integration**: Exclusive support for **Antigravity Slash Commands**, unlocking the `/unity-skills` interactive experience.
 - 🔌 **Full Environment Compatibility**: Perfect support for Claude Code, Antigravity, Gemini CLI, and other mainstream AI terminals.
 - 🎥 **Cinemachine 2.x/3.x Dual Version Support**: Auto-detects Unity version and installs the corresponding Cinemachine, supporting **MixingCamera**, **ClearShot**, **TargetGroup**, **Spline**, and other advanced camera controls.
-- 🔗 **Stable Long-Running Tasks**: User-configurable request timeout (default 60 minutes), automatic port recovery after Domain Reload, Python client auto-syncs timeout from server, fully resolving disconnection issues during long tasks.
+- 🔗 **Stable Long-Running Tasks**: User-configurable request timeout (default 15 minutes), automatic port recovery after Domain Reload, Python client auto-syncs timeout from server, fully resolving disconnection issues during long tasks.
 - **UI Toolkit** fully supported, with guided generation of elegant UXML and USS templates to assist UI development.
 
 ---
@@ -73,9 +73,9 @@ https://github.com/Besty0728/Unity-Skills.git?path=/SkillsForUnity
 https://github.com/Besty0728/Unity-Skills.git?path=/SkillsForUnity#beta
 ```
 
-**Specific Version** (e.g., v1.4.0):
+**Specific Version** (e.g., v1.6.1):
 ```
-https://github.com/Besty0728/Unity-Skills.git?path=/SkillsForUnity#v1.4.0
+https://github.com/Besty0728/Unity-Skills.git?path=/SkillsForUnity#v1.6.1
 ```
 
 > 📦 All version packages are available on the [Releases](https://github.com/Besty0728/Unity-Skills/releases) page

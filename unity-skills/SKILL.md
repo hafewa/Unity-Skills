@@ -195,6 +195,7 @@ template: menu, hud, dialog, settings, inventory, list | scaleMode: ConstantPixe
 | `script_delete` | scriptPath |
 | `script_find_in_file` | pattern, folder?, isRegex?, limit? �?matches |
 | `script_append` | scriptPath, content, atLine? |
+| `script_get_compile_feedback` | scriptPath, limit? |
 
 template: MonoBehaviour, ScriptableObject, Editor, EditorWindow
 
@@ -361,6 +362,6 @@ animationType: None, Legacy, Generic, Humanoid | meshCompression: Off, Low, Medi
 ## Notes
 - Response: `{success: true/false, ...data}` or `{success: false, error: "message"}`
 - All operations auto-revert on failure
-- After `script_create`, wait 3-5s for Unity recompile
+- After script creation or edits, check the returned `compilation` field and call `script_get_compile_feedback` if Unity is still compiling
 - Use `instanceId` (from `editor_get_selection`/`editor_get_context`) for guaranteed uniqueness
 - `name?` means use name OR instanceId OR path to identify object
