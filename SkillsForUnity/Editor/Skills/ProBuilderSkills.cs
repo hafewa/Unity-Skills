@@ -773,11 +773,17 @@ namespace UnitySkills
 
             var go = pbMesh.gameObject;
             if (!string.IsNullOrEmpty(objName)) go.name = objName;
+
+            // Apply size via localScale then freeze (bake into vertices)
+            // This avoids reflection into internal ProBuilderShape APIs
+            go.transform.localScale = size;
+            pbMesh.FreezeScaleTransform();
+            pbMesh.ToMesh();
+            pbMesh.Refresh();
+
+            // Set position/rotation AFTER freeze
             go.transform.position = pos;
             go.transform.eulerAngles = rot;
-
-            // ProBuilderShape is internal — use reflection to set size
-            SetShapeSize(go, size);
 
             if (!string.IsNullOrEmpty(parentName))
             {
@@ -785,30 +791,13 @@ namespace UnitySkills
                 if (parent != null) go.transform.SetParent(parent.transform, true);
             }
 
-            pbMesh.ToMesh();
-            pbMesh.Refresh();
             return pbMesh;
         }
 
-        // ProBuilderShape is internal in ProBuilder 5.x — reflection helpers
+        // ProBuilderShape is internal in ProBuilder 5.x — reflection for read-only queries
 
         private static Type _pbShapeType;
-        private static PropertyInfo _pbShapeSizeProp;
         private static PropertyInfo _pbShapeShapeProp;
-
-        private static void SetShapeSize(GameObject go, Vector3 size)
-        {
-            if (_pbShapeType == null)
-                _pbShapeType = typeof(ProBuilderMesh).Assembly.GetType("UnityEngine.ProBuilder.Shapes.ProBuilderShape");
-            if (_pbShapeType == null) return;
-
-            var comp = go.GetComponent(_pbShapeType);
-            if (comp == null) return;
-
-            if (_pbShapeSizeProp == null)
-                _pbShapeSizeProp = _pbShapeType.GetProperty("size", BindingFlags.Public | BindingFlags.Instance);
-            _pbShapeSizeProp?.SetValue(comp, size);
-        }
 
         private static string GetShapeTypeName(GameObject go)
         {
@@ -1147,10 +1136,18 @@ namespace UnitySkills
             }
             else if (r.HasValue || g.HasValue || b.HasValue)
             {
-                // Create a temporary colored material for quick prototyping
+                // Create a temporary colored material using current render pipeline's shader
                 var color = new Color(r ?? 0.5f, g ?? 0.5f, b ?? 0.5f, a ?? 1f);
-                var mat = new Material(Shader.Find("Standard") ?? Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("HDRP/Lit"));
-                mat.color = color;
+                var shaderName = ProjectSkills.GetDefaultShaderName();
+                var shader = Shader.Find(shaderName);
+                if (shader == null)
+                    return new { error = $"Cannot find shader '{shaderName}' for current render pipeline" };
+                var mat = new Material(shader);
+                var colorProp = ProjectSkills.GetColorPropertyName();
+                if (mat.HasProperty(colorProp))
+                    mat.SetColor(colorProp, color);
+                else
+                    mat.color = color;
                 mat.name = $"PB_{pbMesh.gameObject.name}_{ColorUtility.ToHtmlStringRGB(color)}";
                 renderer.sharedMaterial = mat;
 

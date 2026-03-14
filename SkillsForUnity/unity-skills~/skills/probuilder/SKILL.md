@@ -424,6 +424,32 @@ unity_skills.call_skill("probuilder_set_material", name="Ramp", r=0.8, g=0.4, b=
 
 ---
 
+## Level Design Spatial Reference
+
+> **1 Unity unit = 1 meter.** Use these references when designing levels.
+
+| Element | Value | Notes |
+|---------|-------|-------|
+| Player height | 2m | Standard capsule (radius 0.5, height 2) |
+| Player width | 1m | Capsule diameter |
+| Walk speed | ~4 m/s | Typical CharacterController |
+| Jump height | ~1.2m | Standard gravity (-9.81), jumpForce ~5 |
+| Max jump gap (horizontal) | ~3m | Running jump at walk speed |
+| Comfortable step-up | ≤0.3m | No jump needed |
+| Min platform width | 1.5m | Comfortable landing |
+| Min corridor width | 2m | Player + clearance |
+| Door opening | W 1.5m × H 2.5m | Standard interior |
+| Wall thickness | 0.2–0.5m | Thin = partition, thick = structural |
+| Railing/ledge height | 1m | Waist height |
+| Stair step | W 0.3m × H 0.2m | Per tread |
+| Floor thickness | 0.2–0.5m | Visible slab |
+
+**Reachability rules for parkour:**
+- Vertical gap between platforms: ≤1.0m (jumpable), >1.2m = unreachable
+- Horizontal gap: ≤2.5m (safe), 2.5–3.5m (challenging), >4m = unreachable
+- Progressive height: each step ≤1m higher than previous
+- Always provide a path back or forward — no dead ends without intention
+
 ## Example: Parkour Level
 
 ```python
@@ -432,32 +458,57 @@ import unity_skills
 # 1. Create level root
 unity_skills.call_skill("gameobject_create", name="ParkourLevel")
 
-# 2. Batch create all platforms
+# 2. Batch create all geometry
+# Layout (side view, X = forward):
+#
+#   Start                                           Finish
+#   [Ground]--[Stairs]--[Plat1]--[Plat2]--[Ramp]--[Bridge]--[EndPlat]--[Arch]
+#   y=0        y=0→2     y=2.5    y=3.2    y=0→4    y=4       y=5       y=5
+#   x=-10      x=-6      x=-2     x=2      x=6      x=11     x=16      x=16
+#
 unity_skills.call_skill("probuilder_create_batch", defaultParent="ParkourLevel", items=[
-    {"shape": "Cube", "name": "Ground", "sizeX": 50, "sizeY": 0.5, "sizeZ": 12},
-    {"shape": "Cube", "name": "Wall_L", "sizeX": 50, "sizeY": 5, "sizeZ": 0.3, "z": -6, "y": 2.5},
-    {"shape": "Cube", "name": "Wall_R", "sizeX": 50, "sizeY": 5, "sizeZ": 0.3, "z": 6, "y": 2.5},
-    {"shape": "Stairs", "name": "Stairs_Start", "sizeX": 3, "sizeY": 2, "sizeZ": 4, "x": -20},
-    {"shape": "Cube", "name": "Plat_1", "sizeX": 3, "sizeY": 0.3, "sizeZ": 3, "x": -12, "y": 2},
-    {"shape": "Cube", "name": "Plat_2", "sizeX": 2, "sizeY": 0.3, "sizeZ": 2, "x": -8, "y": 3},
-    {"shape": "Cube", "name": "Ramp_1", "sizeX": 2, "sizeY": 1, "sizeZ": 5, "x": -4, "y": 1},
-    {"shape": "Cube", "name": "Bridge", "sizeX": 8, "sizeY": 0.2, "sizeZ": 1.5, "x": 4, "y": 4},
-    {"shape": "Cylinder", "name": "Pillar_1", "sizeX": 0.6, "sizeY": 4, "sizeZ": 0.6, "x": 0, "y": 2},
-    {"shape": "Cylinder", "name": "Pillar_2", "sizeX": 0.6, "sizeY": 4, "sizeZ": 0.6, "x": 8, "y": 2},
-    {"shape": "Cube", "name": "Plat_End", "sizeX": 4, "sizeY": 0.3, "sizeZ": 4, "x": 15, "y": 5},
-    {"shape": "Arch", "name": "Finish_Arch", "sizeX": 4, "sizeY": 3, "sizeZ": 1, "x": 20, "y": 5},
+    # Ground floor — wide flat area for spawn
+    {"shape": "Cube", "name": "Ground",    "sizeX": 8, "sizeY": 0.3, "sizeZ": 8, "x": -10, "y": -0.15},
+    # Side walls for ground area
+    {"shape": "Cube", "name": "Wall_L",    "sizeX": 8, "sizeY": 3, "sizeZ": 0.3, "x": -10, "y": 1.5, "z": -4},
+    {"shape": "Cube", "name": "Wall_R",    "sizeX": 8, "sizeY": 3, "sizeZ": 0.3, "x": -10, "y": 1.5, "z": 4},
+    # Stairs up (2m rise over 4m run)
+    {"shape": "Stairs", "name": "Stairs_1", "sizeX": 2, "sizeY": 2, "sizeZ": 4, "x": -6, "y": 1},
+    # Platform 1 — first landing (reachable from stairs top at y=2)
+    {"shape": "Cube", "name": "Plat_1",   "sizeX": 3, "sizeY": 0.3, "sizeZ": 3, "x": -2, "y": 2.5},
+    # Platform 2 — small hop up (+0.7m, gap 1.5m)
+    {"shape": "Cube", "name": "Plat_2",   "sizeX": 2, "sizeY": 0.3, "sizeZ": 2, "x": 2, "y": 3.2},
+    # Ramp base — slope from ground to bridge height
+    {"shape": "Cube", "name": "Ramp_1",   "sizeX": 2, "sizeY": 4, "sizeZ": 3, "x": 6, "y": 2},
+    # Bridge — narrow walkway connecting ramp to end (y=4)
+    {"shape": "Cube", "name": "Bridge",   "sizeX": 6, "sizeY": 0.2, "sizeZ": 1.5, "x": 11, "y": 4},
+    # Support pillars under bridge
+    {"shape": "Cylinder", "name": "Pillar_1", "sizeX": 0.4, "sizeY": 4, "sizeZ": 0.4, "x": 8.5, "y": 2},
+    {"shape": "Cylinder", "name": "Pillar_2", "sizeX": 0.4, "sizeY": 4, "sizeZ": 0.4, "x": 13.5, "y": 2},
+    # End platform — generous landing zone
+    {"shape": "Cube", "name": "Plat_End", "sizeX": 4, "sizeY": 0.3, "sizeZ": 4, "x": 16, "y": 5},
+    # Finish arch
+    {"shape": "Arch", "name": "Finish_Arch", "sizeX": 4, "sizeY": 3, "sizeZ": 1, "x": 16, "y": 6.5},
 ])
 
-# 3. Turn Ramp_1 into actual ramp by moving top vertices
+# 3. Turn Ramp_1 into slope by moving top-front vertices down
 verts = unity_skills.call_skill("probuilder_get_vertices", name="Ramp_1")
-# Identify top-front vertices and lower them to create slope
-# (vertex indices depend on ProBuilder's Cube vertex layout)
+# Find top-front vertices (y > 0 and z > 0 in local space) and lower them
+top_front = [v["index"] for v in verts.get("vertices", []) if v["y"] > 0 and v["z"] > 0]
+if top_front:
+    unity_skills.call_skill("probuilder_move_vertices",
+        name="Ramp_1", vertexIndexes=",".join(str(i) for i in top_front), deltaY=-3.5)
 
 # 4. Color everything for visual distinction
-unity_skills.call_skill("probuilder_set_material", name="Ground", r=0.3, g=0.3, b=0.3)
-unity_skills.call_skill("probuilder_set_material", name="Ramp_1", r=0.9, g=0.5, b=0.1)
-unity_skills.call_skill("probuilder_set_material", name="Bridge", r=0.6, g=0.4, b=0.2)
-unity_skills.call_skill("probuilder_set_material", name="Finish_Arch", r=1, g=0.8, b=0)
+for name, rgb in [
+    ("Ground", (0.35, 0.35, 0.35)), ("Wall_L", (0.5, 0.5, 0.55)),
+    ("Wall_R", (0.5, 0.5, 0.55)),   ("Stairs_1", (0.6, 0.5, 0.3)),
+    ("Plat_1", (0.2, 0.6, 0.9)),    ("Plat_2", (0.15, 0.5, 0.85)),
+    ("Ramp_1", (0.9, 0.5, 0.1)),    ("Bridge", (0.6, 0.4, 0.2)),
+    ("Pillar_1", (0.65, 0.65, 0.65)),("Pillar_2", (0.65, 0.65, 0.65)),
+    ("Plat_End", (0.1, 0.75, 0.3)), ("Finish_Arch", (1, 0.8, 0)),
+]:
+    unity_skills.call_skill("probuilder_set_material", name=name, r=rgb[0], g=rgb[1], b=rgb[2])
 ```
 
 ## Important Notes
@@ -467,6 +518,7 @@ unity_skills.call_skill("probuilder_set_material", name="Finish_Arch", r=1, g=0.
 3. **Vertex indexes**: Use `probuilder_get_vertices` to query positions before `probuilder_move_vertices` / `probuilder_set_vertices`.
 4. **All modifications auto-rebuild**: Every skill calls `ToMesh()` + `Refresh()` internally — no manual rebuild needed.
 5. **Undo support**: All modification skills register with Unity's Undo system and Workflow tracking.
-6. **Quick color vs persistent material**: `probuilder_set_material` with `r/g/b` creates runtime materials for fast prototyping. Use `material_create` + `materialPath` for production.
+6. **Quick color vs persistent material**: `probuilder_set_material` with `r/g/b` auto-detects render pipeline (URP/HDRP/Built-in). Use `material_create` + `materialPath` for production.
 7. **Package not installed**: All skills gracefully return `{error: "ProBuilder package not installed..."}` with install instructions.
 8. **Batch-first for level design**: Use `probuilder_create_batch` when creating 2+ shapes — one API call instead of many.
+9. **Spatial reference**: 1 unit = 1 meter. Player is 2m tall, jumps ~1.2m high, gaps ≤3m. See the reference table above.
