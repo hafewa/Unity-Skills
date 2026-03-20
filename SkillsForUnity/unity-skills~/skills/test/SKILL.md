@@ -7,6 +7,20 @@ description: "Unity Test Runner operations. Use when users want to run, list, or
 
 Run and manage Unity tests.
 
+## Guardrails
+
+**Mode**: Full-Auto required
+
+**DO NOT** (common hallucinations):
+- `test_run` does not exist → use `test_run_all` or `test_run_by_name`
+- `test_create` does not exist → use `test_create_template` to generate test script templates
+- `test_get_status` does not exist → use `test_get_result` with `jobId` from test run
+- Test skills are async — they return a `jobId`, poll with `test_get_result(jobId)`
+
+**Routing**:
+- For compile error checking → use `debug` module's `debug_check_compilation`
+- For test script creation → `test_create_template` (this module), then modify via `script` module
+
 ## Skills
 
 ### `test_list`

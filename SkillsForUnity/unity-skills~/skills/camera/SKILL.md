@@ -7,6 +7,21 @@ description: "Scene View camera control. Use when users want to move, rotate, or
 
 Control the Scene View camera.
 
+## Guardrails
+
+**Mode**: Full-Auto required
+
+**DO NOT** (common hallucinations):
+- `camera_move` / `camera_rotate` do not exist → use `camera_set_transform` (Scene View) or `gameobject_set_transform` (Game Camera)
+- `camera_set_fov` does not exist → use `camera_set_properties` with `fieldOfView` parameter
+- `camera_*` skills control **two different cameras**: `camera_set_transform`/`camera_look_at`/`camera_align_view_to_object` control the **Scene View camera**; `camera_create`/`camera_set_properties`/`camera_screenshot` control **Game Cameras**
+- `camera_delete` does not exist → use `gameobject_delete` on the camera GameObject
+
+**Routing**:
+- For Cinemachine virtual cameras → use `cinemachine` module
+- For Game Camera component properties → `camera_set_properties` / `camera_get_properties` (this module)
+- For scene screenshots → `scene_screenshot` (scene module) uses the Scene View; `camera_screenshot` uses a Game Camera
+
 ## Skills
 
 ### `camera_align_view_to_object`

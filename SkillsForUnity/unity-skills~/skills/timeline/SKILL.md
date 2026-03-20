@@ -7,6 +7,20 @@ description: "Unity Timeline operations. Use when users want to create timelines
 
 Create and modify Unity Timelines.
 
+## Guardrails
+
+**Mode**: Full-Auto required
+
+**DO NOT** (common hallucinations):
+- `timeline_create_animation` does not exist → use `timeline_add_track` with track type "AnimationTrack"
+- `timeline_play` does not exist → use `timeline_set_time` for scrubbing, or `editor_play` for runtime playback
+- `timeline_add_keyframe` does not exist → Timeline uses clips, not direct keyframes; use `timeline_add_clip`
+- `timeline_set_duration` sets the Timeline asset duration, not individual clip duration
+
+**Routing**:
+- For Animator parameters/states → use `animator` module
+- For runtime animation playback → use `editor_play` or write C# via `script` module
+
 ## Skills
 
 ### `timeline_create`

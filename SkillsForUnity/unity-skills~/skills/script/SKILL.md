@@ -1,12 +1,28 @@
 ---
 name: unity-script
-description: "C# script management for creating, reading, and modifying Unity scripts."
+description: "C# script management — create, read, replace, and analyze Unity scripts. Triggers: script, C#, create script, write code, MonoBehaviour, ScriptableObject, class, code generation, script_create, script_replace, 脚本, 创建脚本, C#代码, 编写代码, 生成脚本, 代码模板."
 ---
 
 # Unity Script Skills
 
 > **BATCH-FIRST**: Use `script_create_batch` when creating 2+ scripts.
 > **DESIGN-FIRST**: Before creating gameplay scripts, actively consider coupling, performance, and maintainability. In an existing project, load `../project-scout/SKILL.md` first. If the user is asking for architecture or refactoring advice, load `../architecture/SKILL.md` and then `../patterns/SKILL.md`, `../async/SKILL.md`, `../inspector/SKILL.md`, `../performance/SKILL.md`, `../script-roles/SKILL.md`, `../scene-contracts/SKILL.md`, `../testability/SKILL.md`, or `../scriptdesign/SKILL.md` as needed.
+
+## Guardrails
+
+**Mode**: Semi-Auto (available by default)
+
+**DO NOT** (common hallucinations):
+- `script_edit` / `script_update` do not exist → use `script_replace` for find-and-replace
+- `script_write` does not exist → use `script_create` (new file) or `script_replace` (modify existing)
+- `scriptName` parameter must NOT include `.cs` extension
+- Templates only accept: MonoBehaviour, ScriptableObject, Editor, EditorWindow
+
+**Routing**:
+- To modify existing script content → `script_replace` (find/replace) or `script_append` (add lines)
+- To read script → `script_read`
+- To check compile errors → `script_get_compile_feedback`
+- To analyze script API → use `perception` module's `script_analyze`
 
 ## Skills Overview
 

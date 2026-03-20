@@ -1,6 +1,6 @@
 ---
 name: unity-uitoolkit
-description: "UI Toolkit (UITK) for Unity — create/edit USS stylesheets and UXML layouts, configure UIDocument in scenes. Includes USS design patterns for building polished UI (cards, nav bars, badges, transitions). Use when users want to create UI with UI Toolkit, UXML, USS, UIDocument, PanelSettings, VisualElement, 界面工具包."
+description: "UI Toolkit (UITK) for Unity — create/edit USS stylesheets and UXML layouts, configure UIDocument in scenes. Triggers: UI Toolkit, UITK, UXML, USS, UIDocument, PanelSettings, VisualElement, stylesheet, runtime UI, EditorWindow UI, 界面工具包, UI样式, 样式表, 可视化元素."
 ---
 
 # Unity UI Toolkit Skills
@@ -10,6 +10,21 @@ Work with Unity's web-style UI system: **UXML** (structure, like HTML) + **USS**
 > **Requires Unity 2022.3+**. This module is separate from `ui_*` skills (uGUI/Canvas). Use `uitk_*` for UI Toolkit only.
 
 > **Localization**: Match UI text language to the user's conversation language. When the user communicates in **Chinese (中文)**, use Chinese for all UXML text attributes — labels, buttons, titles, descriptions, tags, placeholders. Otherwise default to **English**. USS class names and CSS variables always stay in English.
+
+## Guardrails
+
+**Mode**: Full-Auto required
+
+**DO NOT** (common hallucinations):
+- Do not confuse UI Toolkit (`uitoolkit_*`) with UGUI (`ui_*`) — they are completely separate systems
+- `uitoolkit_create_button` / `uitoolkit_create_label` do not exist → use `uitoolkit_add_element` with `elementType` parameter
+- `uitoolkit_set_style` does not exist → use `uitoolkit_set_uss_rule` for USS rules or `uitoolkit_set_element_attribute` for inline styles
+- `uitoolkit_create_canvas` does not exist → UI Toolkit uses UIDocument, not Canvas
+
+**Routing**:
+- For UGUI (Canvas/Button/Text/Image) → use `ui` module
+- For UI Toolkit templates → `uitoolkit_generate_template` with template type parameter
+- For attaching UI Toolkit to a GameObject → `uitoolkit_add_uidocument`
 
 ## Skills Overview
 

@@ -7,6 +7,20 @@ description: "UnityEvent management. Use when users want to inspect or modify UI
 
 Inspect and modify UnityEvents (e.g. Button.onClick).
 
+## Guardrails
+
+**Mode**: Full-Auto required
+
+**DO NOT** (common hallucinations):
+- `event_create` / `event_trigger` do not exist → UnityEvents are triggered at runtime, not from editor skills
+- `event_subscribe` does not exist → use `event_add_listener`
+- `event_remove` does not exist → use `event_remove_listener`
+- `event_add_listener` requires exact component type and method name on the target
+
+**Routing**:
+- For XR interaction events → use `xr` module's `xr_add_interaction_event`
+- For C# event code → write via `script` module
+
 ## Skills
 
 ### `event_get_listeners`

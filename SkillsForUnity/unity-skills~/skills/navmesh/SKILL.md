@@ -7,6 +7,20 @@ description: "Navigation mesh operations. Use when users want to bake NavMesh or
 
 Baking and pathfinding.
 
+## Guardrails
+
+**Mode**: Full-Auto required
+
+**DO NOT** (common hallucinations):
+- `navmesh_create` does not exist → use `navmesh_bake` to generate NavMesh
+- `navmesh_set_agent` does not exist → use `component_add` with "NavMeshAgent", then `component_set_property`
+- `navmesh_add_obstacle` does not exist → use `component_add` with "NavMeshObstacle"
+- NavMesh must be re-baked after scene geometry changes
+
+**Routing**:
+- For NavMeshAgent/NavMeshObstacle components → use `component` module
+- For path calculation → `navmesh_calculate_path` (this module)
+
 ## Skills
 
 ### `navmesh_bake`

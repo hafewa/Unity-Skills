@@ -7,6 +7,21 @@ description: "Prefab management. Use when users want to create, instantiate, app
 
 > **BATCH-FIRST**: Use `prefab_instantiate_batch` when spawning 2+ prefab instances.
 
+## Guardrails
+
+**Mode**: Full-Auto required
+
+**DO NOT** (common hallucinations):
+- `prefab_create_from_object` does not exist → use `prefab_create` (takes scene object name/instanceId and savePath)
+- `prefab_spawn` does not exist → use `prefab_instantiate`
+- `prefab_edit` / `prefab_modify` do not exist → use `prefab_set_property` (edit prefab asset directly) or instantiate, modify, then `prefab_apply`
+- `prefab_save` does not exist → use `prefab_apply` (applies instance changes to source prefab)
+
+**Routing**:
+- To modify components on a prefab instance in scene → use `component` module skills, then `prefab_apply`
+- To set a property directly on the prefab asset → `prefab_set_property` (this module)
+- To find all instances of a prefab → `prefab_find_instances` (this module)
+
 ## Skills Overview
 
 | Single Object | Batch Version | Use Batch When |

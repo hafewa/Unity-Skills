@@ -30,20 +30,32 @@
 
 ## 🚀 核心特性
 
-- ⚡ **极致效能**：支持 **Result Truncation** 与 **SKILL.md** 瘦身，最大化节省 Token。
-- 🛠️ **全能工具库**：内置 **513 REST Skills**，并提供 **14 个 advisory 设计模块**，支持 **Batch (批处理)** 操作，大幅减少 HTTP 通信开销，显著提升执行效率。
-- 🛡️ **安全第一**：支持 **Transactional (事务原子性)**，操作失败自动回滚，场景零残留。
-- 🌍 **多实例支持**：自动端口发现、全局注册表，支持同时控制多个 Unity 项目。
-- 🤖 **深度集成**：独家支持 **Antigravity Slash Commands**，解锁 `/unity-skills` 交互新体验。
-- 🔌 **全环境兼容**：完美支持 Claude Code, Antigravity, Gemini CLI 等主流 AI 终端。
-- 🎥 **Cinemachine 2.x/3.x 双版本支持**：自动检测 Unity 版本并安装对应 Cinemachine，支持 **MixingCamera**, **ClearShot**, **TargetGroup**, **Spline** 等高级相机控制。
-- 🔗 **超长任务稳定连接**：请求超时用户可配置（默认 15 分钟），Domain Reload 后自动恢复同一端口；脚本编译、Define 变更、资源重导入等导致的短暂不可达会明确提示稍后重试。
-- 🧠 **架构与脚本设计辅助**：新增 advisory 模块，可按需辅助 AI 在脚本生成前思考耦合、性能、可维护性与 Inspector 体验。
-- 🎨 **UI Toolkit**：全面支持 UXML/USS 模板生成，可引导 AI 构建规范的 UI 结构，辅助 UI 开发。
+- 🛠️ **513 REST Skills 全能库**：包含 14 个 advisory 设计模块，支持 Batch 批处理，一次操控多个对象。
+- 🎛️ **双模式灵活切换**：Semi-Auto（代码优先）或 Full-Auto（直接操控），适配不同工作流。
+- 🤖 **4 大 IDE 原生支持**：Claude Code / Antigravity / Gemini CLI / Codex，一键安装即用。
+- 🛡️ **事务原子性保障**：操作失败自动回滚，场景永不残留，确保流程安全。
+- 🌍 **多实例同时控制**：自动端口发现与全局注册表，支持同时操控多个 Unity 项目。
+- 🔗 **超长稳定连接**：请求超时可配（默认 15 分钟），Domain Reload 后自动恢复，脚本编译/资源重导入等短暂中断会提示重试。
+- 🛡️ **防幻觉 Guardrails**：每个 Skill 模块内置 DO NOT 清单和路由规则，防止 AI 调用不存在的命令或参数错误。
 
 ---
 
-## 🏗️ 支持的 IDE / 终端
+## 🎛️ 操作模式
+
+| 模式 | 默认 | 可用 Skills | 适用场景 |
+|:-----|:----:|:-----------:|:---------|
+| **半自动 (Semi-Auto)** | ✅ | ~80 | AI 写 C# 代码 + 少量 Skills 辅助（脚本、场景感知、编辑器控制、资产管理、工作流、调试） |
+| **全自动 (Full-Auto)** | — | 全部 513 | AI 直接操控 Unity（创建物体、配置材质/灯光/UI、搭建场景） |
+
+**切换方式**：
+- → Full-Auto：`"全自动模式"` / `"full auto"` / `"帮我搭建场景"` / `"直接操作 Unity"`
+- → Semi-Auto：`"半自动模式"` / `"semi-auto"` / `"代码优先"` — 每次新会话自动回到半自动
+
+> 14 个 advisory 设计模块（架构、性能、设计模式、可测试性等）在两种模式下均可用，按需自动加载。
+
+---
+
+## 🏗️ 快速安装支持的IDE/终端
 
 本项目针对以下环境进行了深度优化，确保持续、稳定的开发体验（未在下表中的不代表不支持，只是没有快捷安装，可选用 ***自定义安装*** 到对应目录）：
 
@@ -108,7 +120,9 @@ https://github.com/Besty0728/Unity-Skills.git?path=/SkillsForUnity#v1.6.0
 
 📘 需要更完整的安装与使用说明，请查看：[docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md)
 
-### 4. 手动安装 Skills（可选）
+<details>
+<summary><h3>4. 手动安装 Skills（可选）</h3></summary>
+
 如果不使用一键安装，可按以下**标准流程**手动部署（适用于所有支持 Skills 的工具）：
 
 #### ✅ 标准安装规范 A
@@ -143,9 +157,12 @@ https://github.com/Besty0728/Unity-Skills.git?path=/SkillsForUnity#v1.6.0
 #### 🧩 其他支持 Skills 的工具
 若你使用的是其他支持 Skills 的工具，请按照该工具文档指定的 Skills 根目录进行安装。只要满足**标准安装规范**（根目录包含 `SKILL.md` 并保持 `skills/`、`references/` 与 `scripts/` 结构），即可被正确识别。
 
+</details>
+
 ---
 
-## 📦 Skills 分类概要 (513)
+<details>
+<summary><h2>📦 Skills 分类概要 (513)</h2></summary>
 
 | 分类 | 数量 | 核心功能 |
 | :--- | :---: | :--- |
@@ -191,6 +208,8 @@ https://github.com/Besty0728/Unity-Skills.git?path=/SkillsForUnity#v1.6.0
 > ⚠️ 大部分模块支持 `*_batch` 批量操作，操作多个物体时应优先使用批量 Skills 以提升性能。
 >
 > 🧠 `unity-skills/skills/` 目录下额外提供 **14 个 advisory 设计模块**，用于在脚本编写前辅助 AI 进行架构、性能、可维护性与 Inspector 设计决策。
+
+</details>
 
 ---
 

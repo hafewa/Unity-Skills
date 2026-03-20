@@ -7,6 +7,21 @@ description: "GameObject component management. Use when users want to add, remov
 
 > **BATCH-FIRST**: Use `*_batch` skills when operating on 2+ objects to reduce API calls from N to 1.
 
+## Guardrails
+
+**Mode**: Full-Auto required
+
+**DO NOT** (common hallucinations):
+- `component_create` / `component_get` do not exist → use `component_add` (add) and `component_get_properties` (read)
+- `component_find` does not exist → use `component_list` to list components on an object
+- `componentType` is case-sensitive — `Rigidbody` not `rigidbody`, `BoxCollider` not `boxcollider`
+- Custom scripts need exact class name; if namespaced, use `Namespace.ClassName`
+
+**Routing**:
+- To create a C# component script → use `script` module's `script_create` first, then `component_add`
+- To set multiple properties at once → use `component_set_property_batch`
+- To enable/disable a component → `component_set_enabled` (not `component_set_property`)
+
 ## Skills Overview
 
 | Single Object | Batch Version | Use Batch When |

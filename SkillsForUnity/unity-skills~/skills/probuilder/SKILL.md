@@ -7,6 +7,20 @@ description: "ProBuilder mesh modeling. Use when users want to create ProBuilder
 
 > **Requires**: `com.unity.probuilder` package (5.x+). If not installed, all skills return an install prompt.
 
+## Guardrails
+
+**Mode**: Full-Auto required (requires `com.unity.probuilder` package)
+
+**DO NOT** (common hallucinations):
+- `probuilder_create_mesh` does not exist → use `probuilder_create_shape` with `shapeType` parameter
+- `probuilder_edit_face` does not exist → use specific face operations: `probuilder_extrude_faces`, `probuilder_delete_faces`, `probuilder_subdivide`
+- `probuilder_set_material` does not exist → use `probuilder_set_face_material` (per-face) or `probuilder_set_object_material` (whole object)
+- All mesh operations require `ToMesh()` + `Refresh()` — skills handle this automatically
+
+**Routing**:
+- For basic primitive GameObjects (without ProBuilder) → use `gameobject_create` with primitiveType
+- For material assignment → `probuilder_set_face_material` / `probuilder_set_object_material` (this module), or `material_assign` (material module)
+
 ## Skills Overview
 
 | Skill | Category | Description |

@@ -5,6 +5,10 @@ All notable changes to **UnitySkills** will be documented in this file.
 ## [1.6.5] - 2026-03-20
 
 ### Added
+- **SKILL.md 双模式系统 (Semi-Auto / Full-Auto)**：全新操作模式机制，默认半自动模式仅激活 ~80 个高频 Skills（script/perception/scene/editor/asset/workflow/debug/console + 14 advisory），大幅降低 Token 消耗；用户说"全自动模式"/"full auto" 时激活全部 513 Skills。
+- **防幻觉 Guardrails**：全部 39 个功能模块 SKILL.md 新增 `## Guardrails` 段落，包含 Mode 声明、DO NOT 幻觉列表（常见不存在的 Skill 名称和参数错误）、Routing 路由提示（引导 AI 使用正确模块）。
+- **Skill 命名约定**：模块索引新增 `Skill Naming Convention` 段落，列出全部有效 module 前缀，AI 可据此判断 Skill 是否存在。
+- **Advisory 模块触发词优化**：14 个 advisory 模块的 YAML description 全面升级，增加自然语言触发词（"怎么组织代码"、"太慢了"、"用什么模式好" 等）和问题描述型触发词，中英文覆盖更智能。
 - **`component_set_property` 新增 `assetPath` 参数**：支持将 Project Asset（ScriptableObject、Prefab、Material、Texture、AudioClip 等）赋值给组件的 Object 引用字段。通过 `AssetDatabase.LoadAssetAtPath` 加载资产，支持精确类型匹配与降级兼容。`component_set_property_batch` 同步支持。
 - **`prefab_set_property` (1 skill)**：新增 Prefab 资产属性编辑技能，通过 `SerializedObject` + `SerializedProperty` 直接编辑 Prefab Asset 文件的组件字段（无需实例化到场景）。支持：
   - 基本类型（int/float/bool/string/enum）、Vector2/3/4、Color、Rect、Bounds、LayerMask
@@ -13,6 +17,9 @@ All notable changes to **UnitySkills** will be documented in this file.
   - 属性名自动回退（`propertyName` → `m_PropertyName` → `_propertyName` → `m_propertyName`）
 
 ### Changed
+- **SKILL.md 模块索引新增 Mode 列**：38 个功能模块标注 SA (Semi-Auto) 或 FA (Full-Auto)，14 个 advisory 模块明确标注"双模式均可用"。
+- **主入口 SKILL.md**：YAML description 新增 16 个中英文触发词（含模式切换词）；Core Rule #2 添加 `[Full-Auto]` 前缀；workflow/gameobject 示例标注为 Full-Auto 示例。
+- **全部模块 SKILL.md 触发词标准化**：54 个 SKILL.md 文件均包含标准 `Triggers:` 格式的中英文双语触发词。
 - **REST Skills 总数**：512 → 513（+1 prefab_set_property）。
 - **Prefab 模块**：10 → 11 skills。
 

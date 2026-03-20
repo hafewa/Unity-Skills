@@ -7,6 +7,21 @@ description: "Unity material and shader properties. Use when users want to creat
 
 > **BATCH-FIRST**: Use `*_batch` skills when operating on 2+ objects/materials.
 
+## Guardrails
+
+**Mode**: Full-Auto required
+
+**DO NOT** (common hallucinations):
+- `material_set_metallic` / `material_set_smoothness` do not exist → use `material_set_float` with `propertyName="_Metallic"` or `"_Glossiness"` (Standard) / `"_Smoothness"` (URP)
+- `material_set_color` r/g/b/a range is **0–1**, not 0–255
+- `material_set_property` does not exist → use the specific setter: `material_set_float`, `material_set_int`, `material_set_vector`, `material_set_color`
+- `material_get_color` does not exist → use `material_get_properties` (returns all properties including colors)
+
+**Routing**:
+- For shader changes → `material_set_shader` (this module)
+- For texture tiling → `material_set_texture_scale` / `material_set_texture_offset`
+- Pipeline-specific property names differ: check Render Pipeline Compatibility table in this doc
+
 ## Skills Overview
 
 | Single Object | Batch Version | Use Batch When |

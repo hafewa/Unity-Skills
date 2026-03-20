@@ -1,6 +1,6 @@
 ---
 name: unity-scene-contracts
-description: "Scene composition contract advisor for Unity. Use when users want to define required scene objects, component dependencies, bootstrap objects, reference wiring, and validation rules so scenes stay explicit and maintainable. Triggers: scene contract, bootstrap scene, required references, scene wiring, installer object, 场景契约, 场景装配."
+description: "Scene composition contract advisor for Unity. Use when users want to define required scene objects, component dependencies, bootstrap logic, or reference wiring rules. Triggers: scene contract, bootstrap, required references, scene wiring, scene dependencies, what must be in the scene, 场景契约, 场景装配, 场景依赖, 场景里必须有什么, 引用怎么连."
 ---
 
 # Unity Scene Contracts

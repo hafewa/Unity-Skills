@@ -7,6 +7,23 @@ description: "Unity UI creation. Use when users want to create Canvas, Button, T
 
 > **BATCH-FIRST**: Use `ui_create_batch` when creating 2+ UI elements.
 
+## Guardrails
+
+**Mode**: Full-Auto required
+
+**DO NOT** (common hallucinations):
+- `ui_create_canvas` is the correct name — NOT `ui_add_canvas`
+- `ui_create_label` does not exist → use `ui_create_text`
+- `ui_create_checkbox` does not exist → use `ui_create_toggle`
+- `ui_set_color` does not exist → use `component_set_property` on Image/Text component
+- Do not confuse UGUI (this module) with UI Toolkit (uitoolkit module)
+
+**Routing**:
+- For UI Toolkit (UXML/USS) → use `uitoolkit` module
+- For XR-compatible UI → use `xr` module's `xr_setup_ui_canvas` to convert Canvas to World Space
+- For text updates → `ui_set_text` (this module)
+- For layout arrangement → `ui_layout_children`, `ui_align_selected`, `ui_distribute_selected`
+
 ## Skills Overview
 
 | Single Object | Batch Version | Use Batch When |

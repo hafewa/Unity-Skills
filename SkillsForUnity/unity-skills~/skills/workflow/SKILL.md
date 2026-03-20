@@ -10,6 +10,21 @@ Allows tagging tasks, snapshotting objects before modification, and undoing spec
 
 **NEW: Session-level undo** - Group all changes from a conversation and undo them together.
 
+## Guardrails
+
+**Mode**: Semi-Auto (available by default)
+
+**DO NOT** (common hallucinations):
+- `workflow_save` does not exist → use `workflow_task_end` to end and save a task
+- `workflow_rollback` does not exist → use `workflow_undo_task` (by taskId) or `workflow_session_undo` (by sessionId)
+- `workflow_create` does not exist → use `workflow_task_start`
+- `workflow_revert_task` is deprecated → use `workflow_undo_task`
+
+**Routing**:
+- For simple undo/redo (1 step) → `editor_undo` / `editor_redo` (editor module)
+- For multi-step undo → `history_undo` with `steps` parameter (this module)
+- For conversation-level undo → `workflow_session_undo` (this module)
+
 ## Bookmark Skills
 
 ### `bookmark_set`

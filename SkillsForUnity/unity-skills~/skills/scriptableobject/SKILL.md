@@ -7,6 +7,20 @@ description: "ScriptableObject management. Use when users want to create, read, 
 
 Create and manage ScriptableObject assets.
 
+## Guardrails
+
+**Mode**: Full-Auto required
+
+**DO NOT** (common hallucinations):
+- `scriptableobject_create_type` does not exist → create SO scripts via `script_create` with template "ScriptableObject"
+- `scriptableobject_get_properties` does not exist → use `scriptableobject_read`
+- `scriptableobject_set_property` does not exist → use `scriptableobject_set_field`
+- `scriptableobject_save` does not exist → changes are auto-saved to the asset
+
+**Routing**:
+- For ScriptableObject script creation → use `script` module with template "ScriptableObject"
+- For JSON import/export → `scriptableobject_import_json` / `scriptableobject_export_json` (this module)
+
 ## Skills
 
 ### `scriptableobject_create`

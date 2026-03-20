@@ -7,6 +7,21 @@ description: "Shader creation and management. Use when users want to create or i
 
 Work with shaders - create shader files, read source code, and list available shaders.
 
+## Guardrails
+
+**Mode**: Full-Auto required
+
+**DO NOT** (common hallucinations):
+- `shader_set_property` does not exist → use `material_set_float`/`material_set_color`/etc. on the material, not the shader
+- `shader_apply` / `shader_assign` do not exist → use `material_set_shader` to change a material's shader
+- `shader_get_properties` does not exist → use `material_get_properties` on a material using the shader
+- Shader names are case-sensitive and path-like: `"Standard"`, `"Universal Render Pipeline/Lit"`, not `"standard"` or `"URP Lit"`
+
+**Routing**:
+- For material property changes → use `material` module
+- For shader keyword control → `material_set_keyword` (material module)
+- For global shader keywords → `shader_set_global_keyword` (this module)
+
 ## Skills Overview
 
 | Skill | Description |

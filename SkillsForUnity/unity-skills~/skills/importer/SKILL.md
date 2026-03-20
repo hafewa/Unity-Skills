@@ -7,6 +7,20 @@ description: "Asset import settings. Use when users want to configure texture, a
 
 > **BATCH-FIRST**: Use `*_batch` skills when configuring 2+ assets.
 
+## Guardrails
+
+**Mode**: Full-Auto required
+
+**DO NOT** (common hallucinations):
+- `importer_import` does not exist → use `asset_import` (asset module) to import files; this module configures import *settings*
+- `importer_set_format` does not exist → use specific skills: `importer_set_texture`, `importer_set_audio`, `importer_set_model`
+- `importer_get_settings` does not exist → use specific skills: `importer_get_texture`, `importer_get_audio`, etc.
+- After changing import settings, Unity may need `asset_reimport` to apply changes
+
+**Routing**:
+- For file import (copy into project) → use `asset` module's `asset_import`
+- For texture/model/audio settings → use specific importer skills in this module
+
 ## Skills Overview
 
 | Single Object | Batch Version | Use Batch When |

@@ -7,6 +7,21 @@ description: "Debug and diagnostics. Use when users want to check compilation er
 
 Debug utilities for error checking and diagnostics.
 
+## Guardrails
+
+**Mode**: Semi-Auto (available by default)
+
+**DO NOT** (common hallucinations):
+- `debug_compile` / `debug_recompile` do not exist → use `debug_force_recompile`
+- `debug_run` does not exist → use `editor_play` (editor module)
+- `debug_clear` does not exist → use `console_clear` (console module)
+- `debug_set_defines` triggers Domain Reload — server will be temporarily unavailable
+
+**Routing**:
+- For runtime console logs → use `console` module's `console_get_logs` / `console_start_capture`
+- For play mode control → use `editor` module
+- For script compile feedback → use `script` module's `script_get_compile_feedback`
+
 ## Skills
 
 ### `debug_get_logs`

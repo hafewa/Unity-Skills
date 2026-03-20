@@ -29,20 +29,32 @@ This project is a deep refactoring and feature extension based on the excellent 
 
 ## 🚀 Core Features
 
-- ⚡ **Ultimate Efficiency**: Supports **Result Truncation** and **SKILL.md** optimization to maximize token savings.
-- 🛠️ **Comprehensive Toolkit**: Built-in **513 REST Skills** plus **14 advisory design modules**, with **Batch** operations that significantly reduce HTTP overhead and improve execution efficiency.
-- 🛡️ **Safety First**: Supports **Transactional** (atomic operations) with automatic rollback on failure, leaving no residue in scenes.
-- 🌍 **Multi-Instance Support**: Automatic port discovery and global registry, enabling simultaneous control of multiple Unity projects.
-- 🤖 **Deep Integration**: Exclusive support for **Antigravity Slash Commands**, unlocking the `/unity-skills` interactive experience.
-- 🔌 **Full Environment Compatibility**: Perfect support for Claude Code, Antigravity, Gemini CLI, and other mainstream AI terminals.
-- 🎥 **Cinemachine 2.x/3.x Dual Version Support**: Auto-detects Unity version and installs the corresponding Cinemachine, supporting **MixingCamera**, **ClearShot**, **TargetGroup**, **Spline**, and other advanced camera controls.
-- 🔗 **Stable Long-Running Tasks**: User-configurable request timeout (default 15 minutes), automatic port recovery after Domain Reload, and explicit retry hints when script compilation, define changes, asset reimport, or package operations temporarily interrupt the server.
-- 🧠 **Architecture & Script Design Guidance**: Advisory modules can help AI reason about coupling, performance, maintainability, and Inspector ergonomics before generating gameplay code.
-- 🎨 **UI Toolkit** fully supported, with guided generation of elegant UXML and USS templates to assist UI development.
+- 🛠️ **513 REST Skills Comprehensive Toolkit**: Includes 14 advisory design modules with Batch operations for multi-object control.
+- 🎛️ **Dual-Mode Flexibility**: Switch between Semi-Auto (code-first) and Full-Auto (direct manipulation) for different workflows.
+- 🤖 **4 Major IDEs Native Support**: Claude Code / Antigravity / Gemini CLI / Codex — one-click install and use.
+- 🛡️ **Transactional Atomicity**: Failed operations auto-rollback, leaving scenes clean and safe.
+- 🌍 **Multi-Instance Simultaneous Control**: Automatic port discovery and global registry for controlling multiple Unity projects at once.
+- 🔗 **Ultra-Stable Long Connections**: Configurable request timeout (default 15 minutes), automatic recovery after Domain Reload, with retry hints during script compilation/asset updates.
+- 🛡️ **Anti-Hallucination Guardrails**: Each Skill module includes DO NOT lists and routing rules to prevent calls to nonexistent commands or parameter errors.
 
 ---
 
-## 🏗️ Supported IDEs / Terminals
+## 🎛️ Operating Modes
+
+| Mode | Default | Available Skills | Use Case |
+|:-----|:-------:|:----------------:|:---------|
+| **Semi-Auto** | ✅ | ~80 | AI writes C# code + light Skills assist (script, perception, scene, editor, asset, workflow, debug) |
+| **Full-Auto** | — | All 513 | AI directly manipulates Unity (create objects, configure materials/lights/UI, build scenes) |
+
+**How to switch**:
+- → Full-Auto: `"full auto"` / `"full-auto mode"` / `"build the scene for me"` / `"directly manipulate Unity"`
+- → Semi-Auto: `"semi-auto"` / `"code-first"` — each new session defaults to Semi-Auto
+
+> 14 advisory design modules (architecture, performance, design patterns, testability, etc.) are available in both modes and loaded on demand.
+
+---
+
+## 🏗️ Quick Install Supported IDE/Terminals
 
 This project has been deeply optimized for the following environments to ensure a continuous and stable development experience (tools not listed below are not necessarily unsupported — they just lack a quick installer; use ***Custom Installation*** to the corresponding directory):
 
@@ -107,7 +119,9 @@ In Unity, click menu: `Window > UnitySkills > Start Server`
 
 📘 For complete installation and usage instructions, see: [docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md)
 
-### 4. Manual Skills Installation (Optional)
+<details>
+<summary><h3>4. Manual Skills Installation (Optional)</h3></summary>
+
 If one-click installation is not supported or preferred, follow this **standard procedure** for manual deployment (applicable to all tools supporting Skills):
 
 #### ✅ Standard Installation Method A
@@ -142,9 +156,12 @@ The following are verified default directories (if the tool has a custom path co
 #### 🧩 Other Tools Supporting Skills
 If you're using other tools that support Skills, install according to the Skills root directory specified in that tool's documentation. As long as the **standard installation specification** is met (root directory contains `SKILL.md` and maintains `skills/`, `references/`, and `scripts/` structure), it will be correctly recognized.
 
+</details>
+
 ---
 
-## 📦 Skills Category Overview (513)
+<details>
+<summary><h2>📦 Skills Category Overview (513)</h2></summary>
 
 | Category | Count | Core Functions |
 | :--- | :---: | :--- |
@@ -190,6 +207,8 @@ If you're using other tools that support Skills, install according to the Skills
 > ⚠️ Most modules support `*_batch` batch operations. When operating on multiple objects, prioritize batch Skills for better performance.
 >
 > 🧠 `unity-skills/skills/` also includes **14 advisory design modules** for architecture, script design, performance, maintainability, and Inspector guidance.
+
+</details>
 
 ---
 

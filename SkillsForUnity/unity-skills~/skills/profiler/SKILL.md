@@ -7,6 +7,20 @@ description: "Performance profiling. Use when users want to get FPS, memory usag
 
 Get performance statistics.
 
+## Guardrails
+
+**Mode**: Full-Auto required
+
+**DO NOT** (common hallucinations):
+- `profiler_start` / `profiler_stop` do not exist → profiler skills are read-only snapshots, not recording controls
+- `profiler_record` does not exist → use Unity Profiler window for recording
+- `profiler_analyze` does not exist → use specific skills: `profiler_get_fps`, `profiler_get_memory`, etc.
+
+**Routing**:
+- For scene performance hints → use `perception` module's `scene_performance_hints`
+- For memory info → `debug_get_memory_info` (debug module) or `profiler_get_memory` (this module)
+- For optimization suggestions → use `optimization` module
+
 ## Skills
 
 ### `profiler_get_stats`

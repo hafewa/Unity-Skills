@@ -7,6 +7,21 @@ description: "Cinemachine virtual camera control. Use when users want to create 
 
 Control Cinemachine Virtual Cameras and settings (Cinemachine 3.x).
 
+## Guardrails
+
+**Mode**: Full-Auto required
+
+**DO NOT** (common hallucinations):
+- `cinemachine_create` does not exist → use `cinemachine_create_vcam` for virtual cameras
+- `cinemachine_set_target` does not exist → use `cinemachine_set_follow` and `cinemachine_set_lookat` separately
+- `cinemachine_add_brain` does not exist → CinemachineBrain is auto-added to Main Camera
+- Cinemachine 2.x uses `CinemachineVirtualCamera`; Cinemachine 3.x uses `CinemachineCamera` — skills handle this automatically
+
+**Routing**:
+- For basic Game Camera operations → use `camera` module
+- For Scene View camera → use `camera` module's `camera_set_transform`/`camera_look_at`
+- For camera animation sequences → use `timeline` module with Cinemachine track
+
 ## Skills
 
 ### `cinemachine_create_vcam`

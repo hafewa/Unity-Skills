@@ -7,6 +7,21 @@ description: "Unity asset management. Use when users want to import, move, delet
 
 > **BATCH-FIRST**: Use `*_batch` skills when operating on 2+ assets.
 
+## Guardrails
+
+**Mode**: Semi-Auto (available by default)
+
+**DO NOT** (common hallucinations):
+- `asset_create` does not exist → use `asset_create_folder` (folders), `material_create` (materials), `script_create` (scripts)
+- `asset_rename` does not exist → use `asset_move` with new path
+- `asset_search` does not exist → use `asset_find` with searchFilter syntax (e.g. `t:Texture2D player`)
+- `asset_copy` does not exist → use `asset_duplicate`
+
+**Routing**:
+- For texture/model/audio import settings → use `importer` module (Full-Auto)
+- For material creation → use `material` module (Full-Auto)
+- For script creation → use `script` module
+
 ## Skills Overview
 
 | Single Object | Batch Version | Use Batch When |

@@ -7,6 +7,21 @@ description: "Unity Animator Controller management. Use when users want to creat
 
 Control Unity's animation system - create controllers, manage parameters, and control playback.
 
+## Guardrails
+
+**Mode**: Full-Auto required
+
+**DO NOT** (common hallucinations):
+- `animator_play` does not exist → use `animator_set_parameter` to trigger transitions, or `editor_play` for play mode
+- `animator_create_clip` / `animator_add_clip` do not exist → AnimationClips are created via Unity Editor or asset import
+- `animator_set_speed` does not exist → use `component_set_property` on Animator component with propertyName="speed"
+- `animator_get_info` does not exist → use `animator_get_parameters` or `animator_get_states`
+
+**Routing**:
+- For Timeline animation → use `timeline` module
+- For component properties on Animator → use `component` module
+- For animation import settings → use `importer` module
+
 ## Skills Overview
 
 | Skill | Description |

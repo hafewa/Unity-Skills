@@ -5,6 +5,20 @@ description: "AI-powered scene operations: SQL-like object queries, automatic sp
 
 # Unity Smart Skills
 
+## Guardrails
+
+**Mode**: Full-Auto required
+
+**DO NOT** (common hallucinations):
+- `smart_create` / `smart_build` do not exist → smart skills are query/layout tools, not creation tools
+- `smart_search` does not exist → use `smart_query` for SQL-like scene queries
+- `smart_move` does not exist → use `smart_snap_to_grid` or `smart_align_to_ground`
+
+**Routing**:
+- For creating objects → use `gameobject` module
+- For simple object search → use `gameobject_find` or `scene_find_objects`
+- For complex scene queries (SQL-like) → `smart_query` (this module)
+
 ## Skills
 
 ### smart_scene_query

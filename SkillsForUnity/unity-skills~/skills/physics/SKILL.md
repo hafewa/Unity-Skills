@@ -7,6 +7,21 @@ description: "Unity physics operations. Use when users want to perform raycasts,
 
 Raycasts, overlap checks, and gravity settings.
 
+## Guardrails
+
+**Mode**: Full-Auto required
+
+**DO NOT** (common hallucinations):
+- `physics_add_rigidbody` / `physics_add_collider` do not exist → use `component_add` with componentType "Rigidbody"/"BoxCollider"/etc.
+- `physics_set_gravity` does not exist → use `project` module's `project_set_physics` or `component_set_property` on Rigidbody
+- `physics_simulate` does not exist → physics simulation runs during Play mode
+- Raycast results use world-space coordinates
+
+**Routing**:
+- For adding physics components → use `component` module
+- For physics material → use `physics_create_material` (this module)
+- For layer collision matrix → `physics_set_layer_collision` (this module)
+
 ## Skills
 
 ### `physics_raycast`

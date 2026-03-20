@@ -1,6 +1,6 @@
 ---
 name: unity-testability
-description: "Unity testability advisor. Use when users want to improve testability, isolate pure logic from Unity APIs, decide what belongs in EditMode or PlayMode tests, or reduce hard-to-test MonoBehaviour logic. Triggers: testability, unit test, editmode, playmode, isolate logic, 测试性, 单元测试."
+description: "Unity testability advisor. Use when users want to improve testability, isolate logic from MonoBehaviour, or plan EditMode/PlayMode tests. Triggers: testability, unit test, how to test, write tests, editmode test, playmode test, isolate logic, mock, 怎么测试, 写测试, 可测试, 测试性, 单元测试, 逻辑分离."
 ---
 
 # Unity Testability Advisor

@@ -7,6 +7,20 @@ description: "Unity scene management. Use when users want to create, load, save 
 
 Control Unity scenes - the containers that hold all your GameObjects.
 
+## Guardrails
+
+**Mode**: Semi-Auto (available by default)
+
+**DO NOT** (common hallucinations):
+- `scene_delete` / `scene_rename` do not exist → delete scene files via `asset_delete`, rename via `asset_move`
+- `scene_list` does not exist → use `scene_get_loaded` (loaded scenes) or `asset_find` with `t:Scene` (all scene assets)
+- `scene_find_objects` is a simple name/tag/component filter; for regex/layer/path search use `gameobject_find` (Full-Auto)
+
+**Routing**:
+- For detailed hierarchy tree → use `perception` module's `hierarchy_describe`
+- For scene statistics → use `perception` module's `scene_summarize`
+- For screenshot → `scene_screenshot` (this module) or `camera_screenshot` (camera module, Full-Auto)
+
 ## Skills Overview
 
 | Skill | Description |

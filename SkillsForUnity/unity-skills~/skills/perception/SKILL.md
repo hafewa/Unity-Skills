@@ -5,6 +5,20 @@ description: "Scene understanding and analysis. Use when users want to get a sum
 
 # Unity Perception Skills
 
+## Guardrails
+
+**Mode**: Semi-Auto (available by default)
+
+**DO NOT** (common hallucinations):
+- `perception_analyze` does not exist → use `scene_summarize` or `script_analyze`
+- `perception_scan` / `perception_describe` do not exist
+- `scene_context` ≠ `editor_get_context`: `scene_context` exports full hierarchy+components, `editor_get_context` returns current selection+editor state
+
+**Routing**:
+- For current editor state (selection, play mode) → use `editor` module's `editor_get_context`
+- For object search → use `scene_find_objects` (scene module) or `gameobject_find` (gameobject module, Full-Auto)
+- For script dependency analysis → `script_dependency_graph` (this module)
+
 ## Skills
 
 ### scene_summarize

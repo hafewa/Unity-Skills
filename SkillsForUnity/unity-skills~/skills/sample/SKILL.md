@@ -7,6 +7,19 @@ description: "Sample scene generators and API test utilities. Use when users wan
 
 Basic examples for testing the API.
 
+## Guardrails
+
+**Mode**: Full-Auto required
+
+**DO NOT** (common hallucinations):
+- Sample skills are basic test/demo skills — do not use them for production work
+- `sample_create` is a simplified version of `gameobject_create` — prefer the full gameobject module
+- `sample_hello` / `sample_ping` are connectivity test skills only
+
+**Routing**:
+- For actual GameObject operations → use `gameobject` module
+- For server health check → use Python helper's `unity_skills.health()`
+
 ## Skills
 
 ### create_cube

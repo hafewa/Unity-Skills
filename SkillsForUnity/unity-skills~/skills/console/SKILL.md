@@ -7,6 +7,21 @@ description: "Unity console log management. Use when users want to capture, filt
 
 Work with the Unity console - capture logs, write messages, and debug your project.
 
+## Guardrails
+
+**Mode**: Semi-Auto (available by default)
+
+**DO NOT** (common hallucinations):
+- `console_filter` does not exist → use `console_get_logs` with `filter` parameter
+- `console_read` does not exist → use `console_get_logs`
+- `console_write` does not exist → use `console_log`
+- Do not confuse with `debug_get_logs` — `console_get_logs` reads captured buffer, `debug_get_logs` reads all console entries
+
+**Routing**:
+- For compilation errors specifically → use `debug` module's `debug_check_compilation`
+- For error stack traces → use `debug` module's `debug_get_stack_trace`
+- For console settings (collapse, clear-on-play) → `console_set_collapse` / `console_set_clear_on_play` (this module)
+
 ## Skills Overview
 
 | Skill | Description |

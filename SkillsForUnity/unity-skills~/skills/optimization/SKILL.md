@@ -7,6 +7,21 @@ description: "Project optimization utilities. Use when users want to optimize te
 
 Optimize project assets (Textures, Models).
 
+## Guardrails
+
+**Mode**: Full-Auto required
+
+**DO NOT** (common hallucinations):
+- `optimize_scene` / `optimization_run` do not exist → use specific skills: `optimize_find_large_textures`, `optimize_find_duplicate_materials`, etc.
+- `optimize_compress` does not exist → use `optimize_compress_textures` (textures), `optimize_compress_meshes` (meshes), `optimize_compress_audio` (audio)
+- `optimize_set_lod` does not exist → use `optimize_setup_lod` or `optimize_set_static_flags`
+- Optimization skills are analysis + action tools — always review results before applying batch changes
+
+**Routing**:
+- For profiler metrics → use `profiler` module
+- For static batching flags → `optimize_set_static_flags` (this module)
+- For performance review guidance → load `performance` advisory module
+
 ## Skills
 
 ### `optimize_textures`

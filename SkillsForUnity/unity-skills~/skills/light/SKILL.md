@@ -7,6 +7,21 @@ description: "Unity lighting control. Use when users want to create or configure
 
 > **BATCH-FIRST**: Use `*_batch` skills when operating on 2+ lights.
 
+## Guardrails
+
+**Mode**: Full-Auto required
+
+**DO NOT** (common hallucinations):
+- `light_add` does not exist → use `light_create` (creates a new light GameObject)
+- `light_set_color` / `light_set_intensity` do not exist → use `light_set_properties` (sets color, intensity, range, shadows together)
+- `light_delete` does not exist → use `gameobject_delete` on the light's GameObject
+- `light_set_shadow` does not exist → use `light_set_properties` with `shadows` parameter ("none"/"hard"/"soft")
+
+**Routing**:
+- For lightmap baking settings → `light_get_lightmap_settings` (this module)
+- For reflection probes → `light_add_reflection_probe` (this module)
+- For light probe groups → `light_add_probe_group` (this module)
+
 ## Skills Overview
 
 | Single Object | Batch Version | Use Batch When |

@@ -7,6 +7,21 @@ description: "Unity Editor control. Use when users want to enter play mode, sele
 
 Control the Unity Editor itself - enter play mode, manage selection, undo/redo, and execute menu items.
 
+## Guardrails
+
+**Mode**: Semi-Auto (available by default)
+
+**DO NOT** (common hallucinations):
+- `editor_run` does not exist → use `editor_play` to enter play mode
+- `editor_compile` / `editor_recompile` do not exist → use `debug_force_recompile`
+- `editor_save` does not exist → use `editor_execute_menu` with menuPath `"File/Save"`
+- `editor_execute_menu` requires exact menu path — typos cause silent failure
+
+**Routing**:
+- For compilation check → use `debug` module's `debug_check_compilation`
+- For console errors → use `debug` module's `debug_get_errors`
+- For scene save → `scene_save` (scene module) or `editor_execute_menu` menuPath="File/Save"
+
 ## Skills Overview
 
 | Skill | Description |

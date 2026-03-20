@@ -7,6 +7,19 @@ description: "Project cleanup utilities. Use when users want to find unused asse
 
 > **Safety**: All delete operations default to `dryRun=true`. Set `dryRun=false` to actually delete.
 
+## Guardrails
+
+**Mode**: Full-Auto required
+
+**DO NOT** (common hallucinations):
+- `cleaner_delete` / `cleaner_remove` do not exist → cleaner skills only find/report; use `asset_delete` to actually remove
+- `cleaner_fix` does not exist → use `cleaner_fix_missing_scripts` specifically for missing script references
+- `cleaner_scan` does not exist → use specific skills: `cleaner_find_unused`, `cleaner_find_duplicates`, etc.
+
+**Routing**:
+- To delete found assets → use `asset` module's `asset_delete` / `asset_delete_batch`
+- For project validation → use `validation` module
+
 ## Skills Overview
 
 | Skill | Description |

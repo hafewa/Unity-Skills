@@ -7,6 +7,21 @@ description: "GameObject creation and manipulation. Use when users want to creat
 
 > **BATCH-FIRST**: Use `*_batch` skills when operating on 2+ objects to reduce API calls from N to 1.
 
+## Guardrails
+
+**Mode**: Full-Auto required
+
+**DO NOT** (common hallucinations):
+- `gameobject_move` / `gameobject_rotate` / `gameobject_set_scale` do not exist → use `gameobject_set_transform` (handles position, rotation, and scale together)
+- `gameobject_set_position` does not exist → use `gameobject_set_transform` with `posX/posY/posZ`
+- `gameobject_add_component` does not exist → use `component_add` (component module)
+- `gameobject_get_transform` does not exist → use `gameobject_get_info` (returns position/rotation/scale)
+
+**Routing**:
+- To add/remove components → use `component` module
+- To set material/color → use `material` module
+- To search objects by name/tag/component → `gameobject_find` (this module) or `scene_find_objects` (scene module, Semi-Auto)
+
 ## Skills Overview
 
 | Single Object | Batch Version | Use Batch When |

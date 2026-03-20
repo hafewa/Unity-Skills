@@ -49,6 +49,16 @@
 └─────────────────────────────────────────────────────────────┘
 ```
 
+## 🎛️ 操作模式
+
+| 模式 | 默认 | 可用 Skills | 使用场景 |
+|------|:----:|:-----------:|----------|
+| 半自动 (Semi-Auto) | ✅ | ~80 | AI 写 C# 代码，少量 Skills 辅助（script/perception/scene/editor/asset/workflow/debug/console + 14 advisory） |
+| 全自动 (Full-Auto) | - | 全部 513 | AI 直接操作 Unity 编辑器（创建 GameObject、配置材质、灯光、UI 等） |
+
+> 切换方式：用户说"全自动模式"/"full auto" 切换到全自动；说"半自动模式"/"semi-auto"/"代码优先" 切回半自动。每次会话默认半自动。
+> 详见 `SkillsForUnity/unity-skills~/SKILL.md` 的 Operating Mode 段落。
+
 ### 核心设计模式 & 新特性 (v1.4+)
 
 1.  **Multi-Instance (多实例支持)**:

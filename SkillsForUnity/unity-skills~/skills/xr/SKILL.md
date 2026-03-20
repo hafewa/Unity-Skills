@@ -763,6 +763,8 @@ Left Controller:                    Right Controller:
 
 ## Guardrails: Preventing AI Hallucination
 
+**Mode**: Full-Auto required (requires `com.unity.xr.interaction.toolkit` package)
+
 ### DO NOT assume these exist (they don't in XRI)
 
 ```

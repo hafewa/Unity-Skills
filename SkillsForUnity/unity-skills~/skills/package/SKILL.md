@@ -7,6 +7,20 @@ description: "Unity Package Manager operations. Use when users want to install, 
 
 Unity Package Manager 操作，支持包的安装、移除和 Cinemachine 自动配置。
 
+## Guardrails
+
+**Mode**: Full-Auto required
+
+**DO NOT** (common hallucinations):
+- `package_install_from_git` does not exist → use `package_add` with git URL
+- `package_update` does not exist → use `package_add` with the desired version
+- `package_get_info` does not exist → use `package_list` to see all installed packages
+- Package install/remove may trigger Domain Reload — server temporarily unavailable
+
+**Routing**:
+- For Cinemachine/ProBuilder/XR package → `package_add` with correct package name
+- For scripting define symbols after package install → use `debug_set_defines`
+
 ## Skills
 
 ### `package_list`
