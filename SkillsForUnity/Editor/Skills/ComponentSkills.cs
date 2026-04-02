@@ -54,7 +54,12 @@ namespace UnitySkills
             "Rewired.",
         };
 
-        [UnitySkill("component_add", "Add a component to a GameObject (supports name/instanceId/path). Works with Cinemachine, TextMeshPro, etc.", TracksWorkflow = true)]
+        [UnitySkill("component_add", "Add a component to a GameObject (supports name/instanceId/path). Works with Cinemachine, TextMeshPro, etc.",
+            Category = SkillCategory.Component, Operation = SkillOperation.Create,
+            Tags = new[] { "add", "attach", "behaviour" },
+            Outputs = new[] { "gameObject", "instanceId", "component", "fullTypeName" },
+            RequiresInput = new[] { "gameObject" },
+            TracksWorkflow = true)]
         public static object ComponentAdd(string name = null, int instanceId = 0, string path = null, string componentType = null)
         {
             if (Validate.Required(componentType, "componentType") is object err) return err;
@@ -97,7 +102,12 @@ namespace UnitySkills
             };
         }
 
-        [UnitySkill("component_add_batch", "Add components to multiple GameObjects. items: JSON array of {name, componentType, path}", TracksWorkflow = true)]
+        [UnitySkill("component_add_batch", "Add components to multiple GameObjects. items: JSON array of {name, componentType, path}",
+            Category = SkillCategory.Component, Operation = SkillOperation.Create,
+            Tags = new[] { "add", "attach", "behaviour", "batch" },
+            Outputs = new[] { "gameObject", "component" },
+            RequiresInput = new[] { "gameObject" },
+            TracksWorkflow = true)]
         public static object ComponentAddBatch(string items)
         {
             return BatchExecutor.Execute<BatchAddComponentItem>(items, item =>
@@ -134,7 +144,12 @@ namespace UnitySkills
             public string componentType { get; set; }
         }
 
-        [UnitySkill("component_remove", "Remove a component from a GameObject (supports name/instanceId/path)", TracksWorkflow = true)]
+        [UnitySkill("component_remove", "Remove a component from a GameObject (supports name/instanceId/path)",
+            Category = SkillCategory.Component, Operation = SkillOperation.Delete,
+            Tags = new[] { "remove", "detach", "destroy" },
+            Outputs = new[] { "gameObject", "removed" },
+            RequiresInput = new[] { "gameObject", "component" },
+            TracksWorkflow = true)]
         public static object ComponentRemove(string name = null, int instanceId = 0, string path = null, string componentType = null, int componentIndex = 0)
         {
             if (Validate.Required(componentType, "componentType") is object err) return err;
@@ -171,7 +186,12 @@ namespace UnitySkills
             return new { success = true, gameObject = go.name, removed = componentType };
         }
 
-        [UnitySkill("component_remove_batch", "Remove components from multiple GameObjects. items: JSON array of {name, componentType, path}", TracksWorkflow = true)]
+        [UnitySkill("component_remove_batch", "Remove components from multiple GameObjects. items: JSON array of {name, componentType, path}",
+            Category = SkillCategory.Component, Operation = SkillOperation.Delete,
+            Tags = new[] { "remove", "detach", "destroy", "batch" },
+            Outputs = new[] { "gameObject", "removed", "count" },
+            RequiresInput = new[] { "gameObject", "component" },
+            TracksWorkflow = true)]
         public static object ComponentRemoveBatch(string items)
         {
             return BatchExecutor.Execute<BatchRemoveComponentItem>(items, item =>
@@ -210,7 +230,12 @@ namespace UnitySkills
             public string componentType { get; set; }
         }
 
-        [UnitySkill("component_list", "List all components on a GameObject with detailed info (supports name/instanceId/path)")]
+        [UnitySkill("component_list", "List all components on a GameObject with detailed info (supports name/instanceId/path)",
+            Category = SkillCategory.Component, Operation = SkillOperation.Query,
+            Tags = new[] { "list", "inspect", "enumerate" },
+            Outputs = new[] { "gameObject", "instanceId", "path", "components" },
+            RequiresInput = new[] { "gameObject" },
+            ReadOnly = true)]
         public static object ComponentList(string name = null, int instanceId = 0, string path = null, bool includeProperties = false)
         {
             var (go, error) = GameObjectFinder.FindOrError(name, instanceId, path);
@@ -246,7 +271,12 @@ namespace UnitySkills
             };
         }
 
-        [UnitySkill("component_set_property", "Set a property/field on a component. Supports Vector2/3/4, Color, scene references by name/path, project assets by assetPath", TracksWorkflow = true)]
+        [UnitySkill("component_set_property", "Set a property/field on a component. Supports Vector2/3/4, Color, scene references by name/path, project assets by assetPath",
+            Category = SkillCategory.Component, Operation = SkillOperation.Modify,
+            Tags = new[] { "property", "field", "value", "reference" },
+            Outputs = new[] { "gameObject", "component", "property", "valueSet" },
+            RequiresInput = new[] { "gameObject", "component" },
+            TracksWorkflow = true)]
         public static object ComponentSetProperty(
             string name = null, int instanceId = 0, string path = null,
             string componentType = null, string propertyName = null,
@@ -329,7 +359,12 @@ namespace UnitySkills
             }
         }
 
-        [UnitySkill("component_set_property_batch", "Set properties on multiple components (Efficient). items: JSON array of {name, componentType, propertyName, value, referencePath, referenceName, assetPath}", TracksWorkflow = true)]
+        [UnitySkill("component_set_property_batch", "Set properties on multiple components (Efficient). items: JSON array of {name, componentType, propertyName, value, referencePath, referenceName, assetPath}",
+            Category = SkillCategory.Component, Operation = SkillOperation.Modify,
+            Tags = new[] { "property", "field", "value", "reference", "batch" },
+            Outputs = new[] { "gameObject", "property" },
+            RequiresInput = new[] { "gameObject", "component" },
+            TracksWorkflow = true)]
         public static object ComponentSetPropertyBatch(string items)
         {
             return BatchExecutor.Execute<BatchSetPropertyItem>(items, item =>
@@ -403,7 +438,12 @@ namespace UnitySkills
             public string assetPath { get; set; }
         }
 
-        [UnitySkill("component_get_properties", "Get all properties of a component (supports name/instanceId/path)")]
+        [UnitySkill("component_get_properties", "Get all properties of a component (supports name/instanceId/path)",
+            Category = SkillCategory.Component, Operation = SkillOperation.Query,
+            Tags = new[] { "property", "field", "inspect", "reflection" },
+            Outputs = new[] { "gameObject", "component", "properties", "fields" },
+            RequiresInput = new[] { "gameObject", "component" },
+            ReadOnly = true)]
         public static object ComponentGetProperties(string name = null, int instanceId = 0, string path = null, string componentType = null, bool includePrivate = false)
         {
             if (Validate.Required(componentType, "componentType") is object err) return err;
@@ -920,7 +960,12 @@ namespace UnitySkills
 
         #endregion
 
-        [UnitySkill("component_copy", "Copy a component from one GameObject to another", TracksWorkflow = true)]
+        [UnitySkill("component_copy", "Copy a component from one GameObject to another",
+            Category = SkillCategory.Component, Operation = SkillOperation.Create,
+            Tags = new[] { "copy", "paste", "duplicate", "transfer" },
+            Outputs = new[] { "source", "target", "componentType" },
+            RequiresInput = new[] { "gameObject", "component" },
+            TracksWorkflow = true)]
         public static object ComponentCopy(string sourceName = null, int sourceInstanceId = 0, string sourcePath = null, string targetName = null, int targetInstanceId = 0, string targetPath = null, string componentType = null)
         {
             if (Validate.Required(componentType, "componentType") is object err) return err;
@@ -940,7 +985,12 @@ namespace UnitySkills
             return new { success = true, source = sourceName, target = targetName, componentType };
         }
 
-        [UnitySkill("component_set_enabled", "Enable or disable a component (Behaviour, Renderer, Collider, etc.)", TracksWorkflow = true)]
+        [UnitySkill("component_set_enabled", "Enable or disable a component (Behaviour, Renderer, Collider, etc.)",
+            Category = SkillCategory.Component, Operation = SkillOperation.Modify,
+            Tags = new[] { "enable", "disable", "toggle", "active" },
+            Outputs = new[] { "gameObject", "componentType", "enabled" },
+            RequiresInput = new[] { "gameObject", "component" },
+            TracksWorkflow = true)]
         public static object ComponentSetEnabled(string name = null, int instanceId = 0, string path = null, string componentType = null, bool enabled = true)
         {
             if (Validate.Required(componentType, "componentType") is object err) return err;

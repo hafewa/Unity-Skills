@@ -13,7 +13,11 @@ namespace UnitySkills
     /// </summary>
     public static class SceneSkills
     {
-        [UnitySkill("scene_create", "Create a new empty scene", TracksWorkflow = true)]
+        [UnitySkill("scene_create", "Create a new empty scene",
+            Category = SkillCategory.Scene, Operation = SkillOperation.Create,
+            Tags = new[] { "new", "empty", "setup" },
+            Outputs = new[] { "scenePath", "sceneName" },
+            TracksWorkflow = true)]
         public static object SceneCreate(string scenePath)
         {
             if (Validate.Required(scenePath, "scenePath") is object err) return err;
@@ -30,7 +34,11 @@ namespace UnitySkills
             return new { success = true, scenePath, sceneName = scene.name };
         }
 
-        [UnitySkill("scene_load", "Load an existing scene")]
+        [UnitySkill("scene_load", "Load an existing scene",
+            Category = SkillCategory.Scene, Operation = SkillOperation.Execute,
+            Tags = new[] { "open", "load", "additive" },
+            Outputs = new[] { "sceneName", "scenePath" },
+            RequiresInput = new[] { "scenePath" })]
         public static object SceneLoad(string scenePath, bool additive = false)
         {
             if (!File.Exists(scenePath))
@@ -42,7 +50,11 @@ namespace UnitySkills
             return new { success = true, sceneName = scene.name, scenePath = scene.path };
         }
 
-        [UnitySkill("scene_save", "Save the current scene", TracksWorkflow = true)]
+        [UnitySkill("scene_save", "Save the current scene",
+            Category = SkillCategory.Scene, Operation = SkillOperation.Execute,
+            Tags = new[] { "save", "persist", "write" },
+            Outputs = new[] { "scenePath" },
+            TracksWorkflow = true)]
         public static object SceneSave(string scenePath = null)
         {
             if (!string.IsNullOrEmpty(scenePath) && Validate.SafePath(scenePath, "scenePath") is object pathErr) return pathErr;
@@ -57,7 +69,11 @@ namespace UnitySkills
             return new { success = true, scenePath = path };
         }
 
-        [UnitySkill("scene_get_info", "Get current scene information")]
+        [UnitySkill("scene_get_info", "Get current scene information",
+            Category = SkillCategory.Scene, Operation = SkillOperation.Query,
+            Tags = new[] { "info", "status", "roots" },
+            Outputs = new[] { "sceneName", "scenePath", "rootObjects" },
+            ReadOnly = true)]
         public static object SceneGetInfo()
         {
             var scene = SceneManager.GetActiveScene();
@@ -78,7 +94,11 @@ namespace UnitySkills
             };
         }
 
-        [UnitySkill("scene_get_hierarchy", "Get scene hierarchy tree")]
+        [UnitySkill("scene_get_hierarchy", "Get scene hierarchy tree",
+            Category = SkillCategory.Scene, Operation = SkillOperation.Query,
+            Tags = new[] { "hierarchy", "tree", "structure" },
+            Outputs = new[] { "sceneName", "hierarchy" },
+            ReadOnly = true)]
         public static object SceneGetHierarchy(int maxDepth = 3)
         {
             var scene = SceneManager.GetActiveScene();
@@ -132,7 +152,10 @@ namespace UnitySkills
             return names.ToArray();
         }
 
-        [UnitySkill("scene_screenshot", "Capture a screenshot of the game view. filename is a bare filename only (no path separators); saved under Assets/Screenshots/.")]
+        [UnitySkill("scene_screenshot", "Capture a screenshot of the game view. filename is a bare filename only (no path separators); saved under Assets/Screenshots/.",
+            Category = SkillCategory.Scene, Operation = SkillOperation.Execute,
+            Tags = new[] { "screenshot", "capture", "image" },
+            Outputs = new[] { "path", "width", "height" })]
         public static object SceneScreenshot(string filename = "screenshot.png", int width = 1920, int height = 1080)
         {
             // Strip any path components to prevent writing outside Screenshots/
@@ -150,7 +173,11 @@ namespace UnitySkills
             return new { success = true, path, width, height };
         }
 
-        [UnitySkill("scene_get_loaded", "Get list of all currently loaded scenes")]
+        [UnitySkill("scene_get_loaded", "Get list of all currently loaded scenes",
+            Category = SkillCategory.Scene, Operation = SkillOperation.Query,
+            Tags = new[] { "loaded", "list", "multi-scene" },
+            Outputs = new[] { "count", "scenes" },
+            ReadOnly = true)]
         public static object SceneGetLoaded()
         {
             var scenes = new System.Collections.Generic.List<object>();
@@ -170,7 +197,11 @@ namespace UnitySkills
             return new { success = true, count = scenes.Count, scenes };
         }
 
-        [UnitySkill("scene_unload", "Unload a loaded scene (additive)")]
+        [UnitySkill("scene_unload", "Unload a loaded scene (additive)",
+            Category = SkillCategory.Scene, Operation = SkillOperation.Execute,
+            Tags = new[] { "unload", "close", "multi-scene" },
+            Outputs = new[] { "unloaded" },
+            RequiresInput = new[] { "scenePath" })]
         public static object SceneUnload(string sceneName)
         {
             Scene sceneToUnload = default;
@@ -200,7 +231,11 @@ namespace UnitySkills
             return new { success = true, unloaded = sceneName };
         }
 
-        [UnitySkill("scene_set_active", "Set the active scene (for multi-scene editing)")]
+        [UnitySkill("scene_set_active", "Set the active scene (for multi-scene editing)",
+            Category = SkillCategory.Scene, Operation = SkillOperation.Modify,
+            Tags = new[] { "active", "focus", "multi-scene" },
+            Outputs = new[] { "activeScene" },
+            RequiresInput = new[] { "scenePath" })]
         public static object SceneSetActive(string sceneName)
         {
             for (int i = 0; i < SceneManager.sceneCount; i++)
@@ -217,7 +252,11 @@ namespace UnitySkills
             }
             return new { success = false, error = $"Scene '{sceneName}' not found in loaded scenes" };
         }
-        [UnitySkill("scene_find_objects", "Search GameObjects by name pattern, tag, or component type. For advanced search (regex, layer, path) use gameobject_find.")]
+        [UnitySkill("scene_find_objects", "Search GameObjects by name pattern, tag, or component type. For advanced search (regex, layer, path) use gameobject_find.",
+            Category = SkillCategory.Scene, Operation = SkillOperation.Query,
+            Tags = new[] { "search", "filter", "find", "objects" },
+            Outputs = new[] { "count", "objects", "instanceId", "path" },
+            ReadOnly = true)]
         public static object SceneFindObjects(string namePattern = null, string tag = null, string componentType = null, int limit = 50)
         {
             IEnumerable<GameObject> objects = GameObjectFinder.GetSceneObjects();

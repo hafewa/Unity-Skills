@@ -61,7 +61,11 @@ namespace UnitySkills
             _codeDependencyCacheDirty = true;
         }
 
-        [UnitySkill("scene_summarize", "Get a structured summary of the current scene (object counts, component stats, hierarchy depth)")]
+        [UnitySkill("scene_summarize", "Get a structured summary of the current scene (object counts, component stats, hierarchy depth)",
+            Category = SkillCategory.Perception, Operation = SkillOperation.Analyze,
+            Tags = new[] { "scene", "summary", "statistics", "overview" },
+            Outputs = new[] { "sceneName", "scenePath", "stats", "topComponents" },
+            ReadOnly = true)]
         public static object SceneSummarize(bool includeComponentStats = true, int topComponentsLimit = 10)
         {
             var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
@@ -133,7 +137,11 @@ namespace UnitySkills
             };
         }
 
-        [UnitySkill("hierarchy_describe", "Get a text tree of the scene hierarchy (like 'tree' command). Returns human-readable text. For JSON structure use scene_get_hierarchy.")]
+        [UnitySkill("hierarchy_describe", "Get a text tree of the scene hierarchy (like 'tree' command). Returns human-readable text. For JSON structure use scene_get_hierarchy.",
+            Category = SkillCategory.Perception, Operation = SkillOperation.Query,
+            Tags = new[] { "hierarchy", "tree", "scene", "structure" },
+            Outputs = new[] { "sceneName", "hierarchy", "totalObjectsShown" },
+            ReadOnly = true)]
         public static object HierarchyDescribe(int maxDepth = 5, bool includeInactive = false, int maxItemsPerLevel = 20)
         {
             var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
@@ -268,7 +276,12 @@ namespace UnitySkills
             return "";
         }
 
-        [UnitySkill("script_analyze", "Analyze a script's public API (MonoBehaviour, ScriptableObject, or plain class)")]
+        [UnitySkill("script_analyze", "Analyze a script's public API (MonoBehaviour, ScriptableObject, or plain class)",
+            Category = SkillCategory.Perception, Operation = SkillOperation.Analyze,
+            Tags = new[] { "script", "analyze", "api", "reflection" },
+            Outputs = new[] { "script", "fullName", "kind", "fields", "properties", "methods", "unityCallbacks" },
+            RequiresInput = new[] { "scriptName" },
+            ReadOnly = true)]
         public static object ScriptAnalyze(string scriptName, bool includePrivate = false)
         {
             var type = AppDomain.CurrentDomain.GetAssemblies()
@@ -345,7 +358,11 @@ namespace UnitySkills
             };
         }
 
-        [UnitySkill("scene_spatial_query", "Find objects within a radius of a point, or near another object")]
+        [UnitySkill("scene_spatial_query", "Find objects within a radius of a point, or near another object",
+            Category = SkillCategory.Perception, Operation = SkillOperation.Query,
+            Tags = new[] { "spatial", "radius", "proximity", "search" },
+            Outputs = new[] { "center", "radius", "totalFound", "results" },
+            ReadOnly = true)]
         public static object SceneSpatialQuery(
             float x = 0, float y = 0, float z = 0,
             float radius = 10f,
@@ -408,7 +425,11 @@ namespace UnitySkills
             };
         }
 
-        [UnitySkill("scene_materials", "Get an overview of all materials and shaders used in the current scene")]
+        [UnitySkill("scene_materials", "Get an overview of all materials and shaders used in the current scene",
+            Category = SkillCategory.Perception, Operation = SkillOperation.Query,
+            Tags = new[] { "material", "shader", "scene", "overview" },
+            Outputs = new[] { "totalMaterials", "totalShaders", "shaders" },
+            ReadOnly = true)]
         public static object SceneMaterials(bool includeProperties = false)
         {
             var renderers = FindHelper.FindAll<Renderer>();
@@ -484,7 +505,11 @@ namespace UnitySkills
             public List<object> properties;
         }
 
-        [UnitySkill("scene_context", "Generate a comprehensive scene snapshot for AI coding assistance (hierarchy, components, script fields, references, UI layout). Best for initial context gathering before editing code or complex scene work.")]
+        [UnitySkill("scene_context", "Generate a comprehensive scene snapshot for AI coding assistance (hierarchy, components, script fields, references, UI layout). Best for initial context gathering before editing code or complex scene work.",
+            Category = SkillCategory.Perception, Operation = SkillOperation.Analyze,
+            Tags = new[] { "scene", "context", "snapshot", "comprehensive", "ai" },
+            Outputs = new[] { "sceneName", "totalObjects", "exportedObjects", "objects", "references", "codeDependencies" },
+            ReadOnly = true)]
         public static object SceneContext(
             int maxDepth = 10,
             int maxObjects = 200,
@@ -783,7 +808,10 @@ namespace UnitySkills
             return null;
         }
 
-        [UnitySkill("scene_export_report", "Export complete scene structure and script dependency report as markdown file. Use when user asks to: export scene report, generate scene document, save scene overview, create scene context file")]
+        [UnitySkill("scene_export_report", "Export complete scene structure and script dependency report as markdown file. Use when user asks to: export scene report, generate scene document, save scene overview, create scene context file",
+            Category = SkillCategory.Perception, Operation = SkillOperation.Analyze | SkillOperation.Execute,
+            Tags = new[] { "scene", "report", "export", "markdown", "documentation" },
+            Outputs = new[] { "savedTo", "objectCount", "userScriptCount", "referenceCount" })]
         public static object SceneExportReport(
             string savePath = "Assets/Docs/SceneReport.md",
             int maxDepth = 10,
@@ -1367,7 +1395,11 @@ namespace UnitySkills
             return edges;
         }
 
-        [UnitySkill("scene_dependency_analyze", "Analyze object dependency graph and impact of changes. Use ONLY when user explicitly asks about: dependency analysis, impact analysis, what depends on, what references, safe to delete/disable/remove, refactoring impact, reference check")]
+        [UnitySkill("scene_dependency_analyze", "Analyze object dependency graph and impact of changes. Use ONLY when user explicitly asks about: dependency analysis, impact analysis, what depends on, what references, safe to delete/disable/remove, refactoring impact, reference check",
+            Category = SkillCategory.Perception, Operation = SkillOperation.Analyze,
+            Tags = new[] { "dependency", "impact", "reference", "analysis", "graph" },
+            Outputs = new[] { "sceneName", "totalReferences", "objectsAnalyzed", "analysis", "markdown" },
+            ReadOnly = true)]
         public static object SceneDependencyAnalyze(
             string targetPath = null,
             string savePath = null)
@@ -1441,7 +1473,12 @@ namespace UnitySkills
 
         [UnitySkill("script_dependency_graph",
             "Given an entry script, return its N-hop dependency closure as structured JSON. "
-            + "Shows which scripts to read to understand or safely modify a feature.")]
+            + "Shows which scripts to read to understand or safely modify a feature.",
+            Category = SkillCategory.Perception, Operation = SkillOperation.Analyze,
+            Tags = new[] { "script", "dependency", "graph", "closure", "analysis" },
+            Outputs = new[] { "entryScript", "totalScriptsReached", "scripts", "edges", "suggestedReadOrder" },
+            RequiresInput = new[] { "scriptName" },
+            ReadOnly = true)]
         public static object ScriptDependencyGraph(
             string scriptName,
             int maxHops = 2,
@@ -1759,7 +1796,11 @@ namespace UnitySkills
             return type.Name;
         }
 
-        [UnitySkill("scene_tag_layer_stats", "Get Tag/Layer usage stats and find potential issues (untagged objects, unused layers)")]
+        [UnitySkill("scene_tag_layer_stats", "Get Tag/Layer usage stats and find potential issues (untagged objects, unused layers)",
+            Category = SkillCategory.Perception, Operation = SkillOperation.Analyze,
+            Tags = new[] { "tag", "layer", "statistics", "usage" },
+            Outputs = new[] { "totalObjects", "untaggedCount", "tags", "layers", "emptyDefinedLayers" },
+            ReadOnly = true)]
         public static object SceneTagLayerStats()
         {
             var allObjects = GameObjectFinder.GetSceneObjects();
@@ -1794,7 +1835,11 @@ namespace UnitySkills
                 emptyDefinedLayers = emptyLayers.ToArray() };
         }
 
-        [UnitySkill("scene_performance_hints", "Diagnose scene performance issues with prioritized actionable suggestions")]
+        [UnitySkill("scene_performance_hints", "Diagnose scene performance issues with prioritized actionable suggestions",
+            Category = SkillCategory.Perception, Operation = SkillOperation.Analyze,
+            Tags = new[] { "performance", "optimization", "diagnostics", "hints" },
+            Outputs = new[] { "hintCount", "hints" },
+            ReadOnly = true)]
         public static object ScenePerformanceHints()
         {
             var hints = new List<object>();

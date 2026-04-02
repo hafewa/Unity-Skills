@@ -32,6 +32,13 @@ namespace UnitySkills
             public MethodInfo Method;
             public ParameterInfo[] Parameters;
             public bool TracksWorkflow;
+            // Intent-level metadata (v1.7)
+            public SkillCategory Category;
+            public SkillOperation Operation;
+            public string[] Tags;
+            public string[] Outputs;
+            public string[] RequiresInput;
+            public bool ReadOnly;
         }
 
         public static void Initialize()
@@ -64,7 +71,13 @@ namespace UnitySkills
                                 Description = attr.Description ?? "",
                                 Method = method,
                                 Parameters = method.GetParameters(),
-                                TracksWorkflow = attr.TracksWorkflow
+                                TracksWorkflow = attr.TracksWorkflow,
+                                Category = attr.Category,
+                                Operation = attr.Operation,
+                                Tags = attr.Tags,
+                                Outputs = attr.Outputs,
+                                RequiresInput = attr.RequiresInput,
+                                ReadOnly = attr.ReadOnly
                             };
                             if (attr.TracksWorkflow)
                                 trackedSkills.Add(name);
@@ -94,11 +107,19 @@ namespace UnitySkills
                     version = SkillsLogger.Version,
                     unityVersion = Application.unityVersion,
                     totalSkills = _skills.Count,
+                    categories = Enum.GetNames(typeof(SkillCategory)).Where(c => c != "Uncategorized").ToArray(),
+                    operationTypes = Enum.GetNames(typeof(SkillOperation)),
                     workflowTrackedSkills = _workflowTrackedSkills.OrderBy(name => name).ToArray(),
                     skills = _skills.Values.Select(s => new
                     {
                         name = s.Name,
                         description = s.Description,
+                        category = s.Category != SkillCategory.Uncategorized ? s.Category.ToString() : null,
+                        operation = FormatOperation(s.Operation),
+                        tags = s.Tags,
+                        outputs = s.Outputs,
+                        requiresInput = s.RequiresInput,
+                        readOnly = s.ReadOnly,
                         tracksWorkflow = s.TracksWorkflow,
                         parameters = s.Parameters.Select(p => new
                         {
@@ -327,6 +348,18 @@ namespace UnitySkills
             if (underlying == typeof(bool)) return "boolean";
             if (underlying.IsArray) return "array";
             return "object";
+        }
+
+        private static string[] FormatOperation(SkillOperation op)
+        {
+            if (op == 0) return null;
+            var list = new List<string>();
+            foreach (SkillOperation flag in Enum.GetValues(typeof(SkillOperation)))
+            {
+                if (flag != 0 && op.HasFlag(flag))
+                    list.Add(flag.ToString());
+            }
+            return list.Count > 0 ? list.ToArray() : null;
         }
 
         /// <summary>

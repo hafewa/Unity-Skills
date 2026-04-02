@@ -10,7 +10,12 @@ namespace UnitySkills
     /// </summary>
     public static class PrefabSkills
     {
-        [UnitySkill("prefab_create", "Create a prefab from a GameObject", TracksWorkflow = true)]
+        [UnitySkill("prefab_create", "Create a prefab from a GameObject",
+            Category = SkillCategory.Prefab, Operation = SkillOperation.Create,
+            Tags = new[] { "prefab", "asset", "save", "create" },
+            Outputs = new[] { "prefabPath", "name" },
+            RequiresInput = new[] { "gameObject" },
+            TracksWorkflow = true)]
         public static object PrefabCreate(string name = null, int instanceId = 0, string path = null, string savePath = null)
         {
             if (Validate.Required(savePath, "savePath") is object reqErr) return reqErr;
@@ -32,7 +37,12 @@ namespace UnitySkills
             return new { success = true, prefabPath = savePath, name = prefab.name };
         }
 
-        [UnitySkill("prefab_instantiate", "Instantiate a prefab in the scene", TracksWorkflow = true)]
+        [UnitySkill("prefab_instantiate", "Instantiate a prefab in the scene",
+            Category = SkillCategory.Prefab, Operation = SkillOperation.Create,
+            Tags = new[] { "prefab", "instantiate", "scene", "spawn" },
+            Outputs = new[] { "name", "instanceId" },
+            RequiresInput = new[] { "prefabPath" },
+            TracksWorkflow = true)]
         public static object PrefabInstantiate(string prefabPath, float x = 0, float y = 0, float z = 0, string name = null)
         {
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
@@ -53,7 +63,12 @@ namespace UnitySkills
             return new { success = true, name = instance.name, instanceId = instance.GetInstanceID() };
         }
 
-        [UnitySkill("prefab_instantiate_batch", "Instantiate multiple prefabs (Efficient). items: JSON array of {prefabPath, x, y, z, name, rotX, rotY, rotZ, scaleX, scaleY, scaleZ}", TracksWorkflow = true)]
+        [UnitySkill("prefab_instantiate_batch", "Instantiate multiple prefabs (Efficient). items: JSON array of {prefabPath, x, y, z, name, rotX, rotY, rotZ, scaleX, scaleY, scaleZ}",
+            Category = SkillCategory.Prefab, Operation = SkillOperation.Create,
+            Tags = new[] { "prefab", "instantiate", "batch", "spawn", "scene" },
+            Outputs = new[] { "results", "name", "instanceId", "position" },
+            RequiresInput = new[] { "prefabPath" },
+            TracksWorkflow = true)]
         public static object PrefabInstantiateBatch(string items)
         {
             // Cache loaded prefabs to avoid repeated AssetDatabase calls
@@ -122,7 +137,12 @@ namespace UnitySkills
             public float scaleZ { get; set; } = 1;
         }
 
-        [UnitySkill("prefab_apply", "Apply all overrides from prefab instance to the source prefab asset. Equivalent to prefab_apply_overrides.", TracksWorkflow = true)]
+        [UnitySkill("prefab_apply", "Apply all overrides from prefab instance to the source prefab asset. Equivalent to prefab_apply_overrides.",
+            Category = SkillCategory.Prefab, Operation = SkillOperation.Modify,
+            Tags = new[] { "prefab", "apply", "overrides", "save" },
+            Outputs = new[] { "appliedTo" },
+            RequiresInput = new[] { "prefabInstance" },
+            TracksWorkflow = true)]
         public static object PrefabApply(string name = null, int instanceId = 0, string path = null)
         {
             var (go, goErr) = GameObjectFinder.FindOrError(name: name, instanceId: instanceId, path: path);
@@ -139,7 +159,12 @@ namespace UnitySkills
             return new { success = true, appliedTo = prefabPath };
         }
 
-        [UnitySkill("prefab_unpack", "Unpack a prefab instance. completely=false: unpack outermost root only; completely=true: fully unpack all nested prefabs.", TracksWorkflow = true)]
+        [UnitySkill("prefab_unpack", "Unpack a prefab instance. completely=false: unpack outermost root only; completely=true: fully unpack all nested prefabs.",
+            Category = SkillCategory.Prefab, Operation = SkillOperation.Modify,
+            Tags = new[] { "prefab", "unpack", "disconnect", "instance" },
+            Outputs = new[] { "unpacked" },
+            RequiresInput = new[] { "prefabInstance" },
+            TracksWorkflow = true)]
         public static object PrefabUnpack(string name = null, int instanceId = 0, string path = null, bool completely = false)
         {
             var (go, findErr) = GameObjectFinder.FindOrError(name: name, instanceId: instanceId, path: path);
@@ -152,7 +177,12 @@ namespace UnitySkills
             return new { success = true, unpacked = go.name };
         }
 
-        [UnitySkill("prefab_get_overrides", "Get list of property overrides on a prefab instance")]
+        [UnitySkill("prefab_get_overrides", "Get list of property overrides on a prefab instance",
+            Category = SkillCategory.Prefab, Operation = SkillOperation.Query,
+            Tags = new[] { "prefab", "overrides", "inspect", "diff" },
+            Outputs = new[] { "prefabPath", "propertyOverrides", "addedComponents", "removedComponents", "addedGameObjects", "hasOverrides" },
+            RequiresInput = new[] { "prefabInstance" },
+            ReadOnly = true)]
         public static object PrefabGetOverrides(string name = null, int instanceId = 0)
         {
             var (go, goErr) = GameObjectFinder.FindOrError(name: name, instanceId: instanceId);
@@ -192,7 +222,11 @@ namespace UnitySkills
             };
         }
 
-        [UnitySkill("prefab_revert_overrides", "Revert all overrides on a prefab instance back to prefab values")]
+        [UnitySkill("prefab_revert_overrides", "Revert all overrides on a prefab instance back to prefab values",
+            Category = SkillCategory.Prefab, Operation = SkillOperation.Modify,
+            Tags = new[] { "prefab", "revert", "overrides", "reset" },
+            Outputs = new[] { "reverted" },
+            RequiresInput = new[] { "prefabInstance" })]
         public static object PrefabRevertOverrides(string name = null, int instanceId = 0)
         {
             var (go, findErr) = GameObjectFinder.FindOrError(name: name, instanceId: instanceId);
@@ -208,7 +242,11 @@ namespace UnitySkills
             return new { success = true, reverted = prefabRoot.name };
         }
 
-        [UnitySkill("prefab_apply_overrides", "Apply all overrides from instance to source prefab asset. Equivalent to prefab_apply.")]
+        [UnitySkill("prefab_apply_overrides", "Apply all overrides from instance to source prefab asset. Equivalent to prefab_apply.",
+            Category = SkillCategory.Prefab, Operation = SkillOperation.Modify,
+            Tags = new[] { "prefab", "apply", "overrides", "save" },
+            Outputs = new[] { "appliedTo" },
+            RequiresInput = new[] { "prefabInstance" })]
         public static object PrefabApplyOverrides(string name = null, int instanceId = 0)
         {
             var (go, goErr) = GameObjectFinder.FindOrError(name: name, instanceId: instanceId);
@@ -223,7 +261,12 @@ namespace UnitySkills
 
             return new { success = true, appliedTo = prefabPath };
         }
-        [UnitySkill("prefab_create_variant", "Create a prefab variant from an existing prefab", TracksWorkflow = true)]
+        [UnitySkill("prefab_create_variant", "Create a prefab variant from an existing prefab",
+            Category = SkillCategory.Prefab, Operation = SkillOperation.Create,
+            Tags = new[] { "prefab", "variant", "create", "inheritance" },
+            Outputs = new[] { "sourcePath", "variantPath", "name" },
+            RequiresInput = new[] { "sourcePrefabPath" },
+            TracksWorkflow = true)]
         public static object PrefabCreateVariant(string sourcePrefabPath, string variantPath)
         {
             if (Validate.Required(sourcePrefabPath, "sourcePrefabPath") is object err) return err;
@@ -243,7 +286,12 @@ namespace UnitySkills
             return new { success = true, sourcePath = sourcePrefabPath, variantPath, name = variant.name };
         }
 
-        [UnitySkill("prefab_find_instances", "Find all instances of a prefab in the current scene")]
+        [UnitySkill("prefab_find_instances", "Find all instances of a prefab in the current scene",
+            Category = SkillCategory.Prefab, Operation = SkillOperation.Query,
+            Tags = new[] { "prefab", "find", "instances", "scene" },
+            Outputs = new[] { "prefabPath", "count", "instances" },
+            RequiresInput = new[] { "prefabPath" },
+            ReadOnly = true)]
         public static object PrefabFindInstances(string prefabPath, int limit = 50)
         {
             if (Validate.Required(prefabPath, "prefabPath") is object err) return err;
@@ -260,7 +308,12 @@ namespace UnitySkills
             return new { success = true, prefabPath, count = instances.Length, instances };
         }
 
-        [UnitySkill("prefab_set_property", "Set a property on a component inside a Prefab asset file. Supports basic types (int/float/bool/string/enum), vectors, colors, and asset references via assetReferencePath", TracksWorkflow = true)]
+        [UnitySkill("prefab_set_property", "Set a property on a component inside a Prefab asset file. Supports basic types (int/float/bool/string/enum), vectors, colors, and asset references via assetReferencePath",
+            Category = SkillCategory.Prefab, Operation = SkillOperation.Modify,
+            Tags = new[] { "prefab", "property", "set", "component", "asset" },
+            Outputs = new[] { "prefabPath", "gameObject", "component", "property", "valueSet" },
+            RequiresInput = new[] { "prefabAsset", "componentType" },
+            TracksWorkflow = true)]
         public static object PrefabSetProperty(
             string prefabPath = null, string componentType = null, string propertyName = null,
             string value = null, string assetReferencePath = null, string gameObjectName = null)
