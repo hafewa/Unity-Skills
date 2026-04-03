@@ -2,6 +2,18 @@
 
 All notable changes to **UnitySkills** will be documented in this file.
 
+## [1.6.8] - 2026-04-03
+
+### Fixed
+- **`gameobject_create` parentName 参数失效** — 文档声称 `gameobject_create` 支持 `parentName` 参数，但 C# 实现中缺失该参数，SkillRouter 静默忽略导致子物体被创建在场景根层级而非预期父物体下。现已在方法签名中添加 `parentName`/`parentInstanceId`/`parentPath` 三种父物体标识参数，创建后自动 `SetParent`，坐标改为 `localPosition` 语义。
+- **`gameobject_create_batch` 缺少 parent 支持** — `BatchCreateItem` 同步添加 `parentName`/`parentInstanceId`/`parentPath` 字段，批量创建时支持为每个物体指定父物体。
+- **`prefab_instantiate` 缺少 parent 支持** — 新增 `parentName`/`parentInstanceId`/`parentPath` 参数，实例化后自动设置父物体，返回值新增 `path` 字段。
+- **`prefab_instantiate_batch` 缺少 parent 支持** — `BatchInstantiateItem` 同步添加 parent 相关字段。
+
+### Changed
+- **文档与实现一致性修复** — `gameobject/SKILL.md` 补充 `parentInstanceId`/`parentPath` 参数说明，`prefab/SKILL.md` 同步更新参数表和 batch item 属性列表。
+- **版本号更新** — `SkillsLogger.Version`、`package.json`、Python helper 和文档同步提升到 `1.6.8`。
+
 ## [1.6.7] - 2026-04-02
 
 ### Added

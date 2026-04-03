@@ -26,7 +26,7 @@ Window → Package Manager → + → Add package from git URL
 |------|-----|
 | **稳定版** (main) | `https://github.com/Besty0728/Unity-Skills.git?path=/SkillsForUnity` |
 | **开发测试版** (beta) | `https://github.com/Besty0728/Unity-Skills.git?path=/SkillsForUnity#beta` |
-| **指定版本** | `https://github.com/Besty0728/Unity-Skills.git?path=/SkillsForUnity#v1.6.7` |
+| **指定版本** | `https://github.com/Besty0728/Unity-Skills.git?path=/SkillsForUnity#v1.6.8` |
 
 也可以从 [Releases 页面](https://github.com/Besty0728/Unity-Skills/releases) 下载特定版本。
 

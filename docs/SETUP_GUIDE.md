@@ -26,7 +26,7 @@ Choose one of the following:
 |---------|-----|
 | **Stable** (main) | `https://github.com/Besty0728/Unity-Skills.git?path=/SkillsForUnity` |
 | **Beta** (dev) | `https://github.com/Besty0728/Unity-Skills.git?path=/SkillsForUnity#beta` |
-| **Pinned version** | `https://github.com/Besty0728/Unity-Skills.git?path=/SkillsForUnity#v1.6.7` |
+| **Pinned version** | `https://github.com/Besty0728/Unity-Skills.git?path=/SkillsForUnity#v1.6.8` |
 
 You can also download a specific release from the [Releases page](https://github.com/Besty0728/Unity-Skills/releases).
 
