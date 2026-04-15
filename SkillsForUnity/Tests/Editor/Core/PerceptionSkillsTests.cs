@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace UnitySkills.Tests.Core
 {
@@ -237,6 +238,28 @@ namespace UnitySkills.Tests.Core
             Assert.IsTrue(modified?.Any(item =>
                 item["name"]?.ToString() == "Mover" &&
                 (item["changes"] as JArray)?.Any(change => change?.ToString() == "position") == true) ?? false);
+        }
+
+        [Test]
+        public void SceneDiff_SnapshotOnlyIncludesActiveSceneObjects()
+        {
+            var activeScene = SceneManager.GetActiveScene();
+            var activeObject = new GameObject("ActiveSceneObject");
+
+            var additiveScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);
+            var additiveObject = new GameObject("AdditiveSceneObject");
+            SceneManager.MoveGameObjectToScene(additiveObject, additiveScene);
+            SceneManager.SetActiveScene(activeScene);
+            GameObjectFinder.InvalidateCache();
+
+            var result = PerceptionSkills.SceneDiff();
+            var json = ToJObject(result);
+            var snapshot = json["snapshot"] as JArray;
+
+            Assert.IsTrue(snapshot?.Any(item => item["name"]?.ToString() == "ActiveSceneObject") ?? false);
+            Assert.IsFalse(snapshot?.Any(item => item["name"]?.ToString() == "AdditiveSceneObject") ?? true);
+            Assert.AreEqual(activeScene.name, json["sceneName"]?.ToString());
+            Assert.IsNotNull(activeObject);
         }
     }
 }

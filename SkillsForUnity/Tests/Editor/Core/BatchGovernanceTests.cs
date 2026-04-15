@@ -215,5 +215,21 @@ namespace UnitySkills.Tests.Core
             Assert.AreEqual(1, retry["retryCount"]?.Value<int>());
             Assert.AreEqual(2f, go.GetComponent<Light>().intensity);
         }
+
+        [Test]
+        public void TestSmokeSkills_ForTestCategory_ReturnsAggregateSummary()
+        {
+            var result = TestSkills.TestSmokeSkills(
+                category: "Test",
+                executeReadOnly: false,
+                includeMutating: false,
+                limit: 20);
+            var json = ToJObject(result);
+
+            Assert.IsTrue(json["success"]?.Value<bool>() ?? false);
+            Assert.Greater(json["totalSkills"]?.Value<int>() ?? 0, 0);
+            Assert.AreEqual(0, json["failureCount"]?.Value<int>());
+            Assert.IsNotNull(json["results"]);
+        }
     }
 }

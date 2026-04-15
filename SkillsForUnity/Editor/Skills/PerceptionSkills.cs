@@ -2968,31 +2968,47 @@ namespace UnitySkills
         private static List<object> CaptureSceneSnapshot()
         {
             var snapshot = new List<object>();
-            var allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
-            foreach (var go in allObjects)
+            var activeScene = SceneManager.GetActiveScene();
+            if (!activeScene.IsValid() || !activeScene.isLoaded)
+                return snapshot;
+
+            foreach (var root in activeScene.GetRootGameObjects())
             {
-                if (go.hideFlags != HideFlags.None) continue;
-                if (!go.scene.isLoaded) continue;
-
-                var components = go.GetComponents<Component>()
-                    .Where(c => c != null)
-                    .Select(c => c.GetType().Name)
-                    .ToArray();
-                var t = go.transform;
-
-                snapshot.Add(new Dictionary<string, object>
-                {
-                    ["instanceId"] = go.GetInstanceID(),
-                    ["name"] = go.name,
-                    ["path"] = GameObjectFinder.GetPath(go),
-                    ["componentList"] = string.Join(",", components),
-                    ["components"] = components,
-                    ["position"] = new { x = t.localPosition.x, y = t.localPosition.y, z = t.localPosition.z },
-                    ["rotation"] = new { x = t.localEulerAngles.x, y = t.localEulerAngles.y, z = t.localEulerAngles.z },
-                    ["scale"] = new { x = t.localScale.x, y = t.localScale.y, z = t.localScale.z }
-                });
+                CaptureSceneSnapshotRecursive(root, activeScene, snapshot);
             }
+
             return snapshot;
+        }
+
+        private static void CaptureSceneSnapshotRecursive(GameObject go, Scene activeScene, List<object> snapshot)
+        {
+            if (go == null || go.hideFlags != HideFlags.None)
+                return;
+            if (!go.scene.IsValid() || go.scene.handle != activeScene.handle)
+                return;
+
+            var components = go.GetComponents<Component>()
+                .Where(c => c != null)
+                .Select(c => c.GetType().Name)
+                .ToArray();
+            var t = go.transform;
+
+            snapshot.Add(new Dictionary<string, object>
+            {
+                ["instanceId"] = go.GetInstanceID(),
+                ["name"] = go.name,
+                ["path"] = GameObjectFinder.GetPath(go),
+                ["componentList"] = string.Join(",", components),
+                ["components"] = components,
+                ["position"] = new { x = t.localPosition.x, y = t.localPosition.y, z = t.localPosition.z },
+                ["rotation"] = new { x = t.localEulerAngles.x, y = t.localEulerAngles.y, z = t.localEulerAngles.z },
+                ["scale"] = new { x = t.localScale.x, y = t.localScale.y, z = t.localScale.z }
+            });
+
+            for (var i = 0; i < t.childCount; i++)
+            {
+                CaptureSceneSnapshotRecursive(t.GetChild(i).gameObject, activeScene, snapshot);
+            }
         }
 
         private static bool HasVectorDifference(

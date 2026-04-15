@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 using UnityEditor;
 using UnityEditor.TestTools.TestRunner.Api;
 using UnityEngine;
@@ -72,7 +74,7 @@ namespace UnitySkills
             var tests = new List<object>();
 
             api.RetrieveTestList(mode, testRoot => { CollectTests(testRoot, tests, limit); });
-            Object.DestroyImmediate(api);
+            UnityEngine.Object.DestroyImmediate(api);
             return new { testMode, count = tests.Count, tests };
         }
 
@@ -178,8 +180,161 @@ namespace UnitySkills
             var mode = testMode.ToLower() == "playmode" ? TestMode.PlayMode : TestMode.EditMode;
             var categories = new HashSet<string>();
             api.RetrieveTestList(mode, testRoot => CollectCategories(testRoot, categories));
-            Object.DestroyImmediate(api);
+            UnityEngine.Object.DestroyImmediate(api);
             return new { success = true, count = categories.Count, categories = categories.OrderBy(c => c).ToArray() };
+        }
+
+        [UnitySkill("test_smoke_skills", "Run a reusable smoke test across registered skills. Executes safe read-only skills and dry-runs the rest for broad regression coverage.",
+            Category = SkillCategory.Test, Operation = SkillOperation.Analyze,
+            Tags = new[] { "test", "smoke", "skills", "regression", "coverage" },
+            Outputs = new[] { "totalSkills", "executedCount", "dryRunCount", "failureCount", "results" },
+            ReadOnly = true)]
+        public static object TestSmokeSkills(
+            string category = null,
+            string nameContains = null,
+            string excludeNamesCsv = null,
+            bool executeReadOnly = true,
+            bool includeMutating = true,
+            int limit = 0)
+        {
+            SkillRouter.Initialize();
+
+            var excludedNames = ParseCsv(excludeNamesCsv);
+            var metadataIssues = SkillRouter.ValidateMetadata();
+            IEnumerable<SkillRouter.SkillInfo> skills = SkillRouter.GetAllSkillsSnapshot();
+
+            if (!string.IsNullOrWhiteSpace(category) &&
+                Enum.TryParse(category, true, out SkillCategory parsedCategory))
+            {
+                skills = skills.Where(skill => skill.Category == parsedCategory);
+            }
+
+            if (!string.IsNullOrWhiteSpace(nameContains))
+            {
+                skills = skills.Where(skill =>
+                    skill.Name.IndexOf(nameContains, StringComparison.OrdinalIgnoreCase) >= 0);
+            }
+
+            if (excludedNames.Count > 0)
+            {
+                skills = skills.Where(skill => !excludedNames.Contains(skill.Name));
+            }
+
+            if (!includeMutating)
+            {
+                skills = skills.Where(skill => skill.ReadOnly);
+            }
+
+            if (limit > 0)
+            {
+                skills = skills.Take(limit);
+            }
+
+            var selectedSkills = skills.ToArray();
+            var results = new List<object>(selectedSkills.Length);
+            int executedCount = 0;
+            int dryRunCount = 0;
+            int skippedCount = 0;
+            int failureCount = 0;
+
+            foreach (var skill in selectedSkills)
+            {
+                var validation = SkillRouter.ValidateParameters(skill, "{}");
+                var canExecuteReadOnly = executeReadOnly &&
+                                         skill.ReadOnly &&
+                                         validation.MissingParams.Count == 0 &&
+                                         validation.TypeErrors.Count == 0 &&
+                                         !skill.MayTriggerReload;
+
+                string probeMode;
+                string probeJson;
+                if (canExecuteReadOnly)
+                {
+                    probeMode = "execute";
+                    probeJson = "{\"verbose\":false}";
+                    executedCount++;
+                }
+                else
+                {
+                    probeMode = "dryRun";
+                    probeJson = "{}";
+                    dryRunCount++;
+                }
+
+                var rawResponse = probeMode == "execute"
+                    ? SkillRouter.Execute(skill.Name, probeJson)
+                    : SkillRouter.DryRun(skill.Name, probeJson);
+
+                JObject response;
+                try
+                {
+                    response = JObject.Parse(rawResponse);
+                }
+                catch (Exception ex)
+                {
+                    failureCount++;
+                    results.Add(new
+                    {
+                        skill = skill.Name,
+                        category = skill.Category != SkillCategory.Uncategorized ? skill.Category.ToString() : null,
+                        probeMode,
+                        status = "error",
+                        error = $"Smoke test produced non-JSON response: {ex.Message}"
+                    });
+                    continue;
+                }
+
+                var status = response["status"]?.ToString() ?? "unknown";
+                var metadataWarnings = metadataIssues
+                    .Where(issue => issue.IndexOf($"{skill.Name}:", StringComparison.OrdinalIgnoreCase) >= 0)
+                    .ToArray();
+
+                if (status == "error")
+                {
+                    failureCount++;
+                }
+
+                if (status == "dryRun" && !(response["valid"]?.Value<bool?>() ?? false))
+                {
+                    skippedCount++;
+                }
+
+                results.Add(new
+                {
+                    skill = skill.Name,
+                    category = skill.Category != SkillCategory.Uncategorized ? skill.Category.ToString() : null,
+                    readOnly = skill.ReadOnly,
+                    riskLevel = skill.RiskLevel,
+                    probeMode,
+                    status,
+                    valid = response["valid"]?.Value<bool?>(),
+                    missingParams = response["validation"]?["missingParams"]?.ToObject<string[]>() ?? Array.Empty<string>(),
+                    semanticWarnings = response["validation"]?["warnings"]?.ToObject<string[]>() ?? Array.Empty<string>(),
+                    metadataWarnings,
+                    error = response["error"]?.ToString()
+                });
+            }
+
+            return new
+            {
+                success = failureCount == 0,
+                totalSkills = selectedSkills.Length,
+                executedCount,
+                dryRunCount,
+                skippedCount,
+                failureCount,
+                filters = new
+                {
+                    category,
+                    nameContains,
+                    excludeNames = excludedNames.OrderBy(name => name).ToArray(),
+                    executeReadOnly,
+                    includeMutating,
+                    limit
+                },
+                note = "Read-only skills with no required inputs are executed directly; all other skills are smoke-tested via dryRun with empty arguments.",
+                results
+            };
         }
 
         private static void CollectCategories(ITestAdaptor test, HashSet<string> categories)
@@ -324,6 +479,18 @@ public class {testName}
                 return objectList.Select(item => item?.ToString()).Where(item => !string.IsNullOrEmpty(item));
 
             return Enumerable.Empty<string>();
+        }
+
+        private static HashSet<string> ParseCsv(string csv)
+        {
+            if (string.IsNullOrWhiteSpace(csv))
+                return new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            return csv
+                .Split(new[] { ',', ';', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(item => item.Trim())
+                .Where(item => !string.IsNullOrWhiteSpace(item))
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
         }
     }
 }

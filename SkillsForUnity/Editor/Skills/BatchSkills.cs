@@ -882,7 +882,7 @@ namespace UnitySkills
                 var currentValue = property != null ? property.GetValue(component) : field.GetValue(component);
                 var currentString = FormatValue(currentValue);
                 var nextString = FormatValue(converted);
-                if (currentString == nextString)
+                if (AreSameValue(currentValue, converted))
                 {
                     preview.items.Add(CreateSkippedItem(target, "set_property", "already_target_value", currentString, nextString));
                     continue;
@@ -1246,10 +1246,28 @@ namespace UnitySkills
                 if (targetType == typeof(Transform))
                     return gameObject.transform;
                 if (typeof(Component).IsAssignableFrom(targetType))
-                    return gameObject.GetComponent(targetType);
+                {
+                    var component = gameObject.GetComponent(targetType);
+                    if (component == null)
+                        throw new ArgumentException($"Reference target does not contain component: {targetType.Name}");
+                    return component;
+                }
                 throw new ArgumentException($"Unsupported reference target type: {targetType.Name}");
             }
             return ComponentSkills.ConvertValue(value, targetType);
+        }
+
+        private static bool AreSameValue(object currentValue, object nextValue)
+        {
+            if (ReferenceEquals(currentValue, nextValue))
+                return true;
+            if (currentValue == null || nextValue == null)
+                return false;
+
+            if (currentValue is UnityEngine.Object currentObject && nextValue is UnityEngine.Object nextObject)
+                return currentObject == nextObject;
+
+            return Equals(currentValue, nextValue);
         }
 
         private static string FormatValue(object value)

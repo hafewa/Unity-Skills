@@ -71,6 +71,20 @@ List test categories.
 
 **Returns:** `{ success, count, categories }`
 
+### `test_smoke_skills`
+Run a reusable smoke test across registered skills.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| category | string | No | - | Only test one skill category |
+| nameContains | string | No | - | Filter skills by partial name |
+| excludeNamesCsv | string | No | - | Comma-separated skill names to exclude |
+| executeReadOnly | bool | No | true | Execute safe read-only skills directly |
+| includeMutating | bool | No | true | Include mutating skills via dryRun smoke testing |
+| limit | int | No | 0 | Max skills to inspect; 0 means all |
+
+**Returns:** `{ success, totalSkills, executedCount, dryRunCount, failureCount, results }`
+
 ### `test_create_editmode`
 Create an EditMode test script template.
 
@@ -155,6 +169,18 @@ List test categories
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | `testMode` | string | No | "EditMode" | Canonical signature parameter |
+
+### test_smoke_skills
+Run a reusable smoke test across registered skills. Executes safe read-only skills and dry-runs the rest for broad regression coverage.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `category` | string | No | null | Canonical signature parameter |
+| `nameContains` | string | No | null | Canonical signature parameter |
+| `excludeNamesCsv` | string | No | null | Canonical signature parameter |
+| `executeReadOnly` | bool | No | True | Canonical signature parameter |
+| `includeMutating` | bool | No | True | Canonical signature parameter |
+| `limit` | int | No | 0 | Canonical signature parameter |
 
 ### test_create_editmode
 Create an EditMode test script template and return a compile-monitor job.

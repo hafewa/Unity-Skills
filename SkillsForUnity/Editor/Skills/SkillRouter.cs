@@ -898,6 +898,14 @@ namespace UnitySkills
             return _skills.TryGetValue(name, out skill);
         }
 
+        internal static SkillInfo[] GetAllSkillsSnapshot()
+        {
+            Initialize();
+            return _skills.Values
+                .OrderBy(skill => skill.Name, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+        }
+
         internal static ParameterValidationResult ValidateParameters(SkillInfo skill, string json)
         {
             var validation = new ParameterValidationResult
