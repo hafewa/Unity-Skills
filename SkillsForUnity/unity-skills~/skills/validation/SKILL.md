@@ -187,3 +187,86 @@ for asset in unused['unusedAssets']:
 4. Keep texture sizes appropriate for target platform
 5. Fix missing scripts before they cause runtime errors
 6. Regular cleanup prevents project bloat
+
+---
+
+## Canonical Signatures
+
+以下附录以 `SkillsForUnity/Editor/Skills/*Skills.cs` 的真实 `[UnitySkill]` 签名为准，供审计和自动化解析使用。
+
+### validate_scene
+Validate current scene for common issues
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `checkMissingScripts` | bool | No | true | Canonical signature parameter |
+| `checkMissingPrefabs` | bool | No | true | Canonical signature parameter |
+| `checkDuplicateNames` | bool | No | true | Canonical signature parameter |
+| `checkEmptyGameObjects` | bool | No | false | Canonical signature parameter |
+
+### validate_find_missing_scripts
+Find all GameObjects with missing scripts
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `searchInPrefabs` | bool | No | true | Canonical signature parameter |
+
+### validate_cleanup_empty_folders
+Find and optionally delete empty folders
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `rootPath` | string | No | "Assets" | Canonical signature parameter |
+| `dryRun` | bool | No | true | Canonical signature parameter |
+
+### validate_find_unused_assets
+Find potentially unused assets
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetType` | string | No | "Material" | Canonical signature parameter |
+| `limit` | int | No | 100 | Canonical signature parameter |
+
+### validate_texture_sizes
+Find textures that may need optimization
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `maxRecommendedSize` | int | No | 2048 | Canonical signature parameter |
+| `limit` | int | No | 50 | Canonical signature parameter |
+
+### validate_project_structure
+Get overview of project structure
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `rootPath` | string | No | "Assets" | Canonical signature parameter |
+| `maxDepth` | int | No | 2 | Canonical signature parameter |
+
+### validate_fix_missing_scripts
+Remove missing script components from GameObjects
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `dryRun` | bool | No | true | Canonical signature parameter |
+
+### validate_missing_references
+Find null/missing object references on components in the scene
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `limit` | int | No | 50 | Canonical signature parameter |
+
+### validate_mesh_collider_convex
+Find non-convex MeshColliders (potential performance issue)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `limit` | int | No | 50 | Canonical signature parameter |
+
+### validate_shader_errors
+Find shaders with compilation errors
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `limit` | int | No | 50 | Canonical signature parameter |

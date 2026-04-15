@@ -824,3 +824,241 @@ Left Controller:                    Right Controller:
 - Async & lifecycle (coroutine vs UniTask in XR): see [`../async/SKILL.md`](../async/SKILL.md)
 - Design patterns (Observer for XR events, State Machine for locomotion modes): see [`../patterns/SKILL.md`](../patterns/SKILL.md)
 
+---
+
+## Canonical Signatures
+
+以下附录以 `SkillsForUnity/Editor/Skills/*Skills.cs` 的真实 `[UnitySkill]` 签名为准，供审计和自动化解析使用。
+
+### xr_check_setup
+Comprehensive XR project setup validation: checks XRI package, XR Origin, InteractionManager, EventSystem, InputSystem, controllers
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `verbose` | bool | No | false | Canonical signature parameter |
+
+### xr_setup_rig
+Create a complete XR Origin rig with Camera, Left/Right Controllers
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | "XR Origin" | Canonical signature parameter |
+| `x` | float | No | 0 | Canonical signature parameter |
+| `y` | float | No | 0 | Canonical signature parameter |
+| `z` | float | No | 0 | Canonical signature parameter |
+| `cameraYOffset` | float | No | 1.36144f | Canonical signature parameter |
+
+### xr_setup_interaction_manager
+Add or get XRInteractionManager in the scene
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+
+### xr_setup_event_system
+Set up XR-compatible EventSystem (replace StandaloneInputModule with XRUIInputModule)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### xr_get_scene_report
+Generate comprehensive XR scene diagnostic report: all XR components, configuration, and issues
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `verbose` | bool | No | false | Canonical signature parameter |
+
+### xr_add_ray_interactor
+Add XRRayInteractor to a controller GameObject (with LineRenderer and line visual)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `maxDistance` | float | No | 30f | Canonical signature parameter |
+| `lineType` | string | No | "StraightLine" | Canonical signature parameter |
+| `addLineVisual` | bool | No | true | Canonical signature parameter |
+
+### xr_add_direct_interactor
+Add XRDirectInteractor for close-range grab (with SphereCollider trigger)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `radius` | float | No | 0.1f | Canonical signature parameter |
+
+### xr_add_socket_interactor
+Add XRSocketInteractor for snap-to-slot object placement
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `showHoverMesh` | bool | No | true | Canonical signature parameter |
+| `recycleDelay` | float | No | 1f | Canonical signature parameter |
+
+### xr_list_interactors
+List all XR interactors in the scene with type and configuration
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `verbose` | bool | No | false | Canonical signature parameter |
+
+### xr_add_grab_interactable
+Make an object grabbable (adds XRGrabInteractable + Rigidbody + Collider if needed)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `movementType` | string | No | "VelocityTracking" | Canonical signature parameter |
+| `throwOnDetach` | bool | No | true | Canonical signature parameter |
+| `smoothPosition` | bool | No | true | Canonical signature parameter |
+| `smoothRotation` | bool | No | true | Canonical signature parameter |
+| `smoothPositionAmount` | float | No | 5f | Canonical signature parameter |
+| `smoothRotationAmount` | float | No | 5f | Canonical signature parameter |
+| `useGravity` | bool | No | true | Canonical signature parameter |
+| `isKinematic` | bool | No | false | Canonical signature parameter |
+| `attachTransformOffset` | string | No | null | Canonical signature parameter |
+
+### xr_add_simple_interactable
+Add XRSimpleInteractable for hover/select event triggers (no grab physics)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+
+### xr_configure_interactable
+Configure properties of an existing XR interactable (selectMode, movementType, throwOnDetach, etc.)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `selectMode` | string | No | null | Canonical signature parameter |
+| `movementType` | string | No | null | Canonical signature parameter |
+| `throwOnDetach` | bool? | No | null | Canonical signature parameter |
+| `smoothPosition` | bool? | No | null | Canonical signature parameter |
+| `smoothRotation` | bool? | No | null | Canonical signature parameter |
+| `smoothPositionAmount` | float? | No | null | Canonical signature parameter |
+| `smoothRotationAmount` | float? | No | null | Canonical signature parameter |
+| `trackPosition` | bool? | No | null | Canonical signature parameter |
+| `trackRotation` | bool? | No | null | Canonical signature parameter |
+
+### xr_list_interactables
+List all XR interactables in the scene with type and status
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `verbose` | bool | No | false | Canonical signature parameter |
+
+### xr_setup_teleportation
+Set up TeleportationProvider on XR Origin for teleport locomotion
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+
+### xr_add_teleport_area
+Add TeleportationArea to a surface for teleport destination
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `matchOrientation` | string | No | "WorldSpaceUp" | Canonical signature parameter |
+
+### xr_add_teleport_anchor
+Create a teleport anchor at a specific position and rotation
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | "Teleport Anchor" | Canonical signature parameter |
+| `x` | float | No | 0 | Canonical signature parameter |
+| `y` | float | No | 0 | Canonical signature parameter |
+| `z` | float | No | 0 | Canonical signature parameter |
+| `rotY` | float | No | 0 | Canonical signature parameter |
+| `matchOrientation` | string | No | "TargetUpAndForward" | Canonical signature parameter |
+| `parent` | string | No | null | Canonical signature parameter |
+
+### xr_setup_continuous_move
+Add continuous movement provider to XR Origin (joystick-based locomotion)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `moveSpeed` | float | No | 2f | Canonical signature parameter |
+| `enableStrafe` | bool | No | true | Canonical signature parameter |
+| `enableFly` | bool | No | false | Canonical signature parameter |
+
+### xr_setup_turn_provider
+Add snap or continuous turn provider to XR Origin
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `turnType` | string | No | "Snap" | Canonical signature parameter |
+| `turnAmount` | float | No | 45f | Canonical signature parameter |
+| `turnSpeed` | float | No | 90f | Canonical signature parameter |
+
+### xr_setup_ui_canvas
+Make a Canvas XR-compatible by adding TrackedDeviceGraphicRaycaster
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+
+### xr_configure_haptics
+Configure haptic feedback parameters on an XR interactor
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `selectIntensity` | float | No | 0.5f | Canonical signature parameter |
+| `selectDuration` | float | No | 0.1f | Canonical signature parameter |
+| `hoverIntensity` | float | No | 0.1f | Canonical signature parameter |
+| `hoverDuration` | float | No | 0.05f | Canonical signature parameter |
+
+### xr_add_interaction_event
+Wire up an interaction event (selectEntered/selectExited/hoverEntered/hoverExited/activated) to a target method via UnityEvent
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `eventType` | string | No | "selectEntered" | Canonical signature parameter |
+| `targetName` | string | No | null | Canonical signature parameter |
+| `targetMethod` | string | No | null | Canonical signature parameter |
+
+### xr_configure_interaction_layers
+Configure interaction layer mask on an XR interactor or interactable
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `layers` | string | No | "Default" | Canonical signature parameter |
+| `isInteractor` | bool | No | true | Canonical signature parameter |
+

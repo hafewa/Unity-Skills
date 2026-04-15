@@ -49,7 +49,7 @@ namespace UnitySkills.Tests.Core
         }
 
         [Test]
-        public void Plan_ComponentAdd_WithDuplicateSingleInstance_AddsWarning()
+        public void Plan_ComponentAdd_WithExistingBoxCollider_RemainsValidWithoutWarning()
         {
             var go = new GameObject("Actor");
             go.AddComponent<BoxCollider>();
@@ -59,7 +59,8 @@ namespace UnitySkills.Tests.Core
             var obj = JObject.Parse(json);
 
             Assert.AreEqual("plan", obj["status"]?.ToString());
-            Assert.IsTrue((obj["validation"]?["warnings"] as JArray)?.Count > 0);
+            Assert.IsTrue(obj["valid"]?.Value<bool>() ?? false);
+            Assert.IsTrue(((obj["validation"]?["warnings"] as JArray)?.Count ?? 0) == 0);
         }
 
         [Test]

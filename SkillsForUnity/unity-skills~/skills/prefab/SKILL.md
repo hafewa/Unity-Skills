@@ -232,3 +232,111 @@ unity_skills.call_skill("prefab_instantiate_batch", items=[
 3. Apply changes to update all instances
 4. Unpack only when unique modifications needed
 5. Use batch instantiation for level generation
+
+---
+
+## Canonical Signatures
+
+以下附录以 `SkillsForUnity/Editor/Skills/*Skills.cs` 的真实 `[UnitySkill]` 签名为准，供审计和自动化解析使用。
+
+### prefab_create
+Create a prefab from a GameObject
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `savePath` | string | No | null | Canonical signature parameter |
+
+### prefab_instantiate
+Instantiate a prefab in the scene
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `prefabPath` | string | Yes | - | Canonical signature parameter |
+| `x` | float | No | 0 | Canonical signature parameter |
+| `y` | float | No | 0 | Canonical signature parameter |
+| `z` | float | No | 0 | Canonical signature parameter |
+| `name` | string | No | null | Canonical signature parameter |
+| `parentName` | string | No | null | Canonical signature parameter |
+| `parentInstanceId` | int | No | 0 | Canonical signature parameter |
+| `parentPath` | string | No | null | Canonical signature parameter |
+
+### prefab_instantiate_batch
+Instantiate multiple prefabs (Efficient). items: JSON array of {prefabPath, x, y, z, name, rotX, rotY, rotZ, scaleX, scaleY, scaleZ, parentName, parentInstanceId, parentPath}
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `items` | string | Yes | - | Canonical signature parameter |
+
+### prefab_apply
+Apply all overrides from prefab instance to the source prefab asset. Equivalent to prefab_apply_overrides.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+
+### prefab_unpack
+Unpack a prefab instance. completely=false: unpack outermost root only; completely=true: fully unpack all nested prefabs.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `completely` | bool | No | false | Canonical signature parameter |
+
+### prefab_get_overrides
+Get list of property overrides on a prefab instance
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+
+### prefab_revert_overrides
+Revert all overrides on a prefab instance back to prefab values
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+
+### prefab_apply_overrides
+Apply all overrides from instance to source prefab asset. Equivalent to prefab_apply.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+
+### prefab_create_variant
+Create a prefab variant from an existing prefab
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `sourcePrefabPath` | string | Yes | - | Canonical signature parameter |
+| `variantPath` | string | Yes | - | Canonical signature parameter |
+
+### prefab_find_instances
+Find all instances of a prefab in the current scene
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `prefabPath` | string | Yes | - | Canonical signature parameter |
+| `limit` | int | No | 50 | Canonical signature parameter |
+
+### prefab_set_property
+Set a property on a component inside a Prefab asset file. Supports basic types (int/float/bool/string/enum), vectors, colors, and asset references via assetReferencePath
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `prefabPath` | string | No | null | Canonical signature parameter |
+| `componentType` | string | No | null | Canonical signature parameter |
+| `propertyName` | string | No | null | Canonical signature parameter |
+| `value` | string | No | null | Canonical signature parameter |
+| `assetReferencePath` | string | No | null | Canonical signature parameter |
+| `gameObjectName` | string | No | null | Canonical signature parameter |

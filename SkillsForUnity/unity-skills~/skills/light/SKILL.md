@@ -230,3 +230,100 @@ Get Lightmap baking settings.
 4. Limit real-time shadows for performance
 5. Area lights require baking (not real-time)
 6. Use intensity > 1 for HDR/bloom effects
+
+---
+
+## Canonical Signatures
+
+以下附录以 `SkillsForUnity/Editor/Skills/*Skills.cs` 的真实 `[UnitySkill]` 签名为准，供审计和自动化解析使用。
+
+### light_create
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | "New Light" | Canonical signature parameter |
+| `lightType` | string | No | "Point" | Canonical signature parameter |
+| `x` | float | No | 0 | Canonical signature parameter |
+| `y` | float | No | 3 | Canonical signature parameter |
+| `z` | float | No | 0 | Canonical signature parameter |
+| `r` | float | No | 1 | Canonical signature parameter |
+| `g` | float | No | 1 | Canonical signature parameter |
+| `b` | float | No | 1 | Canonical signature parameter |
+| `intensity` | float | No | 1 | Canonical signature parameter |
+| `range` | float | No | 10 | Canonical signature parameter |
+| `spotAngle` | float | No | 30 | Canonical signature parameter |
+| `shadows` | string | No | "soft" | Canonical signature parameter |
+
+### light_set_properties
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `r` | float? | No | null | Canonical signature parameter |
+| `g` | float? | No | null | Canonical signature parameter |
+| `b` | float? | No | null | Canonical signature parameter |
+| `intensity` | float? | No | null | Canonical signature parameter |
+| `range` | float? | No | null | Canonical signature parameter |
+| `spotAngle` | float? | No | null | Canonical signature parameter |
+| `shadows` | string | No | null | Canonical signature parameter |
+
+### light_get_info
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+
+### light_find_all
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `lightType` | string | No | null | Canonical signature parameter |
+| `limit` | int | No | 50 | Canonical signature parameter |
+
+### light_set_enabled
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `enabled` | bool | No | true | Canonical signature parameter |
+
+### light_set_enabled_batch
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `items` | string | Yes | - | Canonical signature parameter |
+
+### light_set_properties_batch
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `items` | string | Yes | - | Canonical signature parameter |
+
+### light_add_probe_group
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `gridX` | int | No | 0 | Canonical signature parameter |
+| `gridY` | int | No | 0 | Canonical signature parameter |
+| `gridZ` | int | No | 0 | Canonical signature parameter |
+| `spacingX` | float | No | 2f | Canonical signature parameter |
+| `spacingY` | float | No | 1.5f | Canonical signature parameter |
+| `spacingZ` | float | No | 2f | Canonical signature parameter |
+
+### light_add_reflection_probe
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `probeName` | string | No | "ReflectionProbe" | Canonical signature parameter |
+| `x` | float | No | 0 | Canonical signature parameter |
+| `y` | float | No | 1 | Canonical signature parameter |
+| `z` | float | No | 0 | Canonical signature parameter |
+| `sizeX` | float | No | 10 | Canonical signature parameter |
+| `sizeY` | float | No | 10 | Canonical signature parameter |
+| `sizeZ` | float | No | 10 | Canonical signature parameter |
+| `resolution` | int | No | 256 | Canonical signature parameter |
+
+### light_get_lightmap_settings
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |

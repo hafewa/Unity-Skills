@@ -130,3 +130,132 @@ Get the number of persistent listeners on a UnityEvent.
 | eventName | string | No | null | Event field name |
 
 **Returns:** `{ success, count }`
+
+---
+
+## Canonical Signatures
+
+以下附录以 `SkillsForUnity/Editor/Skills/*Skills.cs` 的真实 `[UnitySkill]` 签名为准，供审计和自动化解析使用。
+
+### event_get_listeners
+Get persistent listeners of a UnityEvent
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `componentName` | string | No | null | Canonical signature parameter |
+| `eventName` | string | No | null | Canonical signature parameter |
+
+### event_add_listener
+Add a persistent listener to a UnityEvent (Editor time). Supported args: void, int, float, string, bool, Object.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `componentName` | string | No | null | Canonical signature parameter |
+| `eventName` | string | No | null | Canonical signature parameter |
+| `targetObjectName` | string | No | null | Canonical signature parameter |
+| `targetComponentName` | string | No | null | Canonical signature parameter |
+| `methodName` | string | No | null | Canonical signature parameter |
+| `mode` | string | No | "RuntimeOnly" | Canonical signature parameter |
+| `argType` | string | No | "void" | Canonical signature parameter |
+| `floatArg` | float | No | 0 | Canonical signature parameter |
+| `intArg` | int | No | 0 | Canonical signature parameter |
+| `stringArg` | string | No | null | Canonical signature parameter |
+| `boolArg` | bool | No | false | Canonical signature parameter |
+
+### event_remove_listener
+Remove a persistent listener by index
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `componentName` | string | No | null | Canonical signature parameter |
+| `eventName` | string | No | null | Canonical signature parameter |
+| `index` | int | No | 0 | Canonical signature parameter |
+
+### event_invoke
+Invoke a UnityEvent explicitly (Runtime only)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `componentName` | string | No | null | Canonical signature parameter |
+| `eventName` | string | No | null | Canonical signature parameter |
+
+### event_clear_listeners
+Remove all persistent listeners from a UnityEvent
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `componentName` | string | No | null | Canonical signature parameter |
+| `eventName` | string | No | null | Canonical signature parameter |
+
+### event_set_listener_state
+Set a listener's call state (Off, RuntimeOnly, EditorAndRuntime)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `componentName` | string | No | null | Canonical signature parameter |
+| `eventName` | string | No | null | Canonical signature parameter |
+| `index` | int | No | 0 | Canonical signature parameter |
+| `state` | string | No | null | Canonical signature parameter |
+
+### event_list_events
+List all UnityEvent fields on a component
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `componentName` | string | No | null | Canonical signature parameter |
+
+### event_add_listener_batch
+Add multiple listeners at once. items: JSON array of {targetObjectName, targetComponentName, methodName}
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `componentName` | string | No | null | Canonical signature parameter |
+| `eventName` | string | No | null | Canonical signature parameter |
+| `items` | string | No | null | Canonical signature parameter |
+
+### event_copy_listeners
+Copy listeners from one event to another
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `sourceObject` | string | Yes | - | Canonical signature parameter |
+| `sourceComponent` | string | Yes | - | Canonical signature parameter |
+| `sourceEvent` | string | Yes | - | Canonical signature parameter |
+| `targetObject` | string | Yes | - | Canonical signature parameter |
+| `targetComponent` | string | Yes | - | Canonical signature parameter |
+| `targetEvent` | string | Yes | - | Canonical signature parameter |
+
+### event_get_listener_count
+Get the number of persistent listeners on a UnityEvent
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `componentName` | string | No | null | Canonical signature parameter |
+| `eventName` | string | No | null | Canonical signature parameter |

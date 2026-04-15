@@ -97,3 +97,84 @@ Get aggregated test summary across all runs.
 No parameters.
 
 **Returns:** `{ success, totalRuns, completedRuns, totalPassed, totalFailed, allFailedTests }`
+
+---
+
+## Canonical Signatures
+
+以下附录以 `SkillsForUnity/Editor/Skills/*Skills.cs` 的真实 `[UnitySkill]` 签名为准，供审计和自动化解析使用。
+
+### test_run
+Run Unity tests asynchronously. Returns a platform jobId immediately. Poll with job_status/job_wait or test_get_result(jobId).
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `testMode` | string | No | "EditMode" | Canonical signature parameter |
+| `filter` | string | No | null | Canonical signature parameter |
+
+### test_get_result
+Get the result of a test run. Compatible wrapper over the unified job model.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `jobId` | string | Yes | - | Canonical signature parameter |
+
+### test_list
+List available tests
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `testMode` | string | No | "EditMode" | Canonical signature parameter |
+| `limit` | int | No | 100 | Canonical signature parameter |
+
+### test_cancel
+Cancel a running test job if supported. Unity TestRunner itself does not provide a hard cancel.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `jobId` | string | No | null | Canonical signature parameter |
+
+### test_run_by_name
+Run specific tests by class or method name. Returns a unified jobId.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `testName` | string | Yes | - | Canonical signature parameter |
+| `testMode` | string | No | "EditMode" | Canonical signature parameter |
+
+### test_get_last_result
+Get the most recent test run result
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### test_list_categories
+List test categories
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `testMode` | string | No | "EditMode" | Canonical signature parameter |
+
+### test_create_editmode
+Create an EditMode test script template and return a compile-monitor job.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `testName` | string | Yes | - | Canonical signature parameter |
+| `folder` | string | No | "Assets/Tests/Editor" | Canonical signature parameter |
+
+### test_create_playmode
+Create a PlayMode test script template and return a compile-monitor job.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `testName` | string | Yes | - | Canonical signature parameter |
+| `folder` | string | No | "Assets/Tests/Runtime" | Canonical signature parameter |
+
+### test_get_summary
+Get aggregated test summary across all runs
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |

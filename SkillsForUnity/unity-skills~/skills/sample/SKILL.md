@@ -53,3 +53,80 @@ Set object scale.
 ### `get_scene_info`
 Get current scene information.
 **Parameters:** None.
+
+---
+
+## Canonical Signatures
+
+以下附录以 `SkillsForUnity/Editor/Skills/*Skills.cs` 的真实 `[UnitySkill]` 签名为准，供审计和自动化解析使用。
+
+### create_cube
+Create a cube at the specified position
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `x` | float | No | 0 | Canonical signature parameter |
+| `y` | float | No | 0 | Canonical signature parameter |
+| `z` | float | No | 0 | Canonical signature parameter |
+| `name` | string | No | "Cube" | Canonical signature parameter |
+
+### create_sphere
+Create a sphere at the specified position
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `x` | float | No | 0 | Canonical signature parameter |
+| `y` | float | No | 0 | Canonical signature parameter |
+| `z` | float | No | 0 | Canonical signature parameter |
+| `name` | string | No | "Sphere" | Canonical signature parameter |
+
+### delete_object
+Delete a GameObject by name
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `objectName` | string | Yes | - | Canonical signature parameter |
+
+### get_scene_info
+Get current scene information
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### set_object_position
+Set position of a GameObject
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `objectName` | string | Yes | - | Canonical signature parameter |
+| `x` | float | Yes | - | Canonical signature parameter |
+| `y` | float | Yes | - | Canonical signature parameter |
+| `z` | float | Yes | - | Canonical signature parameter |
+
+### set_object_rotation
+Set rotation of a GameObject (Euler angles)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `objectName` | string | Yes | - | Canonical signature parameter |
+| `x` | float | Yes | - | Canonical signature parameter |
+| `y` | float | Yes | - | Canonical signature parameter |
+| `z` | float | Yes | - | Canonical signature parameter |
+
+### set_object_scale
+Set scale of a GameObject
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `objectName` | string | Yes | - | Canonical signature parameter |
+| `x` | float | Yes | - | Canonical signature parameter |
+| `y` | float | Yes | - | Canonical signature parameter |
+| `z` | float | Yes | - | Canonical signature parameter |
+
+### find_objects_by_name
+Find all GameObjects containing a name (param: nameContains)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `nameContains` | string | Yes | - | Canonical signature parameter |

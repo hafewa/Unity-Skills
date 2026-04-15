@@ -560,6 +560,249 @@ Set labels on an asset.
 
 **Returns:** `{ success, assetPath, labels[] }`
 
+---
+
+## Canonical Signatures
+
+以下附录以 `SkillsForUnity/Editor/Skills/*Skills.cs` 的真实 `[UnitySkill]` 签名为准，供审计和自动化解析使用。
+
+### asset_reimport
+Force reimport of an asset
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+
+### asset_reimport_batch
+Reimport multiple assets matching a pattern
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `searchFilter` | string | No | "*" | Canonical signature parameter |
+| `folder` | string | No | "Assets" | Canonical signature parameter |
+| `limit` | int | No | 100 | Canonical signature parameter |
+
+### texture_set_import_settings
+Set texture import settings (maxSize, compression, readable)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+| `maxSize` | int? | No | null | Canonical signature parameter |
+| `compression` | string | No | null | Canonical signature parameter |
+| `readable` | bool? | No | null | Canonical signature parameter |
+| `generateMipMaps` | bool? | No | null | Canonical signature parameter |
+| `textureType` | string | No | null | Canonical signature parameter |
+
+### model_set_import_settings
+Set model (FBX) import settings
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+| `globalScale` | float? | No | null | Canonical signature parameter |
+| `importMaterials` | bool? | No | null | Canonical signature parameter |
+| `importAnimation` | bool? | No | null | Canonical signature parameter |
+| `generateColliders` | bool? | No | null | Canonical signature parameter |
+| `readable` | bool? | No | null | Canonical signature parameter |
+| `meshCompression` | string | No | null | Canonical signature parameter |
+
+### audio_set_import_settings
+Set audio clip import settings
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+| `forceToMono` | bool? | No | null | Canonical signature parameter |
+| `loadInBackground` | bool? | No | null | Canonical signature parameter |
+| `loadType` | string | No | null | Canonical signature parameter |
+| `compressionFormat` | string | No | null | Canonical signature parameter |
+| `quality` | int? | No | null | Canonical signature parameter |
+
+### sprite_set_import_settings
+Set sprite import settings (mode, pivot, packingTag, pixelsPerUnit)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+| `spriteMode` | string | No | null | Canonical signature parameter |
+| `pixelsPerUnit` | float? | No | null | Canonical signature parameter |
+| `packingTag` | string | No | null | Canonical signature parameter |
+| `pivotX` | string | No | null | Canonical signature parameter |
+| `pivotY` | string | No | null | Canonical signature parameter |
+
+### texture_get_import_settings
+Get current texture import settings
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+
+### model_get_import_settings
+Get current model import settings
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+
+### audio_get_import_settings
+Get current audio import settings
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+
+### asset_set_labels
+Set labels on an asset
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+| `labels` | string | Yes | - | Canonical signature parameter |
+
+### asset_get_labels
+Get labels of an asset
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+
+### audio_get_settings
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+
+### audio_set_settings
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+| `forceToMono` | bool? | No | null | Canonical signature parameter |
+| `loadInBackground` | bool? | No | null | Canonical signature parameter |
+| `ambisonic` | bool? | No | null | Canonical signature parameter |
+| `loadType` | string | No | null | Canonical signature parameter |
+| `compressionFormat` | string | No | null | Canonical signature parameter |
+| `quality` | float? | No | null | Canonical signature parameter |
+| `sampleRateSetting` | string | No | null | Canonical signature parameter |
+
+### audio_set_settings_batch
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `items` | string | Yes | - | Canonical signature parameter |
+
+### audio_find_clips
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `filter` | string | No | "" | Canonical signature parameter |
+| `limit` | int | No | 50 | Canonical signature parameter |
+
+### audio_get_clip_info
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+
+### audio_add_source
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `clipPath` | string | No | null | Canonical signature parameter |
+| `playOnAwake` | bool | No | false | Canonical signature parameter |
+| `loop` | bool | No | false | Canonical signature parameter |
+| `volume` | float | No | 1f | Canonical signature parameter |
+
+### audio_get_source_info
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+
+### audio_set_source_properties
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `clipPath` | string | No | null | Canonical signature parameter |
+| `volume` | float? | No | null | Canonical signature parameter |
+| `pitch` | float? | No | null | Canonical signature parameter |
+| `loop` | bool? | No | null | Canonical signature parameter |
+| `playOnAwake` | bool? | No | null | Canonical signature parameter |
+| `mute` | bool? | No | null | Canonical signature parameter |
+| `spatialBlend` | float? | No | null | Canonical signature parameter |
+| `priority` | int? | No | null | Canonical signature parameter |
+
+### audio_find_sources_in_scene
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `limit` | int | No | 50 | Canonical signature parameter |
+
+### audio_create_mixer
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `mixerName` | string | No | "NewAudioMixer" | Canonical signature parameter |
+| `folder` | string | No | "Assets" | Canonical signature parameter |
+
+### texture_get_settings
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+
+### texture_set_settings
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+| `textureType` | string | No | null | Canonical signature parameter |
+| `maxSize` | int? | No | null | Canonical signature parameter |
+| `filterMode` | string | No | null | Canonical signature parameter |
+| `compression` | string | No | null | Canonical signature parameter |
+| `mipmapEnabled` | bool? | No | null | Canonical signature parameter |
+| `sRGB` | bool? | No | null | Canonical signature parameter |
+| `readable` | bool? | No | null | Canonical signature parameter |
+| `alphaIsTransparency` | bool? | No | null | Canonical signature parameter |
+| `spritePixelsPerUnit` | float? | No | null | Canonical signature parameter |
+| `wrapMode` | string | No | null | Canonical signature parameter |
+| `npotScale` | string | No | null | Canonical signature parameter |
+
+### texture_set_settings_batch
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `items` | string | Yes | - | Canonical signature parameter |
+
+### model_get_settings
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+
+### model_set_settings
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+| `globalScale` | float? | No | null | Canonical signature parameter |
+| `useFileScale` | bool? | No | null | Canonical signature parameter |
+| `importBlendShapes` | bool? | No | null | Canonical signature parameter |
+| `importVisibility` | bool? | No | null | Canonical signature parameter |
+| `importCameras` | bool? | No | null | Canonical signature parameter |
+| `importLights` | bool? | No | null | Canonical signature parameter |
+| `meshCompression` | string | No | null | Canonical signature parameter |
+| `isReadable` | bool? | No | null | Canonical signature parameter |
+| `optimizeMeshPolygons` | bool? | No | null | Canonical signature parameter |
+| `optimizeMeshVertices` | bool? | No | null | Canonical signature parameter |
+| `generateSecondaryUV` | bool? | No | null | Canonical signature parameter |
+| `keepQuads` | bool? | No | null | Canonical signature parameter |
+| `weldVertices` | bool? | No | null | Canonical signature parameter |
+| `importNormals` | string | No | null | Canonical signature parameter |
+| `importTangents` | string | No | null | Canonical signature parameter |
+| `animationType` | string | No | null | Canonical signature parameter |
+| `importAnimation` | bool? | No | null | Canonical signature parameter |
+| `materialImportMode` | string | No | null | Canonical signature parameter |
+
+### model_set_settings_batch
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `items` | string | Yes | - | Canonical signature parameter |
+
 ### `asset_get_labels`
 Get labels of an asset.
 

@@ -580,3 +580,254 @@ Use distinct colors by **function**, not by object:
 6. **Quick color vs persistent material**: `probuilder_set_material` with `r/g/b` auto-detects render pipeline (URP/HDRP/Built-in). Use `material_create` + `materialPath` for production.
 7. **Package not installed**: All skills gracefully return `{error: "ProBuilder package not installed..."}` with install instructions.
 8. **Batch-first for level design**: Use `probuilder_create_batch` when creating 2+ shapes — one API call instead of many.
+
+---
+
+## Canonical Signatures
+
+以下附录以 `SkillsForUnity/Editor/Skills/*Skills.cs` 的真实 `[UnitySkill]` 签名为准，供审计和自动化解析使用。
+
+### probuilder_create_shape
+Create a ProBuilder primitive shape (Cube/Sphere/Cylinder/Cone/Torus/Prism/Arch/Pipe/Stairs/Door/Plane)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `shape` | string | No | "Cube" | Canonical signature parameter |
+| `name` | string | No | null | Canonical signature parameter |
+| `x` | float | No | 0 | Canonical signature parameter |
+| `y` | float | No | 0 | Canonical signature parameter |
+| `z` | float | No | 0 | Canonical signature parameter |
+| `sizeX` | float | No | 1 | Canonical signature parameter |
+| `sizeY` | float | No | 1 | Canonical signature parameter |
+| `sizeZ` | float | No | 1 | Canonical signature parameter |
+| `rotX` | float | No | 0 | Canonical signature parameter |
+| `rotY` | float | No | 0 | Canonical signature parameter |
+| `rotZ` | float | No | 0 | Canonical signature parameter |
+| `parent` | string | No | null | Canonical signature parameter |
+
+### probuilder_extrude_faces
+Extrude faces on a ProBuilder mesh (method: IndividualFaces/FaceNormal/VertexNormal)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `faceIndexes` | string | No | null | Canonical signature parameter |
+| `distance` | float | No | 0.5f | Canonical signature parameter |
+| `method` | string | No | "FaceNormal" | Canonical signature parameter |
+
+### probuilder_delete_faces
+Delete faces from a ProBuilder mesh by index
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `faceIndexes` | string | No | null | Canonical signature parameter |
+
+### probuilder_merge_faces
+Merge multiple faces into a single face on a ProBuilder mesh
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `faceIndexes` | string | No | null | Canonical signature parameter |
+
+### probuilder_flip_normals
+Flip face normals on a ProBuilder mesh
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `faceIndexes` | string | No | null | Canonical signature parameter |
+
+### probuilder_detach_faces
+Detach faces from a ProBuilder mesh (creates independent faces or a new object)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `faceIndexes` | string | No | null | Canonical signature parameter |
+| `deleteSourceFaces` | bool | No | false | Canonical signature parameter |
+
+### probuilder_bevel_edges
+Bevel (chamfer) edges on a ProBuilder mesh
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `edgeIndexes` | string | No | null | Canonical signature parameter |
+| `amount` | float | No | 0.2f | Canonical signature parameter |
+
+### probuilder_extrude_edges
+Extrude edges outward on a ProBuilder mesh to create walls, rails, or flanges
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `edgeIndexes` | string | No | null | Canonical signature parameter |
+| `distance` | float | No | 0.5f | Canonical signature parameter |
+| `extrudeAsGroup` | bool | No | true | Canonical signature parameter |
+| `enableManifoldExtrude` | bool | No | false | Canonical signature parameter |
+
+### probuilder_bridge_edges
+Bridge two edges with a new face (create doorways, windows, connections)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `edgeA` | string | No | null | Canonical signature parameter |
+| `edgeB` | string | No | null | Canonical signature parameter |
+| `allowNonManifold` | bool | No | false | Canonical signature parameter |
+
+### probuilder_subdivide
+Subdivide a ProBuilder mesh or selected faces
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `faceIndexes` | string | No | null | Canonical signature parameter |
+
+### probuilder_conform_normals
+Make all face normals on a ProBuilder mesh point consistently outward
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `faceIndexes` | string | No | null | Canonical signature parameter |
+
+### probuilder_weld_vertices
+Weld (merge) nearby vertices within a radius on a ProBuilder mesh
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `vertexIndexes` | string | No | null | Canonical signature parameter |
+| `radius` | float | No | 0.01f | Canonical signature parameter |
+
+### probuilder_set_face_material
+Set material on specific faces of a ProBuilder mesh
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `faceIndexes` | string | No | null | Canonical signature parameter |
+| `materialPath` | string | No | null | Canonical signature parameter |
+| `submeshIndex` | int | No | -1 | Canonical signature parameter |
+
+### probuilder_get_info
+Get ProBuilder mesh info (vertices, faces, edges, materials, bounds)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+
+### probuilder_center_pivot
+Center pivot or set pivot to a world position on a ProBuilder mesh
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `worldX` | float? | No | null | Canonical signature parameter |
+| `worldY` | float? | No | null | Canonical signature parameter |
+| `worldZ` | float? | No | null | Canonical signature parameter |
+
+### probuilder_project_uv
+Project UVs onto ProBuilder mesh faces using box projection
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `faceIndexes` | string | No | null | Canonical signature parameter |
+| `channel` | int | No | 0 | Canonical signature parameter |
+
+### probuilder_create_batch
+Batch create multiple ProBuilder shapes in one call. items: JSON array of {shape, name, x, y, z, sizeX, sizeY, sizeZ, rotX, rotY, rotZ, parent, materialPath}
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `items` | string | Yes | - | Canonical signature parameter |
+| `defaultParent` | string | No | null | Canonical signature parameter |
+
+### probuilder_move_vertices
+Move vertices of a ProBuilder mesh by index. Use to create ramps, slopes, and custom shapes from primitives
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `vertexIndexes` | string | No | null | Canonical signature parameter |
+| `deltaX` | float | No | 0 | Canonical signature parameter |
+| `deltaY` | float | No | 0 | Canonical signature parameter |
+| `deltaZ` | float | No | 0 | Canonical signature parameter |
+
+### probuilder_set_vertices
+Set absolute positions of specific vertices on a ProBuilder mesh. vertices: JSON array of {index, x, y, z}
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `vertices` | string | No | null | Canonical signature parameter |
+
+### probuilder_get_vertices
+Get vertex positions of a ProBuilder mesh (all or by index). Essential for understanding mesh topology before vertex edits
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `vertexIndexes` | string | No | null | Canonical signature parameter |
+| `verbose` | bool | No | true | Canonical signature parameter |
+
+### probuilder_combine_meshes
+Combine multiple ProBuilder meshes into one (for optimization). Provide comma-separated names or 'selected' for Selection
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `names` | string | No | null | Canonical signature parameter |
+
+### probuilder_set_material
+Set material on an entire ProBuilder mesh (all faces). Quick way to color objects
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `materialPath` | string | No | null | Canonical signature parameter |
+| `r` | float? | No | null | Canonical signature parameter |
+| `g` | float? | No | null | Canonical signature parameter |
+| `b` | float? | No | null | Canonical signature parameter |
+| `a` | float? | No | null | Canonical signature parameter |

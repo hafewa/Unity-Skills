@@ -406,3 +406,165 @@ No parameters.
   ]
 }
 ```
+
+---
+
+## Canonical Signatures
+
+以下附录以 `SkillsForUnity/Editor/Skills/*Skills.cs` 的真实 `[UnitySkill]` 签名为准，供审计和自动化解析使用。
+
+### scene_component_stats
+Get detailed scene component statistics and key infrastructure counts.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `topComponentsLimit` | int | No | 15 | Canonical signature parameter |
+
+### scene_find_hotspots
+Find deep hierarchies, large child groups, duplicate-name clusters, and empty-node hotspots in the current scene.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `deepHierarchyThreshold` | int | No | 8 | Canonical signature parameter |
+| `largeChildCountThreshold` | int | No | 25 | Canonical signature parameter |
+| `maxResults` | int | No | 20 | Canonical signature parameter |
+
+### scene_health_check
+Run a read-only scene health report: missing scripts, missing references, duplicate names, empty nodes, deep hierarchy, and missing infrastructure.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `issueLimit` | int | No | 100 | Canonical signature parameter |
+| `deepHierarchyThreshold` | int | No | 8 | Canonical signature parameter |
+| `largeChildCountThreshold` | int | No | 25 | Canonical signature parameter |
+
+### scene_contract_validate
+Validate default scene conventions (Systems/Managers/UIRoot/Gameplay, UI infrastructure, tags, and layers).
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `requiredRootsJson` | string | No | null | Canonical signature parameter |
+| `requiredTagsJson` | string | No | null | Canonical signature parameter |
+| `requiredLayersJson` | string | No | null | Canonical signature parameter |
+| `requireEventSystemForUi` | bool | No | true | Canonical signature parameter |
+
+### project_stack_detect
+Detect the current project's render pipeline, UI route, input system, major packages, and common folder conventions.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### scene_analyze
+Analyze the active scene and project context in one pass. Returns summary, health findings, stack detection, recommendations, and suggested next skills.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `topComponentsLimit` | int | No | 10 | Canonical signature parameter |
+| `issueLimit` | int | No | 100 | Canonical signature parameter |
+| `deepHierarchyThreshold` | int | No | 8 | Canonical signature parameter |
+| `largeChildCountThreshold` | int | No | 25 | Canonical signature parameter |
+
+### scene_summarize
+Get a structured summary of the current scene (object counts, component stats, hierarchy depth)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `includeComponentStats` | bool | No | true | Canonical signature parameter |
+| `topComponentsLimit` | int | No | 10 | Canonical signature parameter |
+
+### hierarchy_describe
+Get a text tree of the scene hierarchy (like 'tree' command). Returns human-readable text. For JSON structure use scene_get_hierarchy.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `maxDepth` | int | No | 5 | Canonical signature parameter |
+| `includeInactive` | bool | No | false | Canonical signature parameter |
+| `maxItemsPerLevel` | int | No | 20 | Canonical signature parameter |
+
+### script_analyze
+Analyze a script's public API (MonoBehaviour, ScriptableObject, or plain class)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `scriptName` | string | Yes | - | Canonical signature parameter |
+| `includePrivate` | bool | No | false | Canonical signature parameter |
+
+### scene_spatial_query
+Find objects within a radius of a point, or near another object
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `x` | float | No | 0 | Canonical signature parameter |
+| `y` | float | No | 0 | Canonical signature parameter |
+| `z` | float | No | 0 | Canonical signature parameter |
+| `radius` | float | No | 10f | Canonical signature parameter |
+| `nearObject` | string | No | null | Canonical signature parameter |
+| `componentFilter` | string | No | null | Canonical signature parameter |
+| `maxResults` | int | No | 50 | Canonical signature parameter |
+
+### scene_materials
+Get an overview of all materials and shaders used in the current scene
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `includeProperties` | bool | No | false | Canonical signature parameter |
+
+### scene_context
+Generate a comprehensive scene snapshot for AI coding assistance (hierarchy, components, script fields, references, UI layout). Best for initial context gathering before editing code or complex scene work.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `maxDepth` | int | No | 10 | Canonical signature parameter |
+| `maxObjects` | int | No | 200 | Canonical signature parameter |
+| `rootPath` | string | No | null | Canonical signature parameter |
+| `includeValues` | bool | No | false | Canonical signature parameter |
+| `includeReferences` | bool | No | true | Canonical signature parameter |
+| `includeCodeDeps` | bool | No | false | Canonical signature parameter |
+
+### scene_export_report
+Export complete scene structure and script dependency report as markdown file. Use when user asks to: export scene report, generate scene document, save scene overview, create scene context file
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `savePath` | string | No | "Assets/Docs/SceneReport.md" | Canonical signature parameter |
+| `maxDepth` | int | No | 10 | Canonical signature parameter |
+| `maxObjects` | int | No | 500 | Canonical signature parameter |
+
+### scene_dependency_analyze
+Analyze object dependency graph and impact of changes. Use ONLY when user explicitly asks about: dependency analysis, impact analysis, what depends on, what references, safe to delete/disable/remove, refactoring impact, reference check
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `targetPath` | string | No | null | Canonical signature parameter |
+| `savePath` | string | No | null | Canonical signature parameter |
+
+### script_dependency_graph
+Given an entry script, return its N-hop dependency closure as structured JSON.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `scriptName` | string | Yes | - | Canonical signature parameter |
+| `maxHops` | int | No | 2 | Canonical signature parameter |
+| `includeDetails` | bool | No | true | Canonical signature parameter |
+
+### scene_tag_layer_stats
+Get Tag/Layer usage stats and find potential issues (untagged objects, unused layers)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### scene_performance_hints
+Diagnose scene performance issues with prioritized actionable suggestions
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### scene_diff
+Compare current scene against a previous snapshot to see what changed. Call without snapshotJson to capture a snapshot; call with snapshotJson to compare.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `snapshotJson` | string | No | null | Canonical signature parameter |

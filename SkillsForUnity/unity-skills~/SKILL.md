@@ -9,8 +9,8 @@ Use this skill when the user wants to automate the Unity Editor through the loca
 
 Current package snapshot:
 
-- `513` REST skills
-- `14` advisory design modules
+- `542` REST skills
+- `13` advisory design modules
 - Unity maintenance baseline: `2022.3+`
 - Default request timeout: `15 minutes`
 
@@ -22,7 +22,7 @@ Current package snapshot:
 
 ### Switch to Full-Auto
 
-Activate ALL 513 skills when user explicitly says:
+Activate ALL 542 skills when user explicitly says:
 - "全自动模式" / "full auto" / "full-auto mode"
 - "自动开发" / "自动化构建" / "auto build"
 - "帮我搭建场景" / "build the scene for me"
@@ -45,7 +45,7 @@ Activate ALL 513 skills when user explicitly says:
 | Asset Basic | asset | asset_refresh, asset_find, asset_get_info |
 | Workflow | workflow | workflow_task_start/end, workflow_undo_task |
 | Debug | debug, console | debug_check_compilation, console_get_logs |
-| Advisory | 14 modules | All advisory modules (no REST skills) |
+| Advisory | 13 modules | All advisory modules (no REST skills) |
 
 ## Core Rules
 

@@ -241,3 +241,96 @@ Move a script to a new folder.
 | `diagnosticLimit` | int | No | 20 | Max compile diagnostics |
 
 **Returns:** `{ success, path, oldPath, newPath, compilation? }`
+
+---
+
+## Canonical Signatures
+
+以下附录以 `SkillsForUnity/Editor/Skills/*Skills.cs` 的真实 `[UnitySkill]` 签名为准，供审计和自动化解析使用。
+
+### script_create
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `scriptName` | string | No | null | Canonical signature parameter |
+| `name` | string | No | null | Canonical signature parameter |
+| `folder` | string | No | "Assets/Scripts" | Canonical signature parameter |
+| `template` | string | No | null | Canonical signature parameter |
+| `namespaceName` | string | No | null | Canonical signature parameter |
+| `checkCompile` | bool | No | true | Canonical signature parameter |
+| `diagnosticLimit` | int | No | DefaultDiagnosticLimit | Canonical signature parameter |
+
+### script_create_batch
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `items` | string | Yes | - | Canonical signature parameter |
+
+### script_read
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `scriptPath` | string | Yes | - | Canonical signature parameter |
+
+### script_delete
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `scriptPath` | string | Yes | - | Canonical signature parameter |
+
+### script_find_in_file
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `pattern` | string | Yes | - | Canonical signature parameter |
+| `folder` | string | No | "Assets" | Canonical signature parameter |
+| `isRegex` | bool | No | false | Canonical signature parameter |
+| `limit` | int | No | 50 | Canonical signature parameter |
+
+### script_append
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `scriptPath` | string | Yes | - | Canonical signature parameter |
+| `content` | string | Yes | - | Canonical signature parameter |
+| `atLine` | int | No | -1 | Canonical signature parameter |
+| `checkCompile` | bool | No | true | Canonical signature parameter |
+| `diagnosticLimit` | int | No | DefaultDiagnosticLimit | Canonical signature parameter |
+
+### script_replace
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `scriptPath` | string | Yes | - | Canonical signature parameter |
+| `find` | string | Yes | - | Canonical signature parameter |
+| `replace` | string | Yes | - | Canonical signature parameter |
+| `isRegex` | bool | No | false | Canonical signature parameter |
+| `checkCompile` | bool | No | true | Canonical signature parameter |
+| `diagnosticLimit` | int | No | DefaultDiagnosticLimit | Canonical signature parameter |
+
+### script_list
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `folder` | string | No | "Assets" | Canonical signature parameter |
+| `filter` | string | No | null | Canonical signature parameter |
+| `limit` | int | No | 100 | Canonical signature parameter |
+
+### script_get_info
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `scriptPath` | string | Yes | - | Canonical signature parameter |
+
+### script_rename
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `scriptPath` | string | Yes | - | Canonical signature parameter |
+| `newName` | string | Yes | - | Canonical signature parameter |
+| `checkCompile` | bool | No | true | Canonical signature parameter |
+| `diagnosticLimit` | int | No | DefaultDiagnosticLimit | Canonical signature parameter |
+
+### script_move
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `scriptPath` | string | Yes | - | Canonical signature parameter |
+| `newFolder` | string | Yes | - | Canonical signature parameter |
+| `checkCompile` | bool | No | true | Canonical signature parameter |
+| `diagnosticLimit` | int | No | DefaultDiagnosticLimit | Canonical signature parameter |
+
+### script_get_compile_feedback
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `scriptPath` | string | Yes | - | Canonical signature parameter |
+| `limit` | int | No | DefaultDiagnosticLimit | Canonical signature parameter |

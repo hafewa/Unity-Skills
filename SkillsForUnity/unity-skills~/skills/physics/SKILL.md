@@ -162,3 +162,123 @@ Set whether two layers collide.
 | enableCollision | bool | No | true | Whether to enable collision |
 
 **Returns:** `{ success, layer1, layer2, collisionEnabled }`
+
+---
+
+## Canonical Signatures
+
+以下附录以 `SkillsForUnity/Editor/Skills/*Skills.cs` 的真实 `[UnitySkill]` 签名为准，供审计和自动化解析使用。
+
+### physics_raycast
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `originX` | float | Yes | - | Canonical signature parameter |
+| `originY` | float | Yes | - | Canonical signature parameter |
+| `originZ` | float | Yes | - | Canonical signature parameter |
+| `dirX` | float | Yes | - | Canonical signature parameter |
+| `dirY` | float | Yes | - | Canonical signature parameter |
+| `dirZ` | float | Yes | - | Canonical signature parameter |
+| `maxDistance` | float | No | 1000f | Canonical signature parameter |
+| `layerMask` | int | No | -1 | Canonical signature parameter |
+
+### physics_check_overlap
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `x` | float | Yes | - | Canonical signature parameter |
+| `y` | float | Yes | - | Canonical signature parameter |
+| `z` | float | Yes | - | Canonical signature parameter |
+| `radius` | float | Yes | - | Canonical signature parameter |
+| `layerMask` | int | No | -1 | Canonical signature parameter |
+
+### physics_get_gravity
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### physics_set_gravity
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `x` | float | Yes | - | Canonical signature parameter |
+| `y` | float | Yes | - | Canonical signature parameter |
+| `z` | float | Yes | - | Canonical signature parameter |
+
+### physics_raycast_all
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `originX` | float | Yes | - | Canonical signature parameter |
+| `originY` | float | Yes | - | Canonical signature parameter |
+| `originZ` | float | Yes | - | Canonical signature parameter |
+| `dirX` | float | Yes | - | Canonical signature parameter |
+| `dirY` | float | Yes | - | Canonical signature parameter |
+| `dirZ` | float | Yes | - | Canonical signature parameter |
+| `maxDistance` | float | No | 1000f | Canonical signature parameter |
+| `layerMask` | int | No | -1 | Canonical signature parameter |
+
+### physics_spherecast
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `originX` | float | Yes | - | Canonical signature parameter |
+| `originY` | float | Yes | - | Canonical signature parameter |
+| `originZ` | float | Yes | - | Canonical signature parameter |
+| `dirX` | float | Yes | - | Canonical signature parameter |
+| `dirY` | float | Yes | - | Canonical signature parameter |
+| `dirZ` | float | Yes | - | Canonical signature parameter |
+| `radius` | float | Yes | - | Canonical signature parameter |
+| `maxDistance` | float | No | 1000f | Canonical signature parameter |
+| `layerMask` | int | No | -1 | Canonical signature parameter |
+
+### physics_boxcast
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `originX` | float | Yes | - | Canonical signature parameter |
+| `originY` | float | Yes | - | Canonical signature parameter |
+| `originZ` | float | Yes | - | Canonical signature parameter |
+| `dirX` | float | Yes | - | Canonical signature parameter |
+| `dirY` | float | Yes | - | Canonical signature parameter |
+| `dirZ` | float | Yes | - | Canonical signature parameter |
+| `halfExtentX` | float | No | 0.5f | Canonical signature parameter |
+| `halfExtentY` | float | No | 0.5f | Canonical signature parameter |
+| `halfExtentZ` | float | No | 0.5f | Canonical signature parameter |
+| `maxDistance` | float | No | 1000f | Canonical signature parameter |
+| `layerMask` | int | No | -1 | Canonical signature parameter |
+
+### physics_overlap_box
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `x` | float | Yes | - | Canonical signature parameter |
+| `y` | float | Yes | - | Canonical signature parameter |
+| `z` | float | Yes | - | Canonical signature parameter |
+| `halfExtentX` | float | No | 0.5f | Canonical signature parameter |
+| `halfExtentY` | float | No | 0.5f | Canonical signature parameter |
+| `halfExtentZ` | float | No | 0.5f | Canonical signature parameter |
+| `layerMask` | int | No | -1 | Canonical signature parameter |
+
+### physics_create_material
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | "New PhysicMaterial" | Canonical signature parameter |
+| `savePath` | string | No | "Assets" | Canonical signature parameter |
+| `dynamicFriction` | float | No | 0.6f | Canonical signature parameter |
+| `staticFriction` | float | No | 0.6f | Canonical signature parameter |
+| `bounciness` | float | No | 0f | Canonical signature parameter |
+
+### physics_set_material
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `materialPath` | string | Yes | - | Canonical signature parameter |
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+
+### physics_get_layer_collision
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `layer1` | int | Yes | - | Canonical signature parameter |
+| `layer2` | int | Yes | - | Canonical signature parameter |
+
+### physics_set_layer_collision
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `layer1` | int | Yes | - | Canonical signature parameter |
+| `layer2` | int | Yes | - | Canonical signature parameter |
+| `enableCollision` | bool | No | true | Canonical signature parameter |

@@ -134,3 +134,121 @@ List all cameras in the scene.
 |-----------|------|----------|---------|-------------|
 
 **Returns:** `{ count, cameras: [{ name, instanceId, path, depth, orthographic, enabled }] }`
+
+---
+
+## Canonical Signatures
+
+以下附录以 `SkillsForUnity/Editor/Skills/*Skills.cs` 的真实 `[UnitySkill]` 签名为准，供审计和自动化解析使用。
+
+### camera_align_view_to_object
+Align Scene View camera to look at an object.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+
+### camera_get_info
+Get Scene View camera position and rotation.
+
+No parameters.
+
+### camera_set_transform
+Set Scene View camera position/rotation manually.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `posX` | float | Yes | - | Canonical signature parameter |
+| `posY` | float | Yes | - | Canonical signature parameter |
+| `posZ` | float | Yes | - | Canonical signature parameter |
+| `rotX` | float | Yes | - | Canonical signature parameter |
+| `rotY` | float | Yes | - | Canonical signature parameter |
+| `rotZ` | float | Yes | - | Canonical signature parameter |
+| `size` | float | No | 5f | Canonical signature parameter |
+| `instant` | bool | No | true | Canonical signature parameter |
+
+### camera_look_at
+Focus Scene View camera on a point.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `x` | float | Yes | - | Canonical signature parameter |
+| `y` | float | Yes | - | Canonical signature parameter |
+| `z` | float | Yes | - | Canonical signature parameter |
+
+### camera_create
+Create a new Game Camera
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | "New Camera" | Canonical signature parameter |
+| `x` | float | No | 0 | Canonical signature parameter |
+| `y` | float | No | 1 | Canonical signature parameter |
+| `z` | float | No | -10 | Canonical signature parameter |
+| `addAudioListener` | bool | No | false | Canonical signature parameter |
+
+### camera_get_properties
+Get Game Camera properties (supports name/instanceId/path)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+
+### camera_set_properties
+Set Game Camera properties (FOV, clip planes, clear flags, background color, depth)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `fieldOfView` | float? | No | null | Canonical signature parameter |
+| `nearClipPlane` | float? | No | null | Canonical signature parameter |
+| `farClipPlane` | float? | No | null | Canonical signature parameter |
+| `depth` | float? | No | null | Canonical signature parameter |
+| `clearFlags` | string | No | null | Canonical signature parameter |
+| `bgR` | float? | No | null | Canonical signature parameter |
+| `bgG` | float? | No | null | Canonical signature parameter |
+| `bgB` | float? | No | null | Canonical signature parameter |
+
+### camera_set_culling_mask
+Set Game Camera culling mask by layer names (comma-separated)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `layerNames` | string | Yes | - | Canonical signature parameter |
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+
+### camera_screenshot
+Capture a screenshot from a Game Camera to file
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `savePath` | string | No | "Assets/screenshot.png" | Canonical signature parameter |
+| `width` | int | No | 1920 | Canonical signature parameter |
+| `height` | int | No | 1080 | Canonical signature parameter |
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+
+### camera_set_orthographic
+Switch Game Camera between orthographic and perspective mode
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `orthographic` | bool | Yes | - | Canonical signature parameter |
+| `orthographicSize` | float? | No | null | Canonical signature parameter |
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+
+### camera_list
+List all cameras in the scene
+
+No parameters.

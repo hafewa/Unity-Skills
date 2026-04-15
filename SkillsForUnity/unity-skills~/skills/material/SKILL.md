@@ -311,3 +311,225 @@ Skills auto-detect and adapt to your render pipeline:
 3. Use material assets (by path) for persistent changes
 4. Check shader property names in Unity Inspector
 5. URP/HDRP have different property names than Standard
+
+---
+
+## Canonical Signatures
+
+以下附录以 `SkillsForUnity/Editor/Skills/*Skills.cs` 的真实 `[UnitySkill]` 签名为准，供审计和自动化解析使用。
+
+### material_create
+Create a new material (auto-detects render pipeline if shader not specified). savePath can be a folder or full path.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | Yes | - | Canonical signature parameter |
+| `shaderName` | string | No | null | Canonical signature parameter |
+| `savePath` | string | No | null | Canonical signature parameter |
+
+### material_assign
+Assign a material asset to a renderer (supports name/instanceId/path)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `materialPath` | string | No | null | Canonical signature parameter |
+
+### material_create_batch
+Create multiple materials (Efficient). items: JSON array of {name, shaderName?, savePath?}
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `items` | string | Yes | - | Canonical signature parameter |
+
+### material_assign_batch
+Assign materials to multiple objects (Efficient). items: JSON array of {name, materialPath}
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `items` | string | Yes | - | Canonical signature parameter |
+
+### material_duplicate
+Duplicate an existing material
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `sourcePath` | string | Yes | - | Canonical signature parameter |
+| `newName` | string | Yes | - | Canonical signature parameter |
+| `savePath` | string | No | null | Canonical signature parameter |
+
+### material_set_color
+Set a color property on a material with optional HDR intensity for emission
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `r` | float | No | 1 | Canonical signature parameter |
+| `g` | float | No | 1 | Canonical signature parameter |
+| `b` | float | No | 1 | Canonical signature parameter |
+| `a` | float | No | 1 | Canonical signature parameter |
+| `propertyName` | string | No | null | Canonical signature parameter |
+| `intensity` | float | No | 1.0f | Canonical signature parameter |
+
+### material_set_colors_batch
+Set colors on multiple GameObjects in a single call. items is a JSON array like [{name:'Obj1',r:1,g:0,b:0},{name:'Obj2',r:0,g:1,b:0}]. Much more efficient than calling material_set_color multiple times.
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `items` | string | No | null | Canonical signature parameter |
+| `propertyName` | string | No | null | Canonical signature parameter |
+
+### material_set_emission
+Set emission color with HDR intensity and auto-enable emission
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `r` | float | No | 1 | Canonical signature parameter |
+| `g` | float | No | 1 | Canonical signature parameter |
+| `b` | float | No | 1 | Canonical signature parameter |
+| `intensity` | float | No | 1.0f | Canonical signature parameter |
+| `enableEmission` | bool | No | true | Canonical signature parameter |
+
+### material_set_emission_batch
+Set emission on multiple objects (Efficient). items: JSON array of {name, r, g, b, intensity?, enableEmission?}
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `items` | string | Yes | - | Canonical signature parameter |
+
+### material_set_texture
+Set a texture on a material (auto-detects property name for render pipeline)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `texturePath` | string | No | null | Canonical signature parameter |
+| `propertyName` | string | No | null | Canonical signature parameter |
+
+### material_set_float
+Set a float property on a material
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `propertyName` | string | No | null | Canonical signature parameter |
+| `value` | float | No | 0 | Canonical signature parameter |
+
+### material_set_int
+Set an integer property on a material
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `propertyName` | string | No | null | Canonical signature parameter |
+| `value` | int | No | 0 | Canonical signature parameter |
+
+### material_set_vector
+Set a vector4 property on a material
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `propertyName` | string | No | null | Canonical signature parameter |
+| `x` | float | No | 0 | Canonical signature parameter |
+| `y` | float | No | 0 | Canonical signature parameter |
+| `z` | float | No | 0 | Canonical signature parameter |
+| `w` | float | No | 0 | Canonical signature parameter |
+
+### material_set_texture_offset
+Set texture offset (tiling position)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `propertyName` | string | No | null | Canonical signature parameter |
+| `x` | float | No | 0 | Canonical signature parameter |
+| `y` | float | No | 0 | Canonical signature parameter |
+
+### material_set_texture_scale
+Set texture scale (tiling)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `propertyName` | string | No | null | Canonical signature parameter |
+| `x` | float | No | 1 | Canonical signature parameter |
+| `y` | float | No | 1 | Canonical signature parameter |
+
+### material_set_keyword
+Enable or disable a shader keyword (e.g., _EMISSION, _NORMALMAP, _METALLICGLOSSMAP)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `keyword` | string | No | null | Canonical signature parameter |
+| `enable` | bool | No | true | Canonical signature parameter |
+
+### material_set_render_queue
+Set material render queue (-1 for shader default, 2000=Geometry, 2450=AlphaTest, 3000=Transparent)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `renderQueue` | int | No | -1 | Canonical signature parameter |
+
+### material_set_shader
+Change the shader of a material
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `shaderName` | string | No | null | Canonical signature parameter |
+
+### material_set_gi_flags
+Set global illumination flags (None, RealtimeEmissive, BakedEmissive, EmissiveIsBlack)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `flags` | string | No | "RealtimeEmissive" | Canonical signature parameter |
+
+### material_get_properties
+Get all properties of a material (colors, floats, textures, keywords)
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+
+### material_get_keywords
+Get all enabled shader keywords on a material
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |

@@ -36,6 +36,68 @@ Unity Package Manager 操作，支持包的安装、移除和 Cinemachine 自动
 }
 ```
 
+---
+
+## Canonical Signatures
+
+以下附录以 `SkillsForUnity/Editor/Skills/*Skills.cs` 的真实 `[UnitySkill]` 签名为准，供审计和自动化解析使用。
+
+### package_list
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### package_check
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `packageId` | string | Yes | - | Canonical signature parameter |
+
+### package_install
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `packageId` | string | Yes | - | Canonical signature parameter |
+| `version` | string | No | null | Canonical signature parameter |
+
+### package_remove
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `packageId` | string | Yes | - | Canonical signature parameter |
+
+### package_refresh
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### package_install_cinemachine
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `version` | int | No | 3 | Canonical signature parameter |
+
+### package_install_splines
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### package_get_cinemachine_status
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### package_search
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `query` | string | Yes | - | Canonical signature parameter |
+
+### package_get_dependencies
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `packageId` | string | Yes | - | Canonical signature parameter |
+
+### package_get_versions
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `packageId` | string | Yes | - | Canonical signature parameter |
+
 ### `package_check`
 检查包是否已安装。
 **Parameters:**
@@ -149,3 +211,63 @@ Get all available versions for a package.
   "allVersions": ["2.10.0", "3.0.0", "3.1.3"]
 }
 ```
+
+---
+
+## Canonical Signatures (Appendix)
+
+### package_list
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### package_check
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `packageId` | string | Yes | - | Canonical signature parameter |
+
+### package_install
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `packageId` | string | Yes | - | Canonical signature parameter |
+| `version` | string | No | null | Canonical signature parameter |
+
+### package_remove
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `packageId` | string | Yes | - | Canonical signature parameter |
+
+### package_refresh
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### package_install_cinemachine
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `version` | int | No | 3 | Canonical signature parameter |
+
+### package_install_splines
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### package_get_cinemachine_status
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### package_search
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `query` | string | Yes | - | Canonical signature parameter |
+
+### package_get_dependencies
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `packageId` | string | Yes | - | Canonical signature parameter |
+
+### package_get_versions
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `packageId` | string | Yes | - | Canonical signature parameter |

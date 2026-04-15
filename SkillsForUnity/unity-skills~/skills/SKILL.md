@@ -1,6 +1,6 @@
 ---
 name: unity-skills-index
-description: "Index of all Unity Skills modules — 38 functional modules (SA/FA) + 14 advisory modules. Browse available skills, check mode requirements, and find the right module. Triggers: module list, skill index, browse skills, find module, 模块列表, 技能索引, 查找模块."
+description: "Index of all Unity Skills modules — 40 functional modules (SA/FA) + 13 advisory modules. Browse available skills, check mode requirements, and find the right module. Triggers: module list, skill index, browse skills, find module, 模块列表, 技能索引, 查找模块."
 ---
 
 # Unity Skills - Module Index
@@ -22,6 +22,7 @@ This folder contains detailed documentation for each skill module. For quick ref
 | [light](./light/SKILL.md) | FA | Lighting setup and configuration | Yes (2 batch skills) |
 | [prefab](./prefab/SKILL.md) | FA | Prefab creation and instantiation | Yes (1 batch skill) |
 | [asset](./asset/SKILL.md) | SA | Asset import, organize, search | Yes (3 batch skills) |
+| [batch](./batch/SKILL.md) | FA | Batch query, preview, execute, report, and async jobs | Built-in |
 | [ui](./ui/SKILL.md) | FA | Canvas and UI element creation | Yes (1 batch skill) |
 | [uitoolkit](./uitoolkit/SKILL.md) | FA | UI Toolkit UXML/USS/UIDocument | No |
 | [script](./script/SKILL.md) | SA | C# script creation and search | Yes (1 batch skill) |
@@ -97,14 +98,14 @@ unity_skills.call_skill("gameobject_create_batch",
 
 ## Coverage Summary
 
-- Unity REST skills: 513
-- Advisory design modules: 14
-- Core runtime modules: 38
-- Total documented module folders: 52
+- Unity REST skills: 542
+- Advisory design modules: 13
+- Core runtime modules: 40
+- Total documented module folders: 53
 
 ## Skill Naming Convention
 
 All skills follow `<module>_<action>` or `<module>_<action>_batch` pattern.
-Valid module prefixes: `gameobject`, `component`, `material`, `light`, `prefab`, `asset`, `ui`, `uitoolkit`, `script`, `scene`, `editor`, `animator`, `shader`, `console`, `validation`, `importer`, `cinemachine`, `probuilder`, `xr`, `terrain`, `physics`, `navmesh`, `timeline`, `workflow`, `cleaner`, `smart`, `perception`, `camera`, `event`, `package`, `project`, `profiler`, `optimize`, `sample`, `debug`, `test`, `bookmark`, `history`, `scriptableobject`.
-Special: `scene_summarize`, `scene_analyze`, `scene_health_check`, `scene_contract_validate`, `scene_component_stats`, `scene_find_hotspots`, `scene_diff`, `hierarchy_describe`, `script_analyze`, `script_dependency_graph`, `project_stack_detect` belong to `perception` module despite their prefix.
+Valid module prefixes: `gameobject`, `component`, `material`, `light`, `prefab`, `asset`, `batch`, `ui`, `uitoolkit`, `script`, `scene`, `editor`, `animator`, `shader`, `console`, `validation`, `importer`, `cinemachine`, `probuilder`, `xr`, `terrain`, `physics`, `navmesh`, `timeline`, `workflow`, `cleaner`, `smart`, `perception`, `camera`, `event`, `package`, `project`, `profiler`, `optimize`, `sample`, `debug`, `test`, `bookmark`, `history`, `scriptableobject`, `job`.
+Special: `scene_summarize`, `scene_analyze`, `scene_health_check`, `scene_contract_validate`, `scene_component_stats`, `scene_find_hotspots`, `scene_diff`, `hierarchy_describe`, `script_analyze`, `script_dependency_graph`, `project_stack_detect`, `scene_context`, `scene_export_report`, `scene_dependency_analyze`, `scene_tag_layer_stats`, `scene_performance_hints`, `scene_spatial_query`, `scene_materials` belong to `perception` module despite their prefix. `job_status`, `job_logs`, `job_list`, `job_wait`, `job_cancel` belong to `batch` module.
 If a skill name doesn't start with a valid prefix listed above, **it does not exist** — do not hallucinate it.

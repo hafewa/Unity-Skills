@@ -166,3 +166,62 @@ unity_skills.call_skill("console_stop_capture")
 3. Use custom logs to mark AI agent actions
 4. Clear console before starting new capture session
 5. Stop capture when done to free resources
+
+---
+
+## Canonical Signatures
+
+以下附录以 `SkillsForUnity/Editor/Skills/*Skills.cs` 的真实 `[UnitySkill]` 签名为准，供审计和自动化解析使用。
+
+### console_start_capture
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### console_stop_capture
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### console_get_logs
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `type` | string | No | "All" | Canonical signature parameter |
+| `filter` | string | No | null | Canonical signature parameter |
+| `limit` | int | No | 100 | Canonical signature parameter |
+
+### console_clear
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### console_log
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `message` | string | Yes | - | Canonical signature parameter |
+| `type` | string | No | "log" | Canonical signature parameter |
+
+### console_set_pause_on_error
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `enabled` | bool | No | true | Canonical signature parameter |
+
+### console_export
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `savePath` | string | No | "Assets/console_log.txt" | Canonical signature parameter |
+
+### console_get_stats
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### console_set_collapse
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `enabled` | bool | Yes | - | Canonical signature parameter |
+
+### console_set_clear_on_play
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `enabled` | bool | Yes | - | Canonical signature parameter |

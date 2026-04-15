@@ -274,3 +274,91 @@ Enable or disable a component (Behaviour, Renderer, Collider, etc.).
 *At least one identifier required
 
 **Returns:** `{ success, gameObject, componentType, enabled }`
+
+---
+
+## Canonical Signatures
+
+以下附录以 `SkillsForUnity/Editor/Skills/*Skills.cs` 的真实 `[UnitySkill]` 签名为准，供审计和自动化解析使用。
+
+### component_add
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `componentType` | string | No | null | Canonical signature parameter |
+
+### component_add_batch
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `items` | string | Yes | - | Canonical signature parameter |
+
+### component_remove
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `componentType` | string | No | null | Canonical signature parameter |
+| `componentIndex` | int | No | 0 | Canonical signature parameter |
+
+### component_remove_batch
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `items` | string | Yes | - | Canonical signature parameter |
+
+### component_list
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `includeProperties` | bool | No | false | Canonical signature parameter |
+
+### component_set_property
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `componentType` | string | No | null | Canonical signature parameter |
+| `propertyName` | string | No | null | Canonical signature parameter |
+| `value` | string | No | null | Canonical signature parameter |
+| `referencePath` | string | No | null | Canonical signature parameter |
+| `referenceName` | string | No | null | Canonical signature parameter |
+| `assetPath` | string | No | null | Canonical signature parameter |
+
+### component_set_property_batch
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `items` | string | Yes | - | Canonical signature parameter |
+
+### component_get_properties
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `componentType` | string | No | null | Canonical signature parameter |
+| `includePrivate` | bool | No | false | Canonical signature parameter |
+
+### component_copy
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `sourceName` | string | No | null | Canonical signature parameter |
+| `sourceInstanceId` | int | No | 0 | Canonical signature parameter |
+| `sourcePath` | string | No | null | Canonical signature parameter |
+| `targetName` | string | No | null | Canonical signature parameter |
+| `targetInstanceId` | int | No | 0 | Canonical signature parameter |
+| `targetPath` | string | No | null | Canonical signature parameter |
+| `componentType` | string | No | null | Canonical signature parameter |
+
+### component_set_enabled
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `componentType` | string | No | null | Canonical signature parameter |
+| `enabled` | bool | No | true | Canonical signature parameter |

@@ -94,3 +94,66 @@ Switch quality level by index or name.
 | levelName | string | No | null | Quality level name |
 
 **Returns:** `{ success, level, name }`
+
+---
+
+## Canonical Signatures
+
+以下附录以 `SkillsForUnity/Editor/Skills/*Skills.cs` 的真实 `[UnitySkill]` 签名为准，供审计和自动化解析使用。
+
+### project_get_info
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### project_get_render_pipeline
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### project_list_shaders
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `filter` | string | No | null | Canonical signature parameter |
+| `limit` | int | No | 50 | Canonical signature parameter |
+
+### project_get_quality_settings
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### project_get_build_settings
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### project_get_packages
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### project_get_layers
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### project_get_tags
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### project_add_tag
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `tagName` | string | Yes | - | Canonical signature parameter |
+
+### project_get_player_settings
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### project_set_quality_level
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `level` | int | No | -1 | Canonical signature parameter |
+| `levelName` | string | No | null | Canonical signature parameter |

@@ -102,3 +102,89 @@ Import JSON data into a ScriptableObject.
 | jsonFilePath | string | No | `null` | Path to a JSON file to read and import |
 
 **Returns:** `{ success, assetPath }`
+
+---
+
+## Canonical Signatures
+
+以下附录以 `SkillsForUnity/Editor/Skills/*Skills.cs` 的真实 `[UnitySkill]` 签名为准，供审计和自动化解析使用。
+
+### scriptableobject_create
+Create a new ScriptableObject asset
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `typeName` | string | Yes | - | Canonical signature parameter |
+| `savePath` | string | Yes | - | Canonical signature parameter |
+
+### scriptableobject_get
+Get properties of a ScriptableObject
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+
+### scriptableobject_set
+Set a field/property on a ScriptableObject
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+| `fieldName` | string | Yes | - | Canonical signature parameter |
+| `value` | string | Yes | - | Canonical signature parameter |
+
+### scriptableobject_list_types
+List available ScriptableObject types
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `filter` | string | No | null | Canonical signature parameter |
+| `limit` | int | No | 50 | Canonical signature parameter |
+
+### scriptableobject_duplicate
+Duplicate a ScriptableObject asset
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+
+### scriptableobject_set_batch
+Set multiple fields on a ScriptableObject at once. fields: JSON object {fieldName: value, ...}
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+| `fields` | string | Yes | - | Canonical signature parameter |
+
+### scriptableobject_delete
+Delete a ScriptableObject asset
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+
+### scriptableobject_find
+Find ScriptableObject assets by type name
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `typeName` | string | Yes | - | Canonical signature parameter |
+| `searchPath` | string | No | "Assets" | Canonical signature parameter |
+| `limit` | int | No | 50 | Canonical signature parameter |
+
+### scriptableobject_export_json
+Export a ScriptableObject to JSON
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+| `savePath` | string | No | null | Canonical signature parameter |
+
+### scriptableobject_import_json
+Import JSON data into a ScriptableObject
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+| `json` | string | No | null | Canonical signature parameter |
+| `jsonFilePath` | string | No | null | Canonical signature parameter |

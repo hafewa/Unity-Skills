@@ -190,3 +190,67 @@ unity_skills.call_skill("asset_move_batch", items=[
 3. Refresh after external file changes
 4. Use search filters for efficiency
 5. Backup before bulk delete operations
+
+---
+
+## Canonical Signatures
+
+以下附录以 `SkillsForUnity/Editor/Skills/*Skills.cs` 的真实 `[UnitySkill]` 签名为准，供审计和自动化解析使用。
+
+### asset_import
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `sourcePath` | string | Yes | - | Canonical signature parameter |
+| `destinationPath` | string | Yes | - | Canonical signature parameter |
+
+### asset_delete
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+
+### asset_move
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `sourcePath` | string | Yes | - | Canonical signature parameter |
+| `destinationPath` | string | Yes | - | Canonical signature parameter |
+
+### asset_import_batch
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `items` | string | Yes | - | Canonical signature parameter |
+
+### asset_delete_batch
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `items` | string | Yes | - | Canonical signature parameter |
+
+### asset_move_batch
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `items` | string | Yes | - | Canonical signature parameter |
+
+### asset_duplicate
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+
+### asset_find
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `searchFilter` | string | Yes | - | Canonical signature parameter |
+| `limit` | int | No | 50 | Canonical signature parameter |
+
+### asset_create_folder
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `folderPath` | string | Yes | - | Canonical signature parameter |
+
+### asset_refresh
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### asset_get_info
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |

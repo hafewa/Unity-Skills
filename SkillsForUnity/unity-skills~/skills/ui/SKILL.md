@@ -385,3 +385,279 @@ Configure Selectable properties on Button/Toggle/Slider/etc.
 3. Use meaningful names for scripting access
 4. Set parent for proper hierarchy
 5. WorldSpace canvas for 3D UI (health bars, etc.)
+
+---
+
+## Canonical Signatures
+
+以下附录以 `SkillsForUnity/Editor/Skills/*Skills.cs` 的真实 `[UnitySkill]` 签名为准，供审计和自动化解析使用。
+
+### ui_create_canvas
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | "Canvas" | Canonical signature parameter |
+| `renderMode` | string | No | "ScreenSpaceOverlay" | Canonical signature parameter |
+
+### ui_create_panel
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | "Panel" | Canonical signature parameter |
+| `parent` | string | No | null | Canonical signature parameter |
+| `r` | float | No | 1 | Canonical signature parameter |
+| `g` | float | No | 1 | Canonical signature parameter |
+| `b` | float | No | 1 | Canonical signature parameter |
+| `a` | float | No | 0.5f | Canonical signature parameter |
+
+### ui_create_button
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | "Button" | Canonical signature parameter |
+| `parent` | string | No | null | Canonical signature parameter |
+| `text` | string | No | "Button" | Canonical signature parameter |
+| `width` | float | No | 160 | Canonical signature parameter |
+| `height` | float | No | 30 | Canonical signature parameter |
+
+### ui_create_text
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | "Text" | Canonical signature parameter |
+| `parent` | string | No | null | Canonical signature parameter |
+| `text` | string | No | "New Text" | Canonical signature parameter |
+| `fontSize` | int | No | 14 | Canonical signature parameter |
+| `r` | float | No | 0 | Canonical signature parameter |
+| `g` | float | No | 0 | Canonical signature parameter |
+| `b` | float | No | 0 | Canonical signature parameter |
+
+### ui_create_image
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | "Image" | Canonical signature parameter |
+| `parent` | string | No | null | Canonical signature parameter |
+| `spritePath` | string | No | null | Canonical signature parameter |
+| `width` | float | No | 100 | Canonical signature parameter |
+| `height` | float | No | 100 | Canonical signature parameter |
+
+### ui_create_batch
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `items` | string | Yes | - | Canonical signature parameter |
+
+### ui_create_inputfield
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | "InputField" | Canonical signature parameter |
+| `parent` | string | No | null | Canonical signature parameter |
+| `placeholder` | string | No | "Enter text..." | Canonical signature parameter |
+| `width` | float | No | 200 | Canonical signature parameter |
+| `height` | float | No | 30 | Canonical signature parameter |
+
+### ui_create_slider
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | "Slider" | Canonical signature parameter |
+| `parent` | string | No | null | Canonical signature parameter |
+| `minValue` | float | No | 0 | Canonical signature parameter |
+| `maxValue` | float | No | 1 | Canonical signature parameter |
+| `value` | float | No | 0.5f | Canonical signature parameter |
+| `width` | float | No | 160 | Canonical signature parameter |
+| `height` | float | No | 20 | Canonical signature parameter |
+
+### ui_create_toggle
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | "Toggle" | Canonical signature parameter |
+| `parent` | string | No | null | Canonical signature parameter |
+| `label` | string | No | "Toggle" | Canonical signature parameter |
+| `isOn` | bool | No | false | Canonical signature parameter |
+
+### ui_set_text
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `text` | string | No | null | Canonical signature parameter |
+
+### ui_find_all
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `uiType` | string | No | null | Canonical signature parameter |
+| `limit` | int | No | 50 | Canonical signature parameter |
+
+### ui_set_anchor
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `preset` | string | No | "MiddleCenter" | Canonical signature parameter |
+| `setPivot` | bool | No | true | Canonical signature parameter |
+
+### ui_set_rect
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `width` | float? | No | null | Canonical signature parameter |
+| `height` | float? | No | null | Canonical signature parameter |
+| `posX` | float? | No | null | Canonical signature parameter |
+| `posY` | float? | No | null | Canonical signature parameter |
+| `left` | float? | No | null | Canonical signature parameter |
+| `right` | float? | No | null | Canonical signature parameter |
+| `top` | float? | No | null | Canonical signature parameter |
+| `bottom` | float? | No | null | Canonical signature parameter |
+
+### ui_layout_children
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `layoutType` | string | No | "Vertical" | Canonical signature parameter |
+| `spacing` | float | No | 10f | Canonical signature parameter |
+| `paddingLeft` | float | No | 0 | Canonical signature parameter |
+| `paddingRight` | float | No | 0 | Canonical signature parameter |
+| `paddingTop` | float | No | 0 | Canonical signature parameter |
+| `paddingBottom` | float | No | 0 | Canonical signature parameter |
+| `gridColumns` | int | No | 3 | Canonical signature parameter |
+| `childForceExpandWidth` | bool | No | false | Canonical signature parameter |
+| `childForceExpandHeight` | bool | No | false | Canonical signature parameter |
+
+### ui_align_selected
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `alignment` | string | No | "Center" | Canonical signature parameter |
+
+### ui_distribute_selected
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `direction` | string | No | "Horizontal" | Canonical signature parameter |
+
+### ui_create_dropdown
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | "Dropdown" | Canonical signature parameter |
+| `parent` | string | No | null | Canonical signature parameter |
+| `options` | string | No | null | Canonical signature parameter |
+| `width` | float | No | 160 | Canonical signature parameter |
+| `height` | float | No | 30 | Canonical signature parameter |
+
+### ui_create_scrollview
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | "ScrollView" | Canonical signature parameter |
+| `parent` | string | No | null | Canonical signature parameter |
+| `width` | float | No | 300 | Canonical signature parameter |
+| `height` | float | No | 200 | Canonical signature parameter |
+| `horizontal` | bool | No | false | Canonical signature parameter |
+| `vertical` | bool | No | true | Canonical signature parameter |
+| `movementType` | string | No | "Elastic" | Canonical signature parameter |
+
+### ui_create_rawimage
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | "RawImage" | Canonical signature parameter |
+| `parent` | string | No | null | Canonical signature parameter |
+| `texturePath` | string | No | null | Canonical signature parameter |
+| `width` | float | No | 100 | Canonical signature parameter |
+| `height` | float | No | 100 | Canonical signature parameter |
+
+### ui_create_scrollbar
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | "Scrollbar" | Canonical signature parameter |
+| `parent` | string | No | null | Canonical signature parameter |
+| `direction` | string | No | "BottomToTop" | Canonical signature parameter |
+| `value` | float | No | 0 | Canonical signature parameter |
+| `size` | float | No | 0.2f | Canonical signature parameter |
+| `numberOfSteps` | int | No | 0 | Canonical signature parameter |
+
+### ui_set_image
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `type` | string | No | null | Canonical signature parameter |
+| `fillMethod` | string | No | null | Canonical signature parameter |
+| `fillAmount` | float? | No | null | Canonical signature parameter |
+| `fillClockwise` | bool? | No | null | Canonical signature parameter |
+| `fillOrigin` | int? | No | null | Canonical signature parameter |
+| `preserveAspect` | bool? | No | null | Canonical signature parameter |
+| `spritePath` | string | No | null | Canonical signature parameter |
+| `pixelsPerUnitMultiplier` | float? | No | null | Canonical signature parameter |
+
+### ui_add_layout_element
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `minWidth` | float? | No | null | Canonical signature parameter |
+| `minHeight` | float? | No | null | Canonical signature parameter |
+| `preferredWidth` | float? | No | null | Canonical signature parameter |
+| `preferredHeight` | float? | No | null | Canonical signature parameter |
+| `flexibleWidth` | float? | No | null | Canonical signature parameter |
+| `flexibleHeight` | float? | No | null | Canonical signature parameter |
+| `ignoreLayout` | bool? | No | null | Canonical signature parameter |
+| `layoutPriority` | int? | No | null | Canonical signature parameter |
+
+### ui_add_canvas_group
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `alpha` | float? | No | null | Canonical signature parameter |
+| `interactable` | bool? | No | null | Canonical signature parameter |
+| `blocksRaycasts` | bool? | No | null | Canonical signature parameter |
+| `ignoreParentGroups` | bool? | No | null | Canonical signature parameter |
+
+### ui_add_mask
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `maskType` | string | No | "RectMask2D" | Canonical signature parameter |
+| `showMaskGraphic` | bool | No | true | Canonical signature parameter |
+
+### ui_add_outline
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `effectType` | string | No | "Outline" | Canonical signature parameter |
+| `r` | float | No | 0 | Canonical signature parameter |
+| `g` | float | No | 0 | Canonical signature parameter |
+| `b` | float | No | 0 | Canonical signature parameter |
+| `a` | float | No | 0.5f | Canonical signature parameter |
+| `distanceX` | float | No | 1 | Canonical signature parameter |
+| `distanceY` | float | No | -1 | Canonical signature parameter |
+| `useGraphicAlpha` | bool | No | true | Canonical signature parameter |
+
+### ui_configure_selectable
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `transition` | string | No | null | Canonical signature parameter |
+| `interactable` | bool? | No | null | Canonical signature parameter |
+| `navigationMode` | string | No | null | Canonical signature parameter |
+| `normalR` | float? | No | null | Canonical signature parameter |
+| `normalG` | float? | No | null | Canonical signature parameter |
+| `normalB` | float? | No | null | Canonical signature parameter |
+| `highlightedR` | float? | No | null | Canonical signature parameter |
+| `highlightedG` | float? | No | null | Canonical signature parameter |
+| `highlightedB` | float? | No | null | Canonical signature parameter |
+| `pressedR` | float? | No | null | Canonical signature parameter |
+| `pressedG` | float? | No | null | Canonical signature parameter |
+| `pressedB` | float? | No | null | Canonical signature parameter |
+| `disabledR` | float? | No | null | Canonical signature parameter |
+| `disabledG` | float? | No | null | Canonical signature parameter |
+| `disabledB` | float? | No | null | Canonical signature parameter |
+| `colorMultiplier` | float? | No | null | Canonical signature parameter |
+| `fadeDuration` | float? | No | null | Canonical signature parameter |

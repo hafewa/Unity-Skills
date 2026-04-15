@@ -1204,3 +1204,248 @@ Inspect the live VisualElement hierarchy of a UIDocument component in the scene.
 7. **Test in Game view**: USS changes are visible in Game view immediately — no domain reload needed
 8. **Localization**: Match UI text to the user's language. Chinese user → `text="开始"`, English user → `text="Start"`. Keep USS class names in English always
 9. **World Space (Unity 6+)**: Set `renderMode="WorldSpace"` in PanelSettings, then configure `worldCamera` on the UIDocument component in the scene
+
+---
+
+## Canonical Signatures
+
+以下附录以 `SkillsForUnity/Editor/Skills/*Skills.cs` 的真实 `[UnitySkill]` 签名为准，供审计和自动化解析使用。
+
+### uitk_create_uss
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `savePath` | string | Yes | - | Canonical signature parameter |
+| `content` | string | No | null | Canonical signature parameter |
+
+### uitk_create_uxml
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `savePath` | string | Yes | - | Canonical signature parameter |
+| `content` | string | No | null | Canonical signature parameter |
+| `ussPath` | string | No | null | Canonical signature parameter |
+
+### uitk_read_file
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `filePath` | string | Yes | - | Canonical signature parameter |
+
+### uitk_write_file
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `filePath` | string | Yes | - | Canonical signature parameter |
+| `content` | string | Yes | - | Canonical signature parameter |
+
+### uitk_delete_file
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `filePath` | string | Yes | - | Canonical signature parameter |
+
+### uitk_find_files
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `type` | string | No | "all" | Canonical signature parameter |
+| `folder` | string | No | null | Canonical signature parameter |
+| `filter` | string | No | null | Canonical signature parameter |
+| `limit` | int | No | 200 | Canonical signature parameter |
+
+### uitk_create_document
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | "UIDocument" | Canonical signature parameter |
+| `uxmlPath` | string | No | null | Canonical signature parameter |
+| `panelSettingsPath` | string | No | null | Canonical signature parameter |
+| `sortOrder` | int | No | 0 | Canonical signature parameter |
+| `parentName` | string | No | null | Canonical signature parameter |
+| `parentInstanceId` | int | No | 0 | Canonical signature parameter |
+| `parentPath` | string | No | null | Canonical signature parameter |
+
+### uitk_set_document
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `uxmlPath` | string | No | null | Canonical signature parameter |
+| `panelSettingsPath` | string | No | null | Canonical signature parameter |
+| `sortOrder` | int? | No | null | Canonical signature parameter |
+
+### uitk_create_panel_settings
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `savePath` | string | Yes | - | Canonical signature parameter |
+| `scaleMode` | string | No | "ScaleWithScreenSize" | Canonical signature parameter |
+| `referenceResolutionX` | int | No | 1920 | Canonical signature parameter |
+| `referenceResolutionY` | int | No | 1080 | Canonical signature parameter |
+| `screenMatchMode` | string | No | "MatchWidthOrHeight" | Canonical signature parameter |
+| `themeStyleSheetPath` | string | No | null | Canonical signature parameter |
+| `textSettingsPath` | string | No | null | Canonical signature parameter |
+| `targetTexturePath` | string | No | null | Canonical signature parameter |
+| `targetDisplay` | int? | No | null | Canonical signature parameter |
+| `sortOrder` | float? | No | null | Canonical signature parameter |
+| `scale` | float? | No | null | Canonical signature parameter |
+| `match` | float? | No | null | Canonical signature parameter |
+| `referenceDpi` | float? | No | null | Canonical signature parameter |
+| `fallbackDpi` | float? | No | null | Canonical signature parameter |
+| `referenceSpritePixelsPerUnit` | float? | No | null | Canonical signature parameter |
+| `dynamicAtlasMinSize` | int? | No | null | Canonical signature parameter |
+| `dynamicAtlasMaxSize` | int? | No | null | Canonical signature parameter |
+| `dynamicAtlasMaxSubTextureSize` | int? | No | null | Canonical signature parameter |
+| `dynamicAtlasFilters` | string | No | null | Canonical signature parameter |
+| `clearColor` | bool? | No | null | Canonical signature parameter |
+| `colorClearR` | float? | No | null | Canonical signature parameter |
+| `colorClearG` | float? | No | null | Canonical signature parameter |
+| `colorClearB` | float? | No | null | Canonical signature parameter |
+| `colorClearA` | float? | No | null | Canonical signature parameter |
+| `clearDepthStencil` | bool? | No | null | Canonical signature parameter |
+| `renderMode` | string | No | null | Canonical signature parameter |
+| `forceGammaRendering` | bool? | No | null | Canonical signature parameter |
+| `bindingLogLevel` | string | No | null | Canonical signature parameter |
+| `colliderUpdateMode` | string | No | null | Canonical signature parameter |
+| `colliderIsTrigger` | bool? | No | null | Canonical signature parameter |
+| `vertexBudget` | int? | No | null | Canonical signature parameter |
+| `textureSlotCount` | int? | No | null | Canonical signature parameter |
+
+### uitk_get_panel_settings
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+
+### uitk_set_panel_settings
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `assetPath` | string | Yes | - | Canonical signature parameter |
+| `scaleMode` | string | No | null | Canonical signature parameter |
+| `referenceResolutionX` | int? | No | null | Canonical signature parameter |
+| `referenceResolutionY` | int? | No | null | Canonical signature parameter |
+| `screenMatchMode` | string | No | null | Canonical signature parameter |
+| `themeStyleSheetPath` | string | No | null | Canonical signature parameter |
+| `textSettingsPath` | string | No | null | Canonical signature parameter |
+| `targetTexturePath` | string | No | null | Canonical signature parameter |
+| `targetDisplay` | int? | No | null | Canonical signature parameter |
+| `sortOrder` | float? | No | null | Canonical signature parameter |
+| `scale` | float? | No | null | Canonical signature parameter |
+| `match` | float? | No | null | Canonical signature parameter |
+| `referenceDpi` | float? | No | null | Canonical signature parameter |
+| `fallbackDpi` | float? | No | null | Canonical signature parameter |
+| `referenceSpritePixelsPerUnit` | float? | No | null | Canonical signature parameter |
+| `dynamicAtlasMinSize` | int? | No | null | Canonical signature parameter |
+| `dynamicAtlasMaxSize` | int? | No | null | Canonical signature parameter |
+| `dynamicAtlasMaxSubTextureSize` | int? | No | null | Canonical signature parameter |
+| `dynamicAtlasFilters` | string | No | null | Canonical signature parameter |
+| `clearColor` | bool? | No | null | Canonical signature parameter |
+| `colorClearR` | float? | No | null | Canonical signature parameter |
+| `colorClearG` | float? | No | null | Canonical signature parameter |
+| `colorClearB` | float? | No | null | Canonical signature parameter |
+| `colorClearA` | float? | No | null | Canonical signature parameter |
+| `clearDepthStencil` | bool? | No | null | Canonical signature parameter |
+| `renderMode` | string | No | null | Canonical signature parameter |
+| `forceGammaRendering` | bool? | No | null | Canonical signature parameter |
+| `bindingLogLevel` | string | No | null | Canonical signature parameter |
+| `colliderUpdateMode` | string | No | null | Canonical signature parameter |
+| `colliderIsTrigger` | bool? | No | null | Canonical signature parameter |
+| `vertexBudget` | int? | No | null | Canonical signature parameter |
+| `textureSlotCount` | int? | No | null | Canonical signature parameter |
+
+### uitk_list_documents
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| - | - | - | - | No parameters |
+
+### uitk_inspect_uxml
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `filePath` | string | Yes | - | Canonical signature parameter |
+| `depth` | int | No | 5 | Canonical signature parameter |
+
+### uitk_create_from_template
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `template` | string | Yes | - | Canonical signature parameter |
+| `savePath` | string | Yes | - | Canonical signature parameter |
+| `name` | string | No | null | Canonical signature parameter |
+
+### uitk_create_batch
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `items` | string | Yes | - | Canonical signature parameter |
+
+### uitk_add_element
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `filePath` | string | Yes | - | Canonical signature parameter |
+| `elementType` | string | Yes | - | Canonical signature parameter |
+| `parentName` | string | No | null | Canonical signature parameter |
+| `elementName` | string | No | null | Canonical signature parameter |
+| `text` | string | No | null | Canonical signature parameter |
+| `classes` | string | No | null | Canonical signature parameter |
+| `style` | string | No | null | Canonical signature parameter |
+| `bindingPath` | string | No | null | Canonical signature parameter |
+
+### uitk_remove_element
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `filePath` | string | Yes | - | Canonical signature parameter |
+| `elementName` | string | Yes | - | Canonical signature parameter |
+
+### uitk_modify_element
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `filePath` | string | Yes | - | Canonical signature parameter |
+| `elementName` | string | Yes | - | Canonical signature parameter |
+| `text` | string | No | null | Canonical signature parameter |
+| `classes` | string | No | null | Canonical signature parameter |
+| `style` | string | No | null | Canonical signature parameter |
+| `newName` | string | No | null | Canonical signature parameter |
+| `bindingPath` | string | No | null | Canonical signature parameter |
+| `setAttribute` | string | No | null | Canonical signature parameter |
+| `setAttributeValue` | string | No | null | Canonical signature parameter |
+
+### uitk_clone_element
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `filePath` | string | Yes | - | Canonical signature parameter |
+| `elementName` | string | Yes | - | Canonical signature parameter |
+| `newName` | string | No | null | Canonical signature parameter |
+
+### uitk_add_uss_rule
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `filePath` | string | Yes | - | Canonical signature parameter |
+| `selector` | string | Yes | - | Canonical signature parameter |
+| `properties` | string | Yes | - | Canonical signature parameter |
+
+### uitk_remove_uss_rule
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `filePath` | string | Yes | - | Canonical signature parameter |
+| `selector` | string | Yes | - | Canonical signature parameter |
+
+### uitk_list_uss_variables
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `filePath` | string | Yes | - | Canonical signature parameter |
+
+### uitk_create_editor_window
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `savePath` | string | Yes | - | Canonical signature parameter |
+| `className` | string | Yes | - | Canonical signature parameter |
+| `windowTitle` | string | No | null | Canonical signature parameter |
+| `uxmlPath` | string | No | null | Canonical signature parameter |
+| `ussPath` | string | No | null | Canonical signature parameter |
+| `menuPath` | string | No | null | Canonical signature parameter |
+
+### uitk_create_runtime_ui
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `savePath` | string | Yes | - | Canonical signature parameter |
+| `className` | string | Yes | - | Canonical signature parameter |
+| `elementQueries` | string | No | null | Canonical signature parameter |
+
+### uitk_inspect_document
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `name` | string | No | null | Canonical signature parameter |
+| `instanceId` | int | No | 0 | Canonical signature parameter |
+| `path` | string | No | null | Canonical signature parameter |
+| `depth` | int | No | 5 | Canonical signature parameter |

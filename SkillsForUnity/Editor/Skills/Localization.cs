@@ -148,7 +148,7 @@ namespace UnitySkills
 
             // Debug Enhance Skills
             {"debug_log", "Write a message to the Unity console"},
-            {"editor_set_pause_on_error", "Enable or disable 'Error Pause' in Play mode"},
+            {"console_set_pause_on_error_legacy_editor_alias", "Enable or disable 'Error Pause' in Play mode"},
             
             // Perception Skills (NextGen)
             {"scene_analyze", "Analyze the active scene and project context in one pass"},
@@ -949,7 +949,7 @@ namespace UnitySkills
 
             // Debug Enhance Skills
             {"debug_log", "向 Unity 控制台写入消息"},
-            {"editor_set_pause_on_error", "启用/禁用播放模式下的'报错暂停'"},
+            {"console_set_pause_on_error_legacy_editor_alias", "启用/禁用播放模式下的'报错暂停'"},
             
             // Perception Skills (NextGen)
             {"scene_analyze", "一次性分析当前场景与项目上下文"},
