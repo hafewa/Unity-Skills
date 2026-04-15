@@ -96,6 +96,23 @@ namespace UnitySkills
         /// <summary>True if this skill has no side effects (pure query/read).</summary>
         public bool ReadOnly { get; set; }
 
+        // === Risk & impact metadata ===
+
+        /// <summary>True if this skill modifies the scene hierarchy (GameObjects, Components, transforms).</summary>
+        public bool MutatesScene { get; set; }
+
+        /// <summary>True if this skill creates, modifies, or deletes on-disk assets.</summary>
+        public bool MutatesAssets { get; set; }
+
+        /// <summary>True if this skill may trigger script compilation or Domain Reload.</summary>
+        public bool MayTriggerReload { get; set; }
+
+        /// <summary>Risk level: "low" (default), "medium", or "high".</summary>
+        public string RiskLevel { get; set; } = "low";
+
+        /// <summary>Optional packages this skill requires (e.g. "com.unity.probuilder").</summary>
+        public string[] RequiresPackages { get; set; }
+
         public UnitySkillAttribute() { }
 
         public UnitySkillAttribute(string name, string description = null)

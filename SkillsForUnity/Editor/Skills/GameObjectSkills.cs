@@ -91,7 +91,8 @@ namespace UnitySkills
             Category = SkillCategory.GameObject, Operation = SkillOperation.Create,
             Tags = new[] { "primitive", "empty", "hierarchy" },
             Outputs = new[] { "gameObject", "instanceId", "path", "position" },
-            TracksWorkflow = true)]
+            TracksWorkflow = true,
+            MutatesScene = true, RiskLevel = "medium")]
         public static object GameObjectCreate(string name, string primitiveType = null, float x = 0, float y = 0, float z = 0,
             string parentName = null, int parentInstanceId = 0, string parentPath = null)
         {
@@ -207,7 +208,8 @@ namespace UnitySkills
             Tags = new[] { "destroy", "remove", "hierarchy" },
             Outputs = new[] { "deleted" },
             RequiresInput = new[] { "gameObject" },
-            TracksWorkflow = true)]
+            TracksWorkflow = true,
+            MutatesScene = true, RiskLevel = "medium")]
         public static object GameObjectDelete(string name = null, int instanceId = 0, string path = null)
         {
             var (go, error) = GameObjectFinder.FindOrError(name, instanceId, path);

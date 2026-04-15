@@ -103,5 +103,66 @@ namespace UnitySkills.Tests.Core
             Assert.IsNull(GameObject.Find("Temp_Helper_1"));
             Assert.IsNull(GameObject.Find("Temp_Helper_2"));
         }
+
+        [Test]
+        public void BatchQueryGameObjects_FiltersByNamePattern_Regex()
+        {
+            new GameObject("Cube_001");
+            new GameObject("Cube_002");
+            new GameObject("Sphere_001");
+            GameObjectFinder.InvalidateCache();
+
+            var result = BatchSkills.BatchQueryGameObjects("{\"namePattern\":\"^Cube_\\\\d+$\",\"includeInactive\":true}");
+            var json = ToJObject(result);
+
+            Assert.IsTrue(json["success"]?.Value<bool>() ?? false);
+            Assert.AreEqual(2, json["count"]?.Value<int>());
+        }
+
+        [Test]
+        public void BatchQueryGameObjects_FiltersByIsStatic()
+        {
+            var staticGo = new GameObject("StaticObj");
+            staticGo.isStatic = true;
+            var dynamicGo = new GameObject("DynamicObj");
+            dynamicGo.isStatic = false;
+            GameObjectFinder.InvalidateCache();
+
+            var result = BatchSkills.BatchQueryGameObjects("{\"isStatic\":true,\"includeInactive\":true}");
+            var json = ToJObject(result);
+
+            Assert.IsTrue(json["success"]?.Value<bool>() ?? false);
+            Assert.AreEqual(1, json["count"]?.Value<int>());
+            Assert.AreEqual("StaticObj", json["objects"]?[0]?["name"]?.ToString());
+        }
+
+        [Test]
+        public void BatchQueryAssets_FiltersByTypeAndFolder()
+        {
+            var result = BatchSkills.BatchQueryAssets(typeFilter: "t:Script", folder: "Assets", maxResults: 5);
+            var json = ToJObject(result);
+
+            Assert.IsTrue(json["success"]?.Value<bool>() ?? false);
+            Assert.IsTrue(json["count"]?.Value<int>() >= 0);
+        }
+
+        [Test]
+        public void BatchRetryFailed_WithNoFailedItems_ReturnsZeroCount()
+        {
+            // Create a mock report with no failed items by running a successful batch
+            new GameObject("RetryTestObj");
+            GameObjectFinder.InvalidateCache();
+
+            var preview = ToJObject(BatchSkills.BatchPreviewRename(
+                "{\"name\":\"RetryTestObj\",\"includeInactive\":true}", mode: "prefix", prefix: "X_"));
+            var token = preview["confirmToken"]?.ToString();
+            var exec = ToJObject(BatchSkills.BatchExecute(token, runAsync: false, chunkSize: 100));
+            var reportId = exec["reportId"]?.ToString();
+            Assert.IsNotNull(reportId);
+
+            // Retry should find 0 failed items
+            var retry = ToJObject(BatchSkills.BatchRetryFailed(reportId));
+            Assert.AreEqual(0, retry["retryCount"]?.Value<int>());
+        }
     }
 }

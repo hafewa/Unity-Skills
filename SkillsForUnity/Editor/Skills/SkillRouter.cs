@@ -47,6 +47,12 @@ namespace UnitySkills
             public string[] Outputs;
             public string[] RequiresInput;
             public bool ReadOnly;
+            // Risk & impact metadata
+            public bool MutatesScene;
+            public bool MutatesAssets;
+            public bool MayTriggerReload;
+            public string RiskLevel;
+            public string[] RequiresPackages;
         }
 
         private static volatile Dictionary<string, SkillInfo> _skills;
@@ -236,7 +242,12 @@ namespace UnitySkills
                                 Tags = attr.Tags,
                                 Outputs = attr.Outputs,
                                 RequiresInput = attr.RequiresInput,
-                                ReadOnly = attr.ReadOnly
+                                ReadOnly = attr.ReadOnly,
+                                MutatesScene = attr.MutatesScene,
+                                MutatesAssets = attr.MutatesAssets,
+                                MayTriggerReload = attr.MayTriggerReload,
+                                RiskLevel = attr.RiskLevel ?? "low",
+                                RequiresPackages = attr.RequiresPackages
                             };
                             if (attr.TracksWorkflow)
                                 trackedSkills.Add(name);
@@ -298,6 +309,11 @@ namespace UnitySkills
                         requiresInput = s.RequiresInput,
                         readOnly = s.ReadOnly,
                         tracksWorkflow = s.TracksWorkflow,
+                        mutatesScene = s.MutatesScene,
+                        mutatesAssets = s.MutatesAssets,
+                        mayTriggerReload = s.MayTriggerReload,
+                        riskLevel = s.RiskLevel,
+                        requiresPackages = s.RequiresPackages,
                         parameters = s.Parameters.Select(p => new
                         {
                             name = p.Name,
@@ -310,6 +326,13 @@ namespace UnitySkills
                 _cachedManifest = JsonConvert.SerializeObject(manifest, Formatting.Indented, _jsonSettings);
                 return _cachedManifest;
             }
+        }
+
+        /// <summary>Returns true if a skill with the given name is registered.</summary>
+        public static bool HasSkill(string name)
+        {
+            Initialize();
+            return !string.IsNullOrEmpty(name) && _skills.ContainsKey(name);
         }
 
         public static string Execute(string name, string json)
@@ -493,7 +516,12 @@ namespace UnitySkills
                         outputs = skill.Outputs,
                         requiresInput = skill.RequiresInput,
                         readOnly = skill.ReadOnly,
-                        tracksWorkflow = skill.TracksWorkflow
+                        tracksWorkflow = skill.TracksWorkflow,
+                        mutatesScene = skill.MutatesScene,
+                        mutatesAssets = skill.MutatesAssets,
+                        mayTriggerReload = skill.MayTriggerReload,
+                        riskLevel = skill.RiskLevel,
+                        requiresPackages = skill.RequiresPackages
                     },
                     parameters = validation.ParameterDetails,
                     validation = new
@@ -507,7 +535,11 @@ namespace UnitySkills
                     {
                         readOnly = skill.ReadOnly,
                         tracksWorkflow = skill.TracksWorkflow,
-                        operation = FormatOperation(skill.Operation)
+                        operation = FormatOperation(skill.Operation),
+                        mutatesScene = skill.MutatesScene,
+                        mutatesAssets = skill.MutatesAssets,
+                        mayTriggerReload = skill.MayTriggerReload,
+                        riskLevel = skill.RiskLevel
                     },
                     note = "No execution performed"
                 }, Formatting.Indented, _jsonSettings);

@@ -43,7 +43,8 @@ namespace UnitySkills
             Category = SkillCategory.Package, Operation = SkillOperation.Execute,
             Tags = new[] { "package", "install", "upm", "add", "job" },
             Outputs = new[] { "status", "message", "jobId" },
-            RequiresInput = new[] { "packageId" })]
+            RequiresInput = new[] { "packageId" },
+            MutatesAssets = true, MayTriggerReload = true, RiskLevel = "high")]
         public static object PackageInstall(string packageId, string version = null)
         {
             if (Validate.Required(packageId, "packageId") is object err) return err;
@@ -88,7 +89,8 @@ namespace UnitySkills
             Category = SkillCategory.Package, Operation = SkillOperation.Execute | SkillOperation.Delete,
             Tags = new[] { "package", "remove", "uninstall", "upm", "job" },
             Outputs = new[] { "message", "jobId" },
-            RequiresInput = new[] { "packageId" })]
+            RequiresInput = new[] { "packageId" },
+            MutatesAssets = true, MayTriggerReload = true, RiskLevel = "high")]
         public static object PackageRemove(string packageId)
         {
             if (Validate.Required(packageId, "packageId") is object err) return err;

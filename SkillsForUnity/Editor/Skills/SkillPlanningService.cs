@@ -364,6 +364,24 @@ namespace UnitySkills
                 case "asset_move_batch":
                     AnalyzeAssetMoveBatch(validation, plan);
                     break;
+                case "scene_create":
+                    AnalyzeSceneCreate(validation, plan);
+                    break;
+                case "scene_save":
+                    AnalyzeSceneSave(validation, plan);
+                    break;
+                case "scene_load":
+                    AnalyzeSceneLoad(validation, plan);
+                    break;
+                case "prefab_create":
+                    AnalyzePrefabCreate(validation, plan);
+                    break;
+                case "prefab_apply":
+                    AnalyzePrefabApply(validation, plan);
+                    break;
+                case "script_create":
+                    AnalyzeScriptCreate(validation, plan);
+                    break;
             }
         }
 
@@ -1682,6 +1700,298 @@ namespace UnitySkills
                             ["items"] = itemPlans.ToArray()
                         }
                     });
+            }
+        }
+
+        // ==================================================================================
+        // Scene Semantic Planners
+        // ==================================================================================
+
+        private static void AnalyzeSceneCreate(SkillRouter.ParameterValidationResult validation, IDictionary<string, object> plan)
+        {
+            var args = validation.Args;
+            var scenePath = GetStringArg(args, "scenePath");
+            AddErrorFromValidation(validation, Validate.Required(scenePath, "scenePath"), "scenePath");
+            AddErrorFromValidation(validation, Validate.SafePath(scenePath, "scenePath"), "scenePath");
+
+            if (!string.IsNullOrWhiteSpace(scenePath))
+            {
+                if (!scenePath.EndsWith(".unity", StringComparison.OrdinalIgnoreCase))
+                    scenePath += ".unity";
+
+                if (File.Exists(scenePath))
+                    AddWarning(validation, $"Scene already exists at '{scenePath}' and will be overwritten.");
+            }
+
+            if (plan != null)
+            {
+                MarkSemantic(plan);
+                SetPlanDetails(plan,
+                    new List<object>
+                    {
+                        new Dictionary<string, object>
+                        {
+                            ["index"] = 1,
+                            ["action"] = "Create Scene",
+                            ["target"] = scenePath ?? "(unresolved)"
+                        }
+                    },
+                    create: new List<object>
+                    {
+                        new Dictionary<string, object>
+                        {
+                            ["type"] = "Scene",
+                            ["path"] = scenePath
+                        }
+                    });
+
+                plan["serverAvailability"] = ServerAvailabilityHelper.CreateTransientUnavailableNotice(
+                    "Creating a new scene may briefly interrupt the connection.",
+                    alwaysInclude: false, retryAfterSeconds: 3);
+            }
+        }
+
+        private static void AnalyzeSceneSave(SkillRouter.ParameterValidationResult validation, IDictionary<string, object> plan)
+        {
+            var args = validation.Args;
+            var scenePath = GetStringArg(args, "scenePath");
+
+            if (!string.IsNullOrWhiteSpace(scenePath))
+                AddErrorFromValidation(validation, Validate.SafePath(scenePath, "scenePath"), "scenePath");
+
+            var activeScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            var targetPath = !string.IsNullOrWhiteSpace(scenePath) ? scenePath : activeScene.path;
+
+            if (string.IsNullOrWhiteSpace(targetPath))
+                AddWarning(validation, "Scene has no path yet. A Save As dialog may appear or a default path will be used.");
+
+            if (plan != null)
+            {
+                MarkSemantic(plan);
+                SetPlanDetails(plan,
+                    new List<object>
+                    {
+                        new Dictionary<string, object>
+                        {
+                            ["index"] = 1,
+                            ["action"] = "Save Scene",
+                            ["target"] = targetPath ?? activeScene.name
+                        }
+                    },
+                    modify: new List<object>
+                    {
+                        new Dictionary<string, object>
+                        {
+                            ["type"] = "Scene",
+                            ["path"] = targetPath,
+                            ["sceneName"] = activeScene.name,
+                            ["isDirty"] = activeScene.isDirty
+                        }
+                    });
+            }
+        }
+
+        private static void AnalyzeSceneLoad(SkillRouter.ParameterValidationResult validation, IDictionary<string, object> plan)
+        {
+            var args = validation.Args;
+            var scenePath = GetStringArg(args, "scenePath");
+            AddErrorFromValidation(validation, Validate.Required(scenePath, "scenePath"), "scenePath");
+
+            if (!string.IsNullOrWhiteSpace(scenePath) && !File.Exists(scenePath))
+                AddSemanticError(validation, "scenePath", $"Scene file not found: {scenePath}");
+
+            var additive = args?["additive"]?.Value<bool>() ?? false;
+            var activeScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+
+            if (!additive && activeScene.isDirty)
+                AddWarning(validation, $"Active scene '{activeScene.name}' has unsaved changes that will be lost.");
+
+            if (plan != null)
+            {
+                MarkSemantic(plan);
+                SetPlanDetails(plan,
+                    new List<object>
+                    {
+                        new Dictionary<string, object>
+                        {
+                            ["index"] = 1,
+                            ["action"] = additive ? "Load Scene (Additive)" : "Load Scene",
+                            ["target"] = scenePath ?? "(unresolved)",
+                            ["additive"] = additive
+                        }
+                    },
+                    modify: additive ? null : new List<object>
+                    {
+                        new Dictionary<string, object>
+                        {
+                            ["type"] = "ActiveScene",
+                            ["from"] = activeScene.path,
+                            ["to"] = scenePath
+                        }
+                    });
+
+                if (!additive)
+                {
+                    plan["serverAvailability"] = ServerAvailabilityHelper.CreateTransientUnavailableNotice(
+                        "Loading a scene (non-additive) replaces the current scene and may briefly interrupt the connection.",
+                        alwaysInclude: false, retryAfterSeconds: 3);
+                }
+            }
+        }
+
+        // ==================================================================================
+        // Prefab Semantic Planners
+        // ==================================================================================
+
+        private static void AnalyzePrefabCreate(SkillRouter.ParameterValidationResult validation, IDictionary<string, object> plan)
+        {
+            var args = validation.Args;
+            var savePath = GetStringArg(args, "savePath");
+            AddErrorFromValidation(validation, Validate.Required(savePath, "savePath"), "savePath");
+            AddErrorFromValidation(validation, Validate.SafePath(savePath, "savePath"), "savePath");
+
+            var (go, goErr) = ResolveGameObject(args);
+            if (goErr != null)
+                AddSemanticError(validation, "gameObject", ExtractError(goErr));
+
+            if (!string.IsNullOrWhiteSpace(savePath))
+            {
+                if (!savePath.EndsWith(".prefab", StringComparison.OrdinalIgnoreCase))
+                    savePath += ".prefab";
+                if (File.Exists(savePath))
+                    AddWarning(validation, $"Prefab already exists at '{savePath}' and will be overwritten.");
+            }
+
+            if (plan != null)
+            {
+                MarkSemantic(plan);
+                var goName = go != null ? go.name : GetStringArg(args, "name", "path");
+                SetPlanDetails(plan,
+                    new List<object>
+                    {
+                        new Dictionary<string, object>
+                        {
+                            ["index"] = 1,
+                            ["action"] = "Create Prefab",
+                            ["source"] = goName ?? "(unresolved)",
+                            ["target"] = savePath ?? "(unresolved)"
+                        }
+                    },
+                    create: new List<object>
+                    {
+                        new Dictionary<string, object>
+                        {
+                            ["type"] = "Prefab",
+                            ["path"] = savePath,
+                            ["sourceName"] = goName
+                        }
+                    });
+            }
+        }
+
+        private static void AnalyzePrefabApply(SkillRouter.ParameterValidationResult validation, IDictionary<string, object> plan)
+        {
+            var args = validation.Args;
+            var (go, goErr) = ResolveGameObject(args);
+            if (goErr != null)
+            {
+                AddSemanticError(validation, "gameObject", ExtractError(goErr));
+            }
+            else if (go != null)
+            {
+                if (!UnityEditor.PrefabUtility.IsPartOfPrefabInstance(go))
+                    AddSemanticError(validation, "gameObject", $"'{go.name}' is not a prefab instance.");
+            }
+
+            if (plan != null)
+            {
+                MarkSemantic(plan);
+                var goName = go != null ? go.name : GetStringArg(args, "name", "path");
+                string prefabPath = null;
+                if (go != null && UnityEditor.PrefabUtility.IsPartOfPrefabInstance(go))
+                {
+                    var prefab = UnityEditor.PrefabUtility.GetCorrespondingObjectFromSource(go);
+                    if (prefab != null)
+                        prefabPath = AssetDatabase.GetAssetPath(prefab);
+                }
+
+                SetPlanDetails(plan,
+                    new List<object>
+                    {
+                        new Dictionary<string, object>
+                        {
+                            ["index"] = 1,
+                            ["action"] = "Apply Prefab Overrides",
+                            ["source"] = goName ?? "(unresolved)",
+                            ["target"] = prefabPath ?? "(unresolved)"
+                        }
+                    },
+                    modify: new List<object>
+                    {
+                        new Dictionary<string, object>
+                        {
+                            ["type"] = "Prefab",
+                            ["instanceName"] = goName,
+                            ["prefabPath"] = prefabPath
+                        }
+                    });
+            }
+        }
+
+        // ==================================================================================
+        // Script Semantic Planners
+        // ==================================================================================
+
+        private static void AnalyzeScriptCreate(SkillRouter.ParameterValidationResult validation, IDictionary<string, object> plan)
+        {
+            var args = validation.Args;
+            var scriptName = GetStringArg(args, "scriptName", "name");
+            var folder = GetStringArg(args, "folder") ?? "Assets/Scripts";
+
+            if (string.IsNullOrWhiteSpace(scriptName))
+                AddSemanticError(validation, "scriptName", "scriptName or name is required.");
+
+            if (!string.IsNullOrWhiteSpace(scriptName))
+            {
+                // Validate C# class name
+                if (!System.Text.RegularExpressions.Regex.IsMatch(scriptName, @"^[A-Za-z_][A-Za-z0-9_]*$"))
+                    AddSemanticError(validation, "scriptName", $"'{scriptName}' is not a valid C# class name.");
+
+                var predictedPath = Path.Combine(folder, scriptName + ".cs").Replace('\\', '/');
+                if (File.Exists(predictedPath))
+                    AddWarning(validation, $"Script already exists at '{predictedPath}' and will be overwritten.");
+            }
+
+            if (plan != null)
+            {
+                MarkSemantic(plan);
+                var predictedPath = !string.IsNullOrWhiteSpace(scriptName)
+                    ? Path.Combine(folder, scriptName + ".cs").Replace('\\', '/')
+                    : "(unresolved)";
+
+                SetPlanDetails(plan,
+                    new List<object>
+                    {
+                        new Dictionary<string, object>
+                        {
+                            ["index"] = 1,
+                            ["action"] = "Create C# Script",
+                            ["target"] = predictedPath
+                        }
+                    },
+                    create: new List<object>
+                    {
+                        new Dictionary<string, object>
+                        {
+                            ["type"] = "Script",
+                            ["path"] = predictedPath,
+                            ["className"] = scriptName
+                        }
+                    });
+
+                plan["serverAvailability"] = ServerAvailabilityHelper.CreateTransientUnavailableNotice(
+                    "Creating a C# script triggers compilation and Domain Reload. The REST server will be briefly unavailable.",
+                    alwaysInclude: true, retryAfterSeconds: 10);
             }
         }
 

@@ -7,11 +7,13 @@ namespace UnitySkills
     internal class BatchTargetQuery
     {
         public string name;
+        public string namePattern;
         public string path;
         public int instanceId;
         public string tag;
         public string layer;
         public bool? active;
+        public bool? isStatic;
         public string componentType;
         public string sceneName;
         public string parentPath;
@@ -145,6 +147,17 @@ namespace UnitySkills
         public Dictionary<string, object> resultData = new Dictionary<string, object>();
         public List<BatchReportItemRecord> items = new List<BatchReportItemRecord>();
         public List<BatchJobLogEntry> logs = new List<BatchJobLogEntry>();
+        public string progressStage;
+        public List<BatchJobProgressEvent> progressEvents = new List<BatchJobProgressEvent>();
+    }
+
+    [Serializable]
+    internal class BatchJobProgressEvent
+    {
+        public long timestamp;
+        public int progress;
+        public string stage;
+        public string description;
     }
 
     [Serializable]

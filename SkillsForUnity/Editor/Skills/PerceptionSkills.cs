@@ -449,6 +449,7 @@ namespace UnitySkills
             return suggestions
                 .GroupBy(s => GetPropertyValue<string>(s, "skill", string.Empty), StringComparer.OrdinalIgnoreCase)
                 .Select(g => g.OrderBy(s => GetPropertyValue<int>(s, "priority", 99)).First())
+                .Where(s => SkillRouter.HasSkill(GetPropertyValue<string>(s, "skill", string.Empty)))
                 .OrderBy(s => GetPropertyValue<int>(s, "priority", 99))
                 .Cast<object>()
                 .ToList();
@@ -2788,6 +2789,161 @@ namespace UnitySkills
                     suggestion = "Scene looks good", fixSkill = (string)null });
 
             return new { success = true, hintCount = hints.Count, hints };
+        }
+
+        // ==================================================================================
+        // Scene Diff
+        // ==================================================================================
+
+        [UnitySkill("scene_diff", "Compare current scene against a previous snapshot to see what changed. Call without snapshotJson to capture a snapshot; call with snapshotJson to compare.",
+            Category = SkillCategory.Perception, Operation = SkillOperation.Analyze,
+            Tags = new[] { "scene", "diff", "compare", "before-after", "changes", "snapshot" },
+            Outputs = new[] { "mode", "snapshot", "added", "removed", "modified", "summary" },
+            ReadOnly = true)]
+        public static object SceneDiff(string snapshotJson = null)
+        {
+            if (string.IsNullOrWhiteSpace(snapshotJson))
+            {
+                // Capture mode: return current scene snapshot
+                var snapshot = CaptureSceneSnapshot();
+                return new
+                {
+                    success = true,
+                    mode = "snapshot",
+                    sceneName = SceneManager.GetActiveScene().name,
+                    objectCount = snapshot.Count,
+                    snapshot
+                };
+            }
+
+            // Compare mode: parse previous snapshot and diff
+            JArray previousSnapshot;
+            try { previousSnapshot = JArray.Parse(snapshotJson); }
+            catch (Exception ex) { return new { error = $"Invalid snapshotJson: {ex.Message}" }; }
+
+            var previousMap = new Dictionary<int, JObject>();
+            foreach (var item in previousSnapshot)
+            {
+                var id = item["instanceId"]?.Value<int>() ?? 0;
+                if (id != 0)
+                    previousMap[id] = item as JObject;
+            }
+
+            var currentSnapshot = CaptureSceneSnapshot();
+            var currentMap = new Dictionary<int, Dictionary<string, object>>();
+            foreach (var item in currentSnapshot)
+            {
+                var id = GetPropertyValue<int>(item, "instanceId", 0);
+                if (id != 0)
+                    currentMap[id] = item as Dictionary<string, object> ?? new Dictionary<string, object>();
+            }
+
+            var added = new List<object>();
+            var removed = new List<object>();
+            var modified = new List<object>();
+
+            // Find added (in current but not in previous)
+            foreach (var kvp in currentMap)
+            {
+                if (!previousMap.ContainsKey(kvp.Key))
+                {
+                    added.Add(new
+                    {
+                        instanceId = kvp.Key,
+                        name = GetPropertyValue<string>(kvp.Value, "name", ""),
+                        path = GetPropertyValue<string>(kvp.Value, "path", "")
+                    });
+                }
+            }
+
+            // Find removed (in previous but not in current)
+            foreach (var kvp in previousMap)
+            {
+                if (!currentMap.ContainsKey(kvp.Key))
+                {
+                    removed.Add(new
+                    {
+                        instanceId = kvp.Key,
+                        name = kvp.Value["name"]?.ToString() ?? "",
+                        path = kvp.Value["path"]?.ToString() ?? ""
+                    });
+                }
+            }
+
+            // Find modified (same instanceId, different properties)
+            foreach (var kvp in currentMap)
+            {
+                if (previousMap.TryGetValue(kvp.Key, out var prev))
+                {
+                    var changes = new List<string>();
+                    var curName = GetPropertyValue<string>(kvp.Value, "name", "");
+                    var prevName = prev["name"]?.ToString() ?? "";
+                    if (!string.Equals(curName, prevName, StringComparison.Ordinal))
+                        changes.Add("name");
+
+                    var curPath = GetPropertyValue<string>(kvp.Value, "path", "");
+                    var prevPath = prev["path"]?.ToString() ?? "";
+                    if (!string.Equals(curPath, prevPath, StringComparison.Ordinal))
+                        changes.Add("path");
+
+                    var curComponents = GetPropertyValue<string>(kvp.Value, "componentList", "");
+                    var prevComponents = prev["componentList"]?.ToString() ?? "";
+                    if (!string.Equals(curComponents, prevComponents, StringComparison.Ordinal))
+                        changes.Add("components");
+
+                    if (changes.Count > 0)
+                    {
+                        modified.Add(new
+                        {
+                            instanceId = kvp.Key,
+                            name = curName,
+                            path = curPath,
+                            changes = changes.ToArray()
+                        });
+                    }
+                }
+            }
+
+            return new
+            {
+                success = true,
+                mode = "diff",
+                sceneName = SceneManager.GetActiveScene().name,
+                summary = new { addedCount = added.Count, removedCount = removed.Count, modifiedCount = modified.Count },
+                added = added.ToArray(),
+                removed = removed.ToArray(),
+                modified = modified.ToArray()
+            };
+        }
+
+        private static List<object> CaptureSceneSnapshot()
+        {
+            var snapshot = new List<object>();
+            var allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
+            foreach (var go in allObjects)
+            {
+                if (go.hideFlags != HideFlags.None) continue;
+                if (!go.scene.isLoaded) continue;
+
+                var components = go.GetComponents<Component>()
+                    .Where(c => c != null)
+                    .Select(c => c.GetType().Name)
+                    .ToArray();
+                var t = go.transform;
+
+                snapshot.Add(new Dictionary<string, object>
+                {
+                    ["instanceId"] = go.GetInstanceID(),
+                    ["name"] = go.name,
+                    ["path"] = GameObjectFinder.GetPath(go),
+                    ["componentList"] = string.Join(",", components),
+                    ["components"] = components,
+                    ["position"] = new { x = t.localPosition.x, y = t.localPosition.y, z = t.localPosition.z },
+                    ["rotation"] = new { x = t.localEulerAngles.x, y = t.localEulerAngles.y, z = t.localEulerAngles.z },
+                    ["scale"] = new { x = t.localScale.x, y = t.localScale.y, z = t.localScale.z }
+                });
+            }
+            return snapshot;
         }
     }
 }

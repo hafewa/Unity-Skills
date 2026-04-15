@@ -59,7 +59,8 @@ namespace UnitySkills
             Tags = new[] { "add", "attach", "behaviour" },
             Outputs = new[] { "gameObject", "instanceId", "component", "fullTypeName" },
             RequiresInput = new[] { "gameObject" },
-            TracksWorkflow = true)]
+            TracksWorkflow = true,
+            MutatesScene = true)]
         public static object ComponentAdd(string name = null, int instanceId = 0, string path = null, string componentType = null)
         {
             if (Validate.Required(componentType, "componentType") is object err) return err;
@@ -149,7 +150,8 @@ namespace UnitySkills
             Tags = new[] { "remove", "detach", "destroy" },
             Outputs = new[] { "gameObject", "removed" },
             RequiresInput = new[] { "gameObject", "component" },
-            TracksWorkflow = true)]
+            TracksWorkflow = true,
+            MutatesScene = true)]
         public static object ComponentRemove(string name = null, int instanceId = 0, string path = null, string componentType = null, int componentIndex = 0)
         {
             if (Validate.Required(componentType, "componentType") is object err) return err;

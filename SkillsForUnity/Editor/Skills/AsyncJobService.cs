@@ -253,6 +253,14 @@ namespace UnitySkills
             job.progress = 100;
             job.updatedAt = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             job.resultSummary = error;
+            job.progressStage = stage;
+            job.progressEvents.Add(new BatchJobProgressEvent
+            {
+                timestamp = job.updatedAt,
+                progress = 100,
+                stage = stage,
+                description = error
+            });
             AddLog(job, "error", stage, error, "job_failed");
             BatchPersistence.UpsertJob(job);
         }
@@ -271,6 +279,14 @@ namespace UnitySkills
             job.progress = 100;
             job.updatedAt = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             job.resultSummary = summary;
+            job.progressStage = "completed";
+            job.progressEvents.Add(new BatchJobProgressEvent
+            {
+                timestamp = job.updatedAt,
+                progress = 100,
+                stage = "completed",
+                description = summary
+            });
             AddLog(job, "info", "completed", summary, "job_completed");
             BatchPersistence.UpsertJob(job);
         }
@@ -428,7 +444,47 @@ namespace UnitySkills
 
             if (job.status == "reconnecting")
             {
-                FailJob(job.jobId, "Test run tracking was interrupted by domain reload and could not be resumed.", "failed_reconnect");
+                var testMode = GetMetadataString(job, "testMode", "EditMode");
+                var elapsed = DateTimeOffset.UtcNow.ToUnixTimeSeconds() - job.startedAt;
+
+                // PlayMode tests cannot recover after Domain Reload (Unity limitation)
+                // Also fail if more than 5 minutes have elapsed
+                if (string.Equals(testMode, "PlayMode", StringComparison.OrdinalIgnoreCase) || elapsed > 300)
+                {
+                    FailJob(job.jobId,
+                        $"Test run ({testMode}) cannot recover after domain reload.",
+                        "failed_reload_unrecoverable");
+                    return;
+                }
+
+                // EditMode tests: attempt to restart
+                try
+                {
+                    var filter = GetMetadataString(job, "filter");
+                    var mode = TestMode.EditMode;
+                    var api = ScriptableObject.CreateInstance<TestRunnerApi>();
+                    var callbacks = new TestCallbacks(job.jobId);
+                    api.RegisterCallbacks(callbacks);
+
+                    var filterObj = new Filter { testMode = mode };
+                    if (!string.IsNullOrEmpty(filter))
+                        filterObj.testNames = new[] { filter };
+
+                    TestRuntimeJobs[job.jobId] = new TestRuntimeContext
+                    {
+                        Api = api,
+                        Callbacks = callbacks
+                    };
+
+                    Transition(job, "running", "restarting", 10,
+                        "Restarting EditMode tests after domain reload.", "test_recovery");
+
+                    api.Execute(new ExecutionSettings(filterObj));
+                }
+                catch (Exception ex)
+                {
+                    FailJob(job.jobId, $"Failed to restart tests: {ex.Message}", "failed_reconnect");
+                }
             }
         }
 
@@ -445,8 +501,18 @@ namespace UnitySkills
             job.progress = Math.Max(job.progress, progress);
             job.updatedAt = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             job.resultSummary = summary;
+            job.progressStage = stage;
             if (shouldLog)
+            {
                 AddLog(job, "info", stage, summary, code);
+                job.progressEvents.Add(new BatchJobProgressEvent
+                {
+                    timestamp = job.updatedAt,
+                    progress = job.progress,
+                    stage = stage,
+                    description = summary
+                });
+            }
             BatchPersistence.UpsertJob(job);
         }
 

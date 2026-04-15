@@ -52,6 +52,75 @@ namespace UnitySkills
             return new { success = true, count = targets.Count, summary = $"Matched {targets.Count} objects with component filters.", query, objects };
         }
 
+        [UnitySkill("batch_query_assets", "Query project assets by type, path pattern, and labels.",
+            Category = SkillCategory.Workflow, Operation = SkillOperation.Query,
+            Tags = new[] { "batch", "query", "asset", "filter", "project" },
+            Outputs = new[] { "count", "assets", "summary" },
+            ReadOnly = true)]
+        public static object BatchQueryAssets(
+            string searchFilter = null,
+            string folder = "Assets",
+            string typeFilter = null,
+            string namePattern = null,
+            string labelFilter = null,
+            int maxResults = 200)
+        {
+            var filterParts = new List<string>();
+            if (!string.IsNullOrWhiteSpace(searchFilter))
+                filterParts.Add(searchFilter);
+            if (!string.IsNullOrWhiteSpace(typeFilter))
+                filterParts.Add(typeFilter.StartsWith("t:") ? typeFilter : $"t:{typeFilter}");
+            if (!string.IsNullOrWhiteSpace(labelFilter))
+                filterParts.Add(labelFilter.StartsWith("l:") ? labelFilter : $"l:{labelFilter}");
+
+            var filter = string.Join(" ", filterParts);
+            var searchFolders = string.IsNullOrWhiteSpace(folder) ? new string[0] : new[] { folder };
+
+            string[] guids;
+            try { guids = AssetDatabase.FindAssets(filter, searchFolders); }
+            catch (Exception ex) { return new { error = $"FindAssets failed: {ex.Message}" }; }
+
+            System.Text.RegularExpressions.Regex regex = null;
+            if (!string.IsNullOrWhiteSpace(namePattern))
+            {
+                try { regex = new System.Text.RegularExpressions.Regex(namePattern, System.Text.RegularExpressions.RegexOptions.IgnoreCase); }
+                catch (Exception ex) { return new { error = $"Invalid namePattern regex: {ex.Message}" }; }
+            }
+
+            var assets = new List<object>();
+            foreach (var guid in guids)
+            {
+                if (assets.Count >= maxResults)
+                    break;
+
+                var assetPath = AssetDatabase.GUIDToAssetPath(guid);
+                var fileName = System.IO.Path.GetFileNameWithoutExtension(assetPath);
+
+                if (regex != null && !regex.IsMatch(fileName))
+                    continue;
+
+                var assetType = AssetDatabase.GetMainAssetTypeAtPath(assetPath);
+                assets.Add(new
+                {
+                    path = assetPath,
+                    name = fileName,
+                    type = assetType?.Name ?? "Unknown",
+                    guid
+                });
+            }
+
+            return new
+            {
+                success = true,
+                count = assets.Count,
+                totalMatched = guids.Length,
+                summary = $"Found {assets.Count} assets" + (guids.Length > assets.Count ? $" (showing {assets.Count} of {guids.Length})" : "") + ".",
+                filter,
+                folder,
+                assets = assets.ToArray()
+            };
+        }
+
         [UnitySkill("batch_preview_rename", "Preview batch renaming. mode supports prefix/suffix/replace/regex_replace.",
             Category = SkillCategory.Workflow, Operation = SkillOperation.Analyze,
             Tags = new[] { "batch", "preview", "rename" },
@@ -235,6 +304,8 @@ namespace UnitySkills
                 status = job.status,
                 progress = job.progress,
                 currentStage = job.currentStage,
+                progressStage = job.progressStage,
+                recentProgress = job.progressEvents?.Skip(System.Math.Max(0, job.progressEvents.Count - 5)).ToArray(),
                 startedAt = job.startedAt,
                 updatedAt = job.updatedAt,
                 warnings = job.warnings,
@@ -426,6 +497,89 @@ namespace UnitySkills
             return SavePreview(preview, sampleLimit);
         }
 
+        [UnitySkill("batch_retry_failed", "Re-run only the failed items from a previous batch execution report.",
+            Category = SkillCategory.Workflow, Operation = SkillOperation.Execute,
+            Tags = new[] { "batch", "retry", "failed", "recovery" },
+            Outputs = new[] { "jobId", "retryCount", "originalReportId" })]
+        public static object BatchRetryFailed(string reportId, bool runAsync = true, int chunkSize = 100)
+        {
+            if (Validate.Required(reportId, "reportId") is object err)
+                return err;
+
+            var report = BatchPersistence.GetReport(reportId);
+            if (report == null)
+                return new { error = $"Report not found: {reportId}" };
+
+            var failedItems = report.items?.Where(i =>
+                string.Equals(i.status, "failed", StringComparison.OrdinalIgnoreCase)).ToList();
+
+            if (failedItems == null || failedItems.Count == 0)
+                return new { success = true, retryCount = 0, message = "No failed items to retry.", originalReportId = reportId };
+
+            // Reconstruct a preview envelope from failed items
+            var preview = new BatchPreviewEnvelope
+            {
+                confirmToken = Guid.NewGuid().ToString("N").Substring(0, 12),
+                kind = report.kind ?? "retry",
+                createdAt = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                expiresAt = DateTimeOffset.UtcNow.ToUnixTimeSeconds() + 3600,
+                riskLevel = "medium",
+                summary = $"Retry {failedItems.Count} failed items from report {reportId}.",
+                rollbackAvailable = report.rollbackAvailable,
+                mayCreateJob = true,
+                targetCount = failedItems.Count,
+                executableCount = failedItems.Count,
+                skipCount = 0,
+                operation = new Dictionary<string, object>
+                {
+                    ["retrySource"] = reportId
+                }
+            };
+
+            foreach (var fi in failedItems)
+            {
+                preview.items.Add(new BatchPreviewItem
+                {
+                    action = fi.action ?? report.kind,
+                    targetName = fi.targetName,
+                    targetPath = fi.targetPath,
+                    instanceId = fi.instanceId,
+                    willChange = true,
+                    valid = true
+                });
+            }
+
+            BatchPersistence.SavePreview(preview);
+
+            // Immediately execute
+            var job = BatchJobService.Start(preview, chunkSize);
+            if (!runAsync && job != null)
+            {
+                var result = BatchJobService.Wait(job.jobId, 30000);
+                if (result != null && result.status == "completed")
+                {
+                    return new
+                    {
+                        success = true,
+                        status = "completed",
+                        retryCount = failedItems.Count,
+                        originalReportId = reportId,
+                        reportId = result.reportId,
+                        resultSummary = result.resultSummary
+                    };
+                }
+            }
+
+            return new
+            {
+                success = true,
+                status = "accepted",
+                jobId = job?.jobId,
+                retryCount = failedItems.Count,
+                originalReportId = reportId
+            };
+        }
+
         internal static BatchReportItemRecord ExecutePreviewItem(BatchPreviewEnvelope preview, BatchPreviewItem item, int chunkIndex)
         {
             switch (preview.kind)
@@ -518,6 +672,15 @@ namespace UnitySkills
                 results = results.Where(go => string.Equals(GameObjectFinder.GetCachedPath(go), query.path.Trim(), StringComparison.OrdinalIgnoreCase));
             if (!string.IsNullOrWhiteSpace(query.name))
                 results = results.Where(go => go.name.IndexOf(query.name, StringComparison.OrdinalIgnoreCase) >= 0);
+            if (!string.IsNullOrWhiteSpace(query.namePattern))
+            {
+                System.Text.RegularExpressions.Regex regex;
+                try { regex = new System.Text.RegularExpressions.Regex(query.namePattern, System.Text.RegularExpressions.RegexOptions.IgnoreCase); }
+                catch { return new List<GameObject>(); }
+                results = results.Where(go => regex.IsMatch(go.name));
+            }
+            if (query.isStatic.HasValue)
+                results = results.Where(go => go.isStatic == query.isStatic.Value);
             if (!string.IsNullOrWhiteSpace(query.tag))
             {
                 results = results.Where(go =>

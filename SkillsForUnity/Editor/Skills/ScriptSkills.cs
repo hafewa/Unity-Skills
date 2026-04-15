@@ -19,7 +19,8 @@ namespace UnitySkills
         [UnitySkill("script_create", "Create a new C# script. Before generating gameplay scripts, actively consider coupling, performance, and maintainability. Optional: namespace", TracksWorkflow = true,
             Category = SkillCategory.Script, Operation = SkillOperation.Create,
             Tags = new[] { "script", "csharp", "create", "template" },
-            Outputs = new[] { "path", "className", "namespaceName", "jobId" })]
+            Outputs = new[] { "path", "className", "namespaceName", "jobId" },
+            MutatesAssets = true, MayTriggerReload = true, RiskLevel = "high")]
         public static object ScriptCreate(
             string scriptName = null,
             string name = null,

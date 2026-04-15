@@ -165,6 +165,7 @@ namespace UnitySkills
             {"scene_context", "Generate a comprehensive scene snapshot for AI coding assistance"},
             {"scene_export_report", "Export complete scene structure and dependency report as markdown"},
             {"scene_dependency_analyze", "Analyze object dependency graph and impact of changes"},
+            {"scene_diff", "Compare current scene against a previous snapshot to see what changed"},
 
             // Smart Skills
             {"smart_scene_query", "Find objects based on component property values (SQL-like)"},
@@ -403,6 +404,7 @@ namespace UnitySkills
             {"workflow_task_start", "Start a new persistent workflow task/session"},
             {"workflow_undo_task", "Undo changes from a specific task (restore to previous state)"},
             {"workflow_undone_list", "List all undone tasks that can be redone"},
+            {"workflow_plan", "Generate a combined execution plan for multiple skills"},
 
             // Profiler Skills
             {"profiler_get_memory", "Get memory usage overview (total allocated, reserved, mono heap)"},
@@ -962,6 +964,7 @@ namespace UnitySkills
             {"scene_context", "生成完整场景快照供 AI 编码辅助使用"},
             {"scene_export_report", "导出完整场景结构与依赖关系报告为 Markdown 文件"},
             {"scene_dependency_analyze", "分析对象依赖关系图与变更影响"},
+            {"scene_diff", "对比当前场景与之前的快照，查看变更内容"},
 
             // Smart Skills
             {"smart_scene_query", "基于组件属性值查找对象 (类SQL查询)"},
@@ -1084,6 +1087,7 @@ namespace UnitySkills
             {"workflow_session_undo", "撤销整个会话的所有更改"},
             {"workflow_session_list", "列出所有会话历史"},
             {"workflow_session_status", "获取当前会话状态"},
+            {"workflow_plan", "为多个技能生成组合执行计划"},
 
             // Editor Skills (Complete)
             {"editor_get_context", "获取完整编辑器上下文 (选中对象/资源/场景/窗口)"},

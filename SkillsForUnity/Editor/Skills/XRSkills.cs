@@ -167,7 +167,8 @@ namespace UnitySkills
         [UnitySkill("xr_setup_rig", "Create a complete XR Origin rig with Camera, Left/Right Controllers", TracksWorkflow = true,
             Category = SkillCategory.XR, Operation = SkillOperation.Create,
             Tags = new[] { "xr", "rig", "origin", "camera", "controllers" },
-            Outputs = new[] { "name", "instanceId", "xriVersion", "hierarchy", "position" })]
+            Outputs = new[] { "name", "instanceId", "xriVersion", "hierarchy", "position" },
+            MutatesScene = true, RiskLevel = "medium", RequiresPackages = new[] { "com.unity.xr.interaction.toolkit" })]
         public static object XRSetupRig(
             string name = "XR Origin",
             float x = 0, float y = 0, float z = 0,
@@ -264,7 +265,8 @@ namespace UnitySkills
         [UnitySkill("xr_setup_interaction_manager", "Add or get XRInteractionManager in the scene", TracksWorkflow = true,
             Category = SkillCategory.XR, Operation = SkillOperation.Create,
             Tags = new[] { "xr", "interaction", "manager", "setup" },
-            Outputs = new[] { "alreadyExists", "name", "instanceId" })]
+            Outputs = new[] { "alreadyExists", "name", "instanceId" },
+            MutatesScene = true, RiskLevel = "medium", RequiresPackages = new[] { "com.unity.xr.interaction.toolkit" })]
         public static object XRSetupInteractionManager(string name = null)
         {
 #if !XRI
@@ -304,7 +306,8 @@ namespace UnitySkills
         [UnitySkill("xr_setup_event_system", "Set up XR-compatible EventSystem (replace StandaloneInputModule with XRUIInputModule)", TracksWorkflow = true,
             Category = SkillCategory.XR, Operation = SkillOperation.Create | SkillOperation.Modify,
             Tags = new[] { "xr", "eventsystem", "input", "ui" },
-            Outputs = new[] { "name", "instanceId", "created", "removedStandaloneInputModule", "addedXRUIInputModule" })]
+            Outputs = new[] { "name", "instanceId", "created", "removedStandaloneInputModule", "addedXRUIInputModule" },
+            MutatesScene = true, RiskLevel = "medium", RequiresPackages = new[] { "com.unity.xr.interaction.toolkit" })]
         public static object XRSetupEventSystem()
         {
 #if !XRI

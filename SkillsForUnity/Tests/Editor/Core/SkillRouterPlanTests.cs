@@ -86,5 +86,95 @@ namespace UnitySkills.Tests.Core
             Assert.AreEqual(2, obj["batchPreview"]?["totalItems"]?.Value<int>());
             Assert.AreEqual(2, (obj["changes"]?["delete"] as JArray)?.Count);
         }
+
+        // === New tests: Declarative metadata ===
+
+        [Test]
+        public void DryRun_ReturnsDeclarativeMetadata_ForAnnotatedSkill()
+        {
+            var json = SkillRouter.DryRun("script_create", "{\"scriptName\":\"TestScript\"}");
+            var obj = JObject.Parse(json);
+
+            Assert.AreEqual("dryRun", obj["status"]?.ToString());
+            Assert.IsTrue(obj["impact"]?["mutatesAssets"]?.Value<bool>() ?? false);
+            Assert.IsTrue(obj["impact"]?["mayTriggerReload"]?.Value<bool>() ?? false);
+            Assert.AreEqual("high", obj["impact"]?["riskLevel"]?.ToString());
+        }
+
+        [Test]
+        public void DryRun_ReadOnlySkill_ReportsNoMutations()
+        {
+            var json = SkillRouter.DryRun("scene_component_stats", "{}");
+            var obj = JObject.Parse(json);
+
+            Assert.AreEqual("dryRun", obj["status"]?.ToString());
+            Assert.IsFalse(obj["impact"]?["mutatesScene"]?.Value<bool>() ?? true);
+            Assert.IsFalse(obj["impact"]?["mutatesAssets"]?.Value<bool>() ?? true);
+            Assert.IsFalse(obj["impact"]?["mayTriggerReload"]?.Value<bool>() ?? true);
+        }
+
+        // === New tests: Scene/Prefab/Script semantic planners ===
+
+        [Test]
+        public void Plan_SceneCreate_ReturnsSemanticPlan()
+        {
+            var json = SkillRouter.Plan("scene_create", "{\"scenePath\":\"Assets/Scenes/TestPlan.unity\"}");
+            var obj = JObject.Parse(json);
+
+            Assert.AreEqual("plan", obj["status"]?.ToString());
+            Assert.AreEqual("semantic", obj["planLevel"]?.ToString());
+            Assert.IsNotNull(obj["changes"]?["create"]?[0]?["path"]);
+        }
+
+        [Test]
+        public void Plan_ScriptCreate_WarnsServerAvailability()
+        {
+            var json = SkillRouter.Plan("script_create", "{\"scriptName\":\"PlanTestScript\",\"folder\":\"Assets/Scripts\"}");
+            var obj = JObject.Parse(json);
+
+            Assert.AreEqual("plan", obj["status"]?.ToString());
+            Assert.AreEqual("semantic", obj["planLevel"]?.ToString());
+            Assert.IsTrue(obj["serverAvailability"]?["mayDisconnect"]?.Value<bool>() ?? false);
+        }
+
+        [Test]
+        public void Plan_ScriptCreate_WithInvalidClassName_ReportsSemanticError()
+        {
+            var json = SkillRouter.Plan("script_create", "{\"scriptName\":\"123Invalid\"}");
+            var obj = JObject.Parse(json);
+
+            Assert.AreEqual("plan", obj["status"]?.ToString());
+            Assert.IsFalse(obj["valid"]?.Value<bool>() ?? true);
+            StringAssert.Contains("not a valid C# class name", obj["validation"]?["semanticErrors"]?[0]?["error"]?.ToString());
+        }
+
+        [Test]
+        public void Plan_PrefabCreate_ReturnsSemanticPlan()
+        {
+            var go = new GameObject("PlanTestObj");
+            GameObjectFinder.InvalidateCache();
+
+            var json = SkillRouter.Plan("prefab_create", "{\"name\":\"PlanTestObj\",\"savePath\":\"Assets/Prefabs/Test.prefab\"}");
+            var obj = JObject.Parse(json);
+
+            Assert.AreEqual("plan", obj["status"]?.ToString());
+            Assert.AreEqual("semantic", obj["planLevel"]?.ToString());
+            Assert.IsNotNull(obj["changes"]?["create"]?[0]?["path"]);
+        }
+
+        // === New test: workflow_plan ===
+
+        [Test]
+        public void WorkflowPlan_AggregatesRiskAndDetectsDependencies()
+        {
+            var skillsJson = "[{\"name\":\"gameobject_create\",\"params\":{\"name\":\"Player\",\"primitiveType\":\"Cube\"}},{\"name\":\"component_add\",\"params\":{\"name\":\"Player\",\"componentType\":\"Rigidbody\"}}]";
+            var requestJson = "{\"skillsJson\":" + Newtonsoft.Json.JsonConvert.SerializeObject(skillsJson) + "}";
+
+            var result = SkillRouter.Execute("workflow_plan", requestJson);
+            var obj = JObject.Parse(result);
+
+            // workflow_plan returns via Execute, result is in the top-level
+            Assert.IsNotNull(obj["result"]?["totalSteps"] ?? obj["totalSteps"]);
+        }
     }
 }

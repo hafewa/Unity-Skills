@@ -15,7 +15,8 @@ namespace UnitySkills
             Category = SkillCategory.Asset, Operation = SkillOperation.Create,
             Tags = new[] { "import", "copy", "external" },
             Outputs = new[] { "imported", "assetPath" },
-            TracksWorkflow = true)]
+            TracksWorkflow = true,
+            MutatesAssets = true, RiskLevel = "medium")]
         public static object AssetImport(string sourcePath, string destinationPath)
         {
             if (!File.Exists(sourcePath) && !Directory.Exists(sourcePath))
@@ -63,7 +64,8 @@ namespace UnitySkills
             Tags = new[] { "delete", "remove", "cleanup" },
             Outputs = new[] { "deleted" },
             RequiresInput = new[] { "assetPath" },
-            TracksWorkflow = true)]
+            TracksWorkflow = true,
+            MutatesAssets = true, RiskLevel = "medium")]
         public static object AssetDelete(string assetPath)
         {
             if (Validate.SafePath(assetPath, "assetPath", isDelete: true) is object err) return err;
@@ -104,7 +106,8 @@ namespace UnitySkills
             Tags = new[] { "move", "rename", "reorganize" },
             Outputs = new[] { "from", "to" },
             RequiresInput = new[] { "assetPath" },
-            TracksWorkflow = true)]
+            TracksWorkflow = true,
+            MutatesAssets = true, RiskLevel = "medium")]
         public static object AssetMove(string sourcePath, string destinationPath)
         {
             if (Validate.SafePath(sourcePath, "sourcePath") is object err1) return err1;
