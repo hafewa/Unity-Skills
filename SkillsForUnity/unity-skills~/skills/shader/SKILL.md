@@ -82,7 +82,7 @@ Find a shader by name.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `shaderName` | string | Yes | Shader name to find |
+| `searchName` | string | Yes | Shader name to find |
 
 **Returns**: `{success, name, path, propertyCount}`
 
@@ -98,8 +98,7 @@ Get all properties defined in a shader.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `shaderName` | string | No* | Shader name |
-| `shaderPath` | string | No* | Shader asset path |
+| `shaderNameOrPath` | string | Yes | Shader name or shader asset path |
 
 **Returns**: `{success, properties: [{name, type, description}]}`
 
@@ -193,90 +192,6 @@ for shader in shaders['shaders']:
 5. Consider mobile compatibility for builds
 
 ---
+## Exact Signatures
 
-## Canonical Signatures
-
-以下附录以 `SkillsForUnity/Editor/Skills/*Skills.cs` 的真实 `[UnitySkill]` 签名为准，供审计和自动化解析使用。
-
-### shader_create
-Create a new shader file
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `shaderName` | string | Yes | - | Canonical signature parameter |
-| `savePath` | string | Yes | - | Canonical signature parameter |
-| `template` | string | No | null | Canonical signature parameter |
-
-### shader_read
-Read shader source code
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `shaderPath` | string | Yes | - | Canonical signature parameter |
-
-### shader_list
-List all shaders in project
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `filter` | string | No | null | Canonical signature parameter |
-| `limit` | int | No | 100 | Canonical signature parameter |
-
-### shader_get_properties
-Get properties of a shader
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `shaderNameOrPath` | string | Yes | - | Canonical signature parameter |
-
-### shader_find
-Find shaders by name
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `searchName` | string | Yes | - | Canonical signature parameter |
-
-### shader_delete
-Delete a shader file
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `shaderPath` | string | Yes | - | Canonical signature parameter |
-
-### shader_check_errors
-Check shader for compilation errors
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `shaderNameOrPath` | string | Yes | - | Canonical signature parameter |
-
-### shader_get_keywords
-Get shader keyword list
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `shaderNameOrPath` | string | Yes | - | Canonical signature parameter |
-
-### shader_get_variant_count
-Get shader variant count for performance analysis
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `shaderNameOrPath` | string | Yes | - | Canonical signature parameter |
-
-### shader_create_urp
-Create a URP shader from template (type: Unlit or Lit)
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `shaderName` | string | Yes | - | Canonical signature parameter |
-| `savePath` | string | Yes | - | Canonical signature parameter |
-| `type` | string | No | "Unlit" | Canonical signature parameter |
-
-### shader_set_global_keyword
-Enable or disable a global shader keyword
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `keyword` | string | Yes | - | Canonical signature parameter |
-| `enabled` | bool | Yes | - | Canonical signature parameter |
+Exact names, parameters, defaults, and returns are defined by `GET /skills/schema` or `unity_skills.get_skill_schema()`, not by this file.

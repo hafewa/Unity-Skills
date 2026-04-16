@@ -12,7 +12,8 @@ Maintain project health - find problems, clean up, and validate your Unity proje
 **Mode**: Full-Auto required
 
 **DO NOT** (common hallucinations):
-- `validation_run` / `validation_check` do not exist → use specific skills: `validation_check_project`, `validation_find_missing_refs`, etc.
+- Validation skill routes use the `validate_*` prefix, not `validation_*`
+- `validation_run` / `validation_check` do not exist → use specific skills such as `validate_scene`, `validate_project_structure`, `validate_missing_references`
 - `validation_fix` does not exist → validation skills report issues; use other modules to fix them
 - `validation_clean` does not exist → use `cleaner` module for cleanup operations
 
@@ -189,84 +190,6 @@ for asset in unused['unusedAssets']:
 6. Regular cleanup prevents project bloat
 
 ---
+## Exact Signatures
 
-## Canonical Signatures
-
-以下附录以 `SkillsForUnity/Editor/Skills/*Skills.cs` 的真实 `[UnitySkill]` 签名为准，供审计和自动化解析使用。
-
-### validate_scene
-Validate current scene for common issues
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `checkMissingScripts` | bool | No | true | Canonical signature parameter |
-| `checkMissingPrefabs` | bool | No | true | Canonical signature parameter |
-| `checkDuplicateNames` | bool | No | true | Canonical signature parameter |
-| `checkEmptyGameObjects` | bool | No | false | Canonical signature parameter |
-
-### validate_find_missing_scripts
-Find all GameObjects with missing scripts
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `searchInPrefabs` | bool | No | true | Canonical signature parameter |
-
-### validate_cleanup_empty_folders
-Find and optionally delete empty folders
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `rootPath` | string | No | "Assets" | Canonical signature parameter |
-| `dryRun` | bool | No | true | Canonical signature parameter |
-
-### validate_find_unused_assets
-Find potentially unused assets
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `assetType` | string | No | "Material" | Canonical signature parameter |
-| `limit` | int | No | 100 | Canonical signature parameter |
-
-### validate_texture_sizes
-Find textures that may need optimization
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `maxRecommendedSize` | int | No | 2048 | Canonical signature parameter |
-| `limit` | int | No | 50 | Canonical signature parameter |
-
-### validate_project_structure
-Get overview of project structure
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `rootPath` | string | No | "Assets" | Canonical signature parameter |
-| `maxDepth` | int | No | 2 | Canonical signature parameter |
-
-### validate_fix_missing_scripts
-Remove missing script components from GameObjects
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `dryRun` | bool | No | true | Canonical signature parameter |
-
-### validate_missing_references
-Find null/missing object references on components in the scene
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `limit` | int | No | 50 | Canonical signature parameter |
-
-### validate_mesh_collider_convex
-Find non-convex MeshColliders (potential performance issue)
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `limit` | int | No | 50 | Canonical signature parameter |
-
-### validate_shader_errors
-Find shaders with compilation errors
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `limit` | int | No | 50 | Canonical signature parameter |
+Exact names, parameters, defaults, and returns are defined by `GET /skills/schema` or `unity_skills.get_skill_schema()`, not by this file.

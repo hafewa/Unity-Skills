@@ -90,9 +90,15 @@ namespace UnitySkills
 
             // 7. Locomotion
             var teleportProvider = XRReflectionHelper.FindFirstOfXRType("TeleportationProvider");
-            var moveProvider = XRReflectionHelper.FindFirstOfXRType("ContinuousMoveProvider");
+            var moveProvider = XRReflectionHelper.FindFirstOfXRType("ActionBasedContinuousMoveProvider")
+                               ?? XRReflectionHelper.FindFirstOfXRType("ContinuousMoveProvider");
+            var turnProvider = XRReflectionHelper.FindFirstOfXRType("ActionBasedSnapTurnProvider")
+                               ?? XRReflectionHelper.FindFirstOfXRType("SnapTurnProvider")
+                               ?? XRReflectionHelper.FindFirstOfXRType("ActionBasedContinuousTurnProvider")
+                               ?? XRReflectionHelper.FindFirstOfXRType("ContinuousTurnProvider");
             info["hasTeleportation"] = teleportProvider != null;
             info["hasContinuousMove"] = moveProvider != null;
+            info["hasTurnProvider"] = turnProvider != null;
 
             // 8. Collider validation — most common XR setup error
             var colliderIssues = new List<string>();
@@ -391,7 +397,9 @@ namespace UnitySkills
                 "XRRayInteractor", "XRDirectInteractor", "XRSocketInteractor", "NearFarInteractor",
                 "XRGrabInteractable", "XRSimpleInteractable",
                 "TeleportationProvider", "TeleportationArea", "TeleportationAnchor",
-                "ContinuousMoveProvider", "SnapTurnProvider", "ContinuousTurnProvider",
+                "ActionBasedContinuousMoveProvider", "ContinuousMoveProvider",
+                "ActionBasedSnapTurnProvider", "SnapTurnProvider",
+                "ActionBasedContinuousTurnProvider", "ContinuousTurnProvider",
                 "TrackedDeviceGraphicRaycaster", "XRUIInputModule",
                 "ActionBasedController", "XRController"
             };

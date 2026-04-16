@@ -1171,6 +1171,13 @@ namespace UnitySkills
                 return;
             }
 
+            if (path == "/skills/schema" && job.HttpMethod == "GET")
+            {
+                job.StatusCode = 200;
+                job.ResponseJson = SkillRouter.GetSchema();
+                return;
+            }
+
             // Skill recommendation by intent
             if (path == "/skills/recommend" && job.HttpMethod == "GET")
             {
@@ -1271,6 +1278,7 @@ namespace UnitySkills
                 endpoints = new[]
                 {
                     "GET /skills",
+                    "GET /skills/schema",
                     "GET /skills/recommend",
                     "GET /skills/chain",
                     "POST /skill/{name}",

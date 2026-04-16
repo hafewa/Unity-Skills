@@ -642,6 +642,20 @@ def get_skills(category: str = None, operation: str = None, tags: str = None,
     except Exception as e:
         return {"status": "error", "error": str(e)}
 
+def get_skill_schema() -> Dict[str, Any]:
+    """Get the canonical machine-readable skill schema.
+
+    This is the preferred source for exact skill names, parameters, and metadata
+    when prompt/token budget matters more than loading large SKILL.md files.
+    """
+    try:
+        client = _get_default_client()
+        response = client._session.get(f"{client.url}/skills/schema", timeout=client.timeout)
+        response.encoding = 'utf-8'
+        return response.json()
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
 
 def find_skills(intent: str, top_n: int = 10) -> Dict[str, Any]:
     """Server-side intent-based skill recommendation.

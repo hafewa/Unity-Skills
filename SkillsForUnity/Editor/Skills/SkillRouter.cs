@@ -14,6 +14,8 @@ namespace UnitySkills
     /// </summary>
     public static class SkillRouter
     {
+        internal const int SkillSchemaVersion = 2;
+
         internal enum RequestMode
         {
             Execute,
@@ -68,6 +70,19 @@ namespace UnitySkills
         private static readonly HashSet<string> _reservedBodyParameters = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "verbose"
+        };
+
+        private static readonly HashSet<string> _transactionlessSkills = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "editor_undo",
+            "editor_redo",
+            "gameobject_create",
+            "history_undo",
+            "history_redo",
+            "workflow_undo_task",
+            "workflow_redo_task",
+            "workflow_revert_task",
+            "workflow_session_undo"
         };
 
         private static readonly Dictionary<string, Dictionary<string, string[]>> _commonParameterSuggestions =
@@ -343,44 +358,17 @@ namespace UnitySkills
             {
                 if (_cachedManifest != null) return _cachedManifest;
 
-                var manifest = new
-                {
-                    version = SkillsLogger.Version,
-                    unityVersion = Application.unityVersion,
-                    totalSkills = _skills.Count,
-                    categories = Enum.GetNames(typeof(SkillCategory)).Where(c => c != "Uncategorized").ToArray(),
-                    operationTypes = Enum.GetNames(typeof(SkillOperation)),
-                    workflowTrackedSkills = _workflowTrackedSkills.OrderBy(name => name).ToArray(),
-                    skills = _skills.Values.Select(s => new
-                    {
-                        name = s.Name,
-                        description = s.Description,
-                        category = s.Category != SkillCategory.Uncategorized ? s.Category.ToString() : null,
-                        operation = FormatOperation(s.Operation),
-                        tags = s.Tags,
-                        outputs = s.Outputs,
-                        requiresInput = s.RequiresInput,
-                        readOnly = s.ReadOnly,
-                        tracksWorkflow = s.TracksWorkflow,
-                        mutatesScene = s.MutatesScene,
-                        mutatesAssets = s.MutatesAssets,
-                        mayTriggerReload = s.MayTriggerReload,
-                        mayEnterPlayMode = s.MayEnterPlayMode,
-                        supportsDryRun = s.SupportsDryRun,
-                        riskLevel = s.RiskLevel,
-                        requiresPackages = s.RequiresPackages,
-                        parameters = s.Parameters.Select(p => new
-                        {
-                            name = p.Name,
-                            type = GetJsonType(p.ParameterType),
-                            required = IsParameterRequired(p),
-                            defaultValue = p.HasDefaultValue ? p.DefaultValue?.ToString() : null
-                        })
-                    })
-                };
+                var manifest = BuildManifest(_skills.Values, filtered: false, filters: null, manifestType: "manifest");
                 _cachedManifest = JsonConvert.SerializeObject(manifest, Formatting.Indented, _jsonSettings);
                 return _cachedManifest;
             }
+        }
+
+        public static string GetSchema()
+        {
+            Initialize();
+            var schema = BuildManifest(_skills.Values, filtered: false, filters: null, manifestType: "schema");
+            return JsonConvert.SerializeObject(schema, Formatting.Indented, _jsonSettings);
         }
 
         /// <summary>Returns true if a skill with the given name is registered.</summary>
@@ -399,6 +387,8 @@ namespace UnitySkills
             }
 
             bool autoStartedWorkflow = false;
+            var wrapWithUndoTransaction = !skill.ReadOnly && !_transactionlessSkills.Contains(name);
+            int undoGroup = -1;
             try
             {
                 var validation = ValidateParameters(skill, json);
@@ -449,10 +439,12 @@ namespace UnitySkills
                 var args = validation.Args;
                 var invoke = validation.InvokeArgs;
 
-                // Transactional Support: Start Undo Group
-                UnityEditor.Undo.IncrementCurrentGroup();
-                UnityEditor.Undo.SetCurrentGroupName($"Skill: {name}");
-                int undoGroup = UnityEditor.Undo.GetCurrentGroup();
+                if (wrapWithUndoTransaction)
+                {
+                    UnityEditor.Undo.IncrementCurrentGroup();
+                    UnityEditor.Undo.SetCurrentGroupName($"Skill: {name}");
+                    undoGroup = UnityEditor.Undo.GetCurrentGroup();
+                }
 
                 // ========== AUTO WORKFLOW RECORDING ==========
                 if (skill.TracksWorkflow && !WorkflowManager.IsRecording)
@@ -479,6 +471,9 @@ namespace UnitySkills
 
                 var result = skill.Method.Invoke(null, invoke);
 
+                if (!skill.ReadOnly)
+                    UnityEditor.Undo.FlushUndoRecordObjects();
+
                 // ========== AUTO WORKFLOW END ==========
                 if (autoStartedWorkflow)
                 {
@@ -491,8 +486,17 @@ namespace UnitySkills
                 }
                 // ========================================
 
-                // Commit transaction
-                UnityEditor.Undo.CollapseUndoOperations(undoGroup);
+                if (wrapWithUndoTransaction)
+                {
+                    // Commit transaction
+                    UnityEditor.Undo.CollapseUndoOperations(undoGroup);
+
+                    // REST-invoked skills do not run through the usual menu/mouse event
+                    // boundaries that advance Unity's undo stack. Move to the next group
+                    // explicitly so editor_undo/editor_redo target the completed mutation.
+                    if (!skill.ReadOnly)
+                        UnityEditor.Undo.IncrementCurrentGroup();
+                }
 
                 // Return a normalized error payload when a skill reports a logical failure.
                 if (SkillResultHelper.TryGetError(result, out string errorText))
@@ -542,8 +546,11 @@ namespace UnitySkills
                 if (autoStartedWorkflow && WorkflowManager.IsRecording)
                     WorkflowManager.EndTask();
 
-                // Revert transaction
-                UnityEditor.Undo.RevertAllInCurrentGroup();
+                if (undoGroup >= 0)
+                {
+                    // Revert transaction
+                    UnityEditor.Undo.RevertAllInCurrentGroup();
+                }
 
                 var inner = ex.InnerException ?? ex;
                 return JsonConvert.SerializeObject(new
@@ -558,8 +565,11 @@ namespace UnitySkills
                 if (autoStartedWorkflow && WorkflowManager.IsRecording)
                     WorkflowManager.EndTask();
 
-                // Revert transaction
-                UnityEditor.Undo.RevertAllInCurrentGroup();
+                if (undoGroup >= 0)
+                {
+                    // Revert transaction
+                    UnityEditor.Undo.RevertAllInCurrentGroup();
+                }
 
                 return JsonConvert.SerializeObject(new
                 {
@@ -748,14 +758,30 @@ namespace UnitySkills
             }
 
             var results = filtered.ToList();
-            var manifest = new
+            var manifest = BuildManifest(results, filtered: true, filters, manifestType: "manifest");
+            return JsonConvert.SerializeObject(manifest, Formatting.Indented, _jsonSettings);
+        }
+
+        private static object BuildManifest(IEnumerable<SkillInfo> skills, bool filtered, Dictionary<string, string> filters, string manifestType)
+        {
+            var skillArray = skills
+                .OrderBy(s => s.Name, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+
+            return new
             {
+                manifestType,
+                schemaVersion = SkillSchemaVersion,
                 version = SkillsLogger.Version,
                 unityVersion = Application.unityVersion,
-                totalSkills = results.Count,
-                filtered = true,
+                totalSkills = skillArray.Length,
+                filtered,
                 filters,
-                skills = results.Select(s => new
+                categories = Enum.GetNames(typeof(SkillCategory)).Where(c => c != "Uncategorized").ToArray(),
+                operationTypes = Enum.GetNames(typeof(SkillOperation)),
+                reservedBodyParameters = _reservedBodyParameters.OrderBy(x => x).ToArray(),
+                workflowTrackedSkills = _workflowTrackedSkills.OrderBy(name => name).ToArray(),
+                skills = skillArray.Select(s => new
                 {
                     name = s.Name,
                     description = s.Description,
@@ -766,16 +792,22 @@ namespace UnitySkills
                     requiresInput = s.RequiresInput,
                     readOnly = s.ReadOnly,
                     tracksWorkflow = s.TracksWorkflow,
+                    mutatesScene = s.MutatesScene,
+                    mutatesAssets = s.MutatesAssets,
+                    mayTriggerReload = s.MayTriggerReload,
+                    mayEnterPlayMode = s.MayEnterPlayMode,
+                    supportsDryRun = s.SupportsDryRun,
+                    riskLevel = s.RiskLevel,
+                    requiresPackages = s.RequiresPackages,
                     parameters = s.Parameters.Select(p => new
                     {
                         name = p.Name,
                         type = GetJsonType(p.ParameterType),
-                        required = !p.HasDefaultValue,
+                        required = IsParameterRequired(p),
                         defaultValue = p.HasDefaultValue ? p.DefaultValue?.ToString() : null
                     })
                 })
             };
-            return JsonConvert.SerializeObject(manifest, Formatting.Indented, _jsonSettings);
         }
 
         // ========== Skill Recommendations ==========

@@ -38,7 +38,7 @@ namespace UnitySkills
 
             var bookmark = new BookmarkData
             {
-                selectedInstanceIds = Selection.instanceIDs,
+                selectedInstanceIds = Selection.instanceIDs ?? Array.Empty<int>(),
                 note = note,
                 createdAt = System.DateTime.Now
             };
@@ -75,7 +75,7 @@ namespace UnitySkills
                 return new { success = false, error = $"Bookmark '{bookmarkName}' not found" };
 
             // Restore selection
-            var validIds = bookmark.selectedInstanceIds
+            var validIds = (bookmark.selectedInstanceIds ?? Array.Empty<int>())
                 .Where(id => EditorUtility.InstanceIDToObject(id) != null)
                 .ToArray();
             Selection.instanceIDs = validIds;
@@ -114,7 +114,7 @@ namespace UnitySkills
             var list = _bookmarks.Select(kv => new
             {
                 name = kv.Key,
-                selectedCount = kv.Value.selectedInstanceIds.Length,
+                selectedCount = (kv.Value.selectedInstanceIds ?? Array.Empty<int>()).Length,
                 hasSceneView = kv.Value.sceneViewPosition.HasValue,
                 note = kv.Value.note,
                 createdAt = kv.Value.createdAt.ToString("HH:mm:ss")
@@ -143,10 +143,13 @@ namespace UnitySkills
         {
             if (steps < 1)
                 return new { success = false, error = "steps must be >= 1" };
+            Undo.FlushUndoRecordObjects();
+            Undo.IncrementCurrentGroup();
             for (int i = 0; i < steps; i++)
             {
                 Undo.PerformUndo();
             }
+            Undo.FlushUndoRecordObjects();
             return new { success = true, undoneSteps = steps };
         }
 
@@ -158,10 +161,13 @@ namespace UnitySkills
         {
             if (steps < 1)
                 return new { success = false, error = "steps must be >= 1" };
+            Undo.FlushUndoRecordObjects();
+            Undo.IncrementCurrentGroup();
             for (int i = 0; i < steps; i++)
             {
                 Undo.PerformRedo();
             }
+            Undo.FlushUndoRecordObjects();
             return new { success = true, redoneSteps = steps };
         }
 

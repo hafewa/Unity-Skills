@@ -245,11 +245,17 @@ namespace UnitySkills.Tests.Core
         {
             var activeScene = SceneManager.GetActiveScene();
             var activeObject = new GameObject("ActiveSceneObject");
+            var activeSaveOk = EditorSceneManager.SaveScene(activeScene, "Assets/CodexTemp/RealValidation/SceneDiffActive.unity");
+            Assert.That(activeSaveOk, Is.True);
 
             var additiveScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);
             var additiveObject = new GameObject("AdditiveSceneObject");
             SceneManager.MoveGameObjectToScene(additiveObject, additiveScene);
-            SceneManager.SetActiveScene(activeScene);
+            var additiveSaveOk = EditorSceneManager.SaveScene(additiveScene, "Assets/CodexTemp/RealValidation/SceneDiffAdditive.unity");
+            Assert.That(additiveSaveOk, Is.True);
+            var setActiveOk = SceneManager.SetActiveScene(activeScene);
+            Assert.That(setActiveOk, Is.True);
+            Assert.That(SceneManager.GetActiveScene().path, Is.EqualTo(activeScene.path));
             GameObjectFinder.InvalidateCache();
 
             var result = PerceptionSkills.SceneDiff();

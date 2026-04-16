@@ -471,7 +471,7 @@ namespace UnitySkills
                 {
                     try 
                     { 
-                        var val = p.GetValue(comp);
+                        var val = ReadPropertyValueSafely(comp, p);
                         return new { 
                             name = p.Name, 
                             type = p.PropertyType.Name, 
@@ -509,6 +509,19 @@ namespace UnitySkills
                 properties = props,
                 fields = fields
             };
+        }
+
+        private static object ReadPropertyValueSafely(Component comp, PropertyInfo property)
+        {
+            if (comp is Renderer renderer)
+            {
+                if (property.Name == "material")
+                    return renderer.sharedMaterial;
+                if (property.Name == "materials")
+                    return renderer.sharedMaterials;
+            }
+
+            return property.GetValue(comp);
         }
 
         #region Type Finding (Enhanced for Third-Party)

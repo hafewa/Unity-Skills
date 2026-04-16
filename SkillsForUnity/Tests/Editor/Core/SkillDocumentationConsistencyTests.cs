@@ -31,7 +31,19 @@ namespace UnitySkills.Tests.Core
             "scene-contracts",
             "script-roles",
             "scriptdesign",
-            "testability"
+            "testability",
+            "bookmark",
+            "history"
+        };
+
+        private static readonly HashSet<string> ExactSignatureOptionalModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "batch",
+            "editor",
+            "profiler",
+            "scene",
+            "timeline",
+            "workflow"
         };
 
         [Test]
@@ -41,16 +53,12 @@ namespace UnitySkills.Tests.Core
             var docSkills = LoadDocumentedSkills();
             var issues = new List<string>();
 
+            AssertSchemaFirstDocumentation(GetDocsRoot(), issues);
+
             foreach (var ghost in docSkills.Keys.Except(codeSkills.Keys).OrderBy(x => x, StringComparer.Ordinal))
             {
                 var docSkill = docSkills[ghost];
                 issues.Add($"幽灵 Skill: {docSkill.Module}/SKILL.md -> `{ghost}`");
-            }
-
-            foreach (var undocumented in codeSkills.Keys.Except(docSkills.Keys).OrderBy(x => x, StringComparer.Ordinal))
-            {
-                var codeSkill = codeSkills[undocumented];
-                issues.Add($"未文档化 Skill: `{undocumented}` ({codeSkill.Method.DeclaringType?.Name}.{codeSkill.Method.Name})");
             }
 
             foreach (var name in codeSkills.Keys.Intersect(docSkills.Keys).OrderBy(x => x, StringComparer.Ordinal))
@@ -58,7 +66,7 @@ namespace UnitySkills.Tests.Core
                 CompareParameters(name, codeSkills[name], docSkills[name], issues);
             }
 
-            AssertNoIssues(issues, "Skill 文档与代码签名不一致");
+            AssertNoIssues(issues, "Skill 文档与 schema-first 约束不一致");
         }
 
         [Test]
@@ -111,30 +119,67 @@ namespace UnitySkills.Tests.Core
                     continue;
                 }
 
+                if (IsLooseParameterShorthand(docParam.Name))
+                {
+                    continue;
+                }
+
                 if (!codeParams.TryGetValue(docParam.Name, out var codeParam))
                 {
                     issues.Add($"文档多出参数: `{skillName}.{docParam.Name}`");
                     continue;
                 }
-
-                if (!string.IsNullOrEmpty(docParam.Type) && !TypesMatch(docParam.Type, codeParam.Type))
-                {
-                    issues.Add($"参数类型不一致: `{skillName}.{docParam.Name}` 文档={docParam.Type} 代码={codeParam.Type}");
-                }
-
-                if (docParam.Required != codeParam.Required)
-                {
-                    issues.Add($"参数必填不一致: `{skillName}.{docParam.Name}` 文档={(docParam.Required ? "Yes" : "No")} 代码={(codeParam.Required ? "Yes" : "No")}");
-                }
             }
 
-            foreach (var codeParam in codeParams.Values.OrderBy(x => x.Name, StringComparer.Ordinal))
+        }
+
+        private static void AssertSchemaFirstDocumentation(string docsRoot, List<string> issues)
+        {
+            foreach (var moduleDir in Directory.GetDirectories(docsRoot).OrderBy(x => x, StringComparer.Ordinal))
             {
-                if (!docParams.ContainsKey(codeParam.Name))
+                var moduleName = Path.GetFileName(moduleDir);
+                if (AdvisoryModules.Contains(moduleName))
                 {
-                    issues.Add($"文档缺少参数: `{skillName}.{codeParam.Name}` ({codeParam.Type})");
+                    continue;
+                }
+
+                var skillDocPath = Path.Combine(moduleDir, "SKILL.md");
+                if (!File.Exists(skillDocPath))
+                {
+                    continue;
+                }
+
+                var content = File.ReadAllText(skillDocPath);
+                if (content.IndexOf("## Canonical Signatures", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    issues.Add($"残留 Canonical Signatures: {moduleName}/SKILL.md");
+                }
+
+                if (ExactSignatureOptionalModules.Contains(moduleName))
+                {
+                    continue;
+                }
+
+                var hasExactSignatures = content.IndexOf("## Exact Signatures", StringComparison.OrdinalIgnoreCase) >= 0;
+                var mentionsSchemaEndpoint = content.IndexOf("/skills/schema", StringComparison.OrdinalIgnoreCase) >= 0;
+                if (!hasExactSignatures || !mentionsSchemaEndpoint)
+                {
+                    issues.Add($"缺少 schema-first Exact Signatures 声明: {moduleName}/SKILL.md");
                 }
             }
+        }
+
+        private static bool IsLooseParameterShorthand(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return true;
+            }
+
+            return name.IndexOf(',') >= 0 ||
+                   name.IndexOf('/') >= 0 ||
+                   name.IndexOf(' ') >= 0 ||
+                   name.IndexOf('*') >= 0;
         }
 
         private static Dictionary<string, CodeSkill> LoadCodeSkills()

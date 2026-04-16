@@ -2972,7 +2972,19 @@ namespace UnitySkills
             if (!activeScene.IsValid() || !activeScene.isLoaded)
                 return snapshot;
 
-            foreach (var root in activeScene.GetRootGameObjects())
+            var rootObjects = Resources.FindObjectsOfTypeAll<GameObject>()
+                .Where(go =>
+                    go != null &&
+                    go.hideFlags == HideFlags.None &&
+                    !EditorUtility.IsPersistent(go) &&
+                    go.scene.IsValid() &&
+                    go.scene.handle == activeScene.handle &&
+                    go.transform.parent == null)
+                .OrderBy(go => go.transform.GetSiblingIndex())
+                .ThenBy(go => go.name, StringComparer.Ordinal)
+                .ToArray();
+
+            foreach (var root in rootObjects)
             {
                 CaptureSceneSnapshotRecursive(root, activeScene, snapshot);
             }

@@ -89,7 +89,10 @@ namespace UnitySkills
             Outputs = new[] { "message" })]
         public static object EditorUndo()
         {
+            Undo.FlushUndoRecordObjects();
+            Undo.IncrementCurrentGroup();
             Undo.PerformUndo();
+            Undo.FlushUndoRecordObjects();
             return new { success = true, message = "Undo performed" };
         }
 
@@ -99,7 +102,10 @@ namespace UnitySkills
             Outputs = new[] { "message" })]
         public static object EditorRedo()
         {
+            Undo.FlushUndoRecordObjects();
+            Undo.IncrementCurrentGroup();
             Undo.PerformRedo();
+            Undo.FlushUndoRecordObjects();
             return new { success = true, message = "Redo performed" };
         }
 

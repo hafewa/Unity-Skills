@@ -70,7 +70,9 @@ Add a parameter to a controller.
 | `controllerPath` | string | Yes | - | Controller asset path |
 | `paramName` | string | Yes | - | Parameter name |
 | `paramType` | string | Yes | - | float/int/bool/trigger |
-| `defaultValue` | any | No | 0/false | Initial value |
+| `defaultFloat` | float | No | 0 | Initial float value |
+| `defaultInt` | int | No | 0 | Initial int value |
+| `defaultBool` | bool | No | false | Initial bool value |
 
 ### animator_get_parameters
 Get all parameters from a controller.
@@ -174,11 +176,11 @@ unity_skills.call_skill("animator_create_controller",
 # 2. Add parameters
 unity_skills.call_skill("animator_add_parameter",
     controllerPath="Assets/Animations/PlayerController.controller",
-    paramName="Speed", paramType="float", defaultValue=0
+    paramName="Speed", paramType="float", defaultFloat=0
 )
 unity_skills.call_skill("animator_add_parameter",
     controllerPath="Assets/Animations/PlayerController.controller",
-    paramName="IsGrounded", paramType="bool", defaultValue=True
+    paramName="IsGrounded", paramType="bool", defaultBool=True
 )
 unity_skills.call_skill("animator_add_parameter",
     controllerPath="Assets/Animations/PlayerController.controller",
@@ -215,109 +217,6 @@ unity_skills.call_skill("animator_play", name="Player", stateName="Idle")
 6. States must exist in controller before playing
 
 ---
+## Exact Signatures
 
-## Canonical Signatures
-
-以下附录以 `SkillsForUnity/Editor/Skills/*Skills.cs` 的真实 `[UnitySkill]` 签名为准，供审计和自动化解析使用。
-
-### animator_create_controller
-Create a new Animator Controller
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `name` | string | Yes | - | Canonical signature parameter |
-| `folder` | string | No | "Assets/Animations" | Canonical signature parameter |
-
-### animator_add_parameter
-Add a parameter to an Animator Controller
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `controllerPath` | string | Yes | - | Canonical signature parameter |
-| `paramName` | string | Yes | - | Canonical signature parameter |
-| `paramType` | string | No | "float" | Canonical signature parameter |
-| `defaultFloat` | float | No | 0 | Canonical signature parameter |
-| `defaultInt` | int | No | 0 | Canonical signature parameter |
-| `defaultBool` | bool | No | false | Canonical signature parameter |
-
-### animator_get_parameters
-Get all parameters from an Animator Controller
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `controllerPath` | string | Yes | - | Canonical signature parameter |
-
-### animator_set_parameter
-Set a parameter value on a GameObject's Animator (supports name/instanceId/path)
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `name` | string | No | null | Canonical signature parameter |
-| `instanceId` | int | No | 0 | Canonical signature parameter |
-| `path` | string | No | null | Canonical signature parameter |
-| `paramName` | string | No | null | Canonical signature parameter |
-| `paramType` | string | No | "float" | Canonical signature parameter |
-| `floatValue` | float | No | 0 | Canonical signature parameter |
-| `intValue` | int | No | 0 | Canonical signature parameter |
-| `boolValue` | bool | No | false | Canonical signature parameter |
-
-### animator_play
-Play an animation state on a GameObject (supports name/instanceId/path)
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `name` | string | No | null | Canonical signature parameter |
-| `instanceId` | int | No | 0 | Canonical signature parameter |
-| `path` | string | No | null | Canonical signature parameter |
-| `stateName` | string | No | null | Canonical signature parameter |
-| `layer` | int | No | 0 | Canonical signature parameter |
-| `normalizedTime` | float | No | 0 | Canonical signature parameter |
-
-### animator_get_info
-Get Animator component information (supports name/instanceId/path)
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `name` | string | No | null | Canonical signature parameter |
-| `instanceId` | int | No | 0 | Canonical signature parameter |
-| `path` | string | No | null | Canonical signature parameter |
-
-### animator_assign_controller
-Assign an Animator Controller to a GameObject (supports name/instanceId/path)
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `name` | string | No | null | Canonical signature parameter |
-| `instanceId` | int | No | 0 | Canonical signature parameter |
-| `path` | string | No | null | Canonical signature parameter |
-| `controllerPath` | string | No | null | Canonical signature parameter |
-
-### animator_list_states
-List all states in an Animator Controller layer
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `controllerPath` | string | Yes | - | Canonical signature parameter |
-| `layer` | int | No | 0 | Canonical signature parameter |
-
-### animator_add_state
-Add a state to an Animator Controller layer
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `controllerPath` | string | Yes | - | Canonical signature parameter |
-| `stateName` | string | Yes | - | Canonical signature parameter |
-| `clipPath` | string | No | null | Canonical signature parameter |
-| `layer` | int | No | 0 | Canonical signature parameter |
-
-### animator_add_transition
-Add a transition between two states in an Animator Controller
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `controllerPath` | string | Yes | - | Canonical signature parameter |
-| `fromState` | string | Yes | - | Canonical signature parameter |
-| `toState` | string | Yes | - | Canonical signature parameter |
-| `layer` | int | No | 0 | Canonical signature parameter |
-| `hasExitTime` | bool | No | true | Canonical signature parameter |
-| `duration` | float | No | 0.25f | Canonical signature parameter |
+Exact names, parameters, defaults, and returns are defined by `GET /skills/schema` or `unity_skills.get_skill_schema()`, not by this file.

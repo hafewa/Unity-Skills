@@ -54,13 +54,17 @@ Import an external file into the project.
 ### asset_import_batch
 Import multiple external files.
 
+`items` currently expects a JSON string, not a native array.
+
 **Returns**: `{success, totalItems, successCount, failCount, results: [{success, sourcePath, destinationPath}]}`
 
 ```python
-unity_skills.call_skill("asset_import_batch", items=[
+import json
+
+unity_skills.call_skill("asset_import_batch", items=json.dumps([
     {"sourcePath": "C:/Downloads/tex1.png", "destinationPath": "Assets/Textures/tex1.png"},
     {"sourcePath": "C:/Downloads/tex2.png", "destinationPath": "Assets/Textures/tex2.png"}
-])
+]))
 ```
 
 ### asset_delete
@@ -73,13 +77,17 @@ Delete an asset from the project.
 ### asset_delete_batch
 Delete multiple assets.
 
+`items` currently expects a JSON string, not a native array.
+
 **Returns**: `{success, totalItems, successCount, failCount, results: [{success, path}]}`
 
 ```python
-unity_skills.call_skill("asset_delete_batch", items=[
+import json
+
+unity_skills.call_skill("asset_delete_batch", items=json.dumps([
     {"path": "Assets/Textures/old1.png"},
     {"path": "Assets/Textures/old2.png"}
-])
+]))
 ```
 
 ### asset_move
@@ -93,13 +101,17 @@ Move or rename an asset.
 ### asset_move_batch
 Move multiple assets.
 
+`items` currently expects a JSON string, not a native array.
+
 **Returns**: `{success, totalItems, successCount, failCount, results: [{success, sourcePath, destinationPath}]}`
 
 ```python
-unity_skills.call_skill("asset_move_batch", items=[
+import json
+
+unity_skills.call_skill("asset_move_batch", items=json.dumps([
     {"sourcePath": "Assets/Old/mat1.mat", "destinationPath": "Assets/New/mat1.mat"},
     {"sourcePath": "Assets/Old/mat2.mat", "destinationPath": "Assets/New/mat2.mat"}
-])
+]))
 ```
 
 ### asset_duplicate
@@ -115,7 +127,7 @@ Find assets by search filter.
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | `searchFilter` | string | Yes | - | Search query |
-| `searchInFolders` | string | No | "Assets" | Folder to search |
+| `limit` | int | No | 50 | Max results to return |
 | `limit` | int | No | 100 | Max results |
 
 **Search Filter Syntax**:
@@ -159,7 +171,9 @@ Reimport multiple assets matching a pattern.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `pattern` | string | Yes | Search pattern (e.g., "Assets/Textures/*.png") |
+| `searchFilter` | string | No | AssetDatabase search filter (default `*`) |
+| `folder` | string | No | Folder root to search (default `Assets`) |
+| `limit` | int | No | Max assets to reimport (default `100`) |
 
 ---
 
@@ -192,65 +206,6 @@ unity_skills.call_skill("asset_move_batch", items=[
 5. Backup before bulk delete operations
 
 ---
+## Exact Signatures
 
-## Canonical Signatures
-
-以下附录以 `SkillsForUnity/Editor/Skills/*Skills.cs` 的真实 `[UnitySkill]` 签名为准，供审计和自动化解析使用。
-
-### asset_import
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `sourcePath` | string | Yes | - | Canonical signature parameter |
-| `destinationPath` | string | Yes | - | Canonical signature parameter |
-
-### asset_delete
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `assetPath` | string | Yes | - | Canonical signature parameter |
-
-### asset_move
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `sourcePath` | string | Yes | - | Canonical signature parameter |
-| `destinationPath` | string | Yes | - | Canonical signature parameter |
-
-### asset_import_batch
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `items` | string | Yes | - | Canonical signature parameter |
-
-### asset_delete_batch
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `items` | string | Yes | - | Canonical signature parameter |
-
-### asset_move_batch
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `items` | string | Yes | - | Canonical signature parameter |
-
-### asset_duplicate
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `assetPath` | string | Yes | - | Canonical signature parameter |
-
-### asset_find
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `searchFilter` | string | Yes | - | Canonical signature parameter |
-| `limit` | int | No | 50 | Canonical signature parameter |
-
-### asset_create_folder
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `folderPath` | string | Yes | - | Canonical signature parameter |
-
-### asset_refresh
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| - | - | - | - | No parameters |
-
-### asset_get_info
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `assetPath` | string | Yes | - | Canonical signature parameter |
+Exact names, parameters, defaults, and returns are defined by `GET /skills/schema` or `unity_skills.get_skill_schema()`, not by this file.

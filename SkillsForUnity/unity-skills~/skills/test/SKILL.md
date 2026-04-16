@@ -12,14 +12,17 @@ Run and manage Unity tests.
 **Mode**: Full-Auto required
 
 **DO NOT** (common hallucinations):
-- `test_run` does not exist → use `test_run_all` or `test_run_by_name`
-- `test_create` does not exist → use `test_create_template` to generate test script templates
+- `test_run_all` does not exist → use `test_run` or `test_run_by_name`
+- `test_create_template` does not exist → use `test_create_editmode` or `test_create_playmode`
 - `test_get_status` does not exist → use `test_get_result` with `jobId` from test run
 - Test skills are async — they return a `jobId`, poll with `test_get_result(jobId)`
+- Unity Test Runner is serialized here: do not start a second `test_run` while another test job is still active
+- Prefer `unity_skills.get_skills(category="Test")` or `GET /skills/schema` for exact signatures instead of guessing from memory
 
 **Routing**:
 - For compile error checking → use `debug` module's `debug_check_compilation`
-- For test script creation → `test_create_template` (this module), then modify via `script` module
+- For test script creation → `test_create_editmode` / `test_create_playmode`, then modify via `script` module
+- For broad regression probes across many skills → `test_smoke_skills`, which uses transient probes to avoid polluting workflow/batch persistence
 
 ## Skills
 
@@ -39,6 +42,8 @@ Run Unity tests (returns job ID for polling).
 Get the result of a test run.
 **Parameters:**
 - `jobId` (string): Job ID from test_run.
+
+**Returns:** `{ success, jobId, status, totalTests, passedTests, failedTests, skippedTests, inconclusiveTests, otherTests, failedTestNames, elapsedSeconds, resultSummary, error }`
 
 ### `test_cancel`
 Cancel a running test.
@@ -60,7 +65,7 @@ Get the most recent test run result.
 
 No parameters.
 
-**Returns:** `{ jobId, status, total, passed, failed, failedNames }`
+**Returns:** `{ jobId, status, total, passed, failed, skipped, inconclusive, other, failedNames }`
 
 ### `test_list_categories`
 List test categories.
@@ -110,97 +115,9 @@ Get aggregated test summary across all runs.
 
 No parameters.
 
-**Returns:** `{ success, totalRuns, completedRuns, totalPassed, totalFailed, allFailedTests }`
+**Returns:** `{ success, totalRuns, completedRuns, totalPassed, totalFailed, totalSkipped, totalInconclusive, totalOther, allFailedTests }`
 
 ---
+## Exact Signatures
 
-## Canonical Signatures
-
-以下附录以 `SkillsForUnity/Editor/Skills/*Skills.cs` 的真实 `[UnitySkill]` 签名为准，供审计和自动化解析使用。
-
-### test_run
-Run Unity tests asynchronously. Returns a platform jobId immediately. Poll with job_status/job_wait or test_get_result(jobId).
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `testMode` | string | No | "EditMode" | Canonical signature parameter |
-| `filter` | string | No | null | Canonical signature parameter |
-
-### test_get_result
-Get the result of a test run. Compatible wrapper over the unified job model.
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `jobId` | string | Yes | - | Canonical signature parameter |
-
-### test_list
-List available tests
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `testMode` | string | No | "EditMode" | Canonical signature parameter |
-| `limit` | int | No | 100 | Canonical signature parameter |
-
-### test_cancel
-Cancel a running test job if supported. Unity TestRunner itself does not provide a hard cancel.
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `jobId` | string | No | null | Canonical signature parameter |
-
-### test_run_by_name
-Run specific tests by class or method name. Returns a unified jobId.
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `testName` | string | Yes | - | Canonical signature parameter |
-| `testMode` | string | No | "EditMode" | Canonical signature parameter |
-
-### test_get_last_result
-Get the most recent test run result
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| - | - | - | - | No parameters |
-
-### test_list_categories
-List test categories
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `testMode` | string | No | "EditMode" | Canonical signature parameter |
-
-### test_smoke_skills
-Run a reusable smoke test across registered skills. Executes safe read-only skills and dry-runs the rest for broad regression coverage.
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `category` | string | No | null | Canonical signature parameter |
-| `nameContains` | string | No | null | Canonical signature parameter |
-| `excludeNamesCsv` | string | No | null | Canonical signature parameter |
-| `executeReadOnly` | bool | No | True | Canonical signature parameter |
-| `includeMutating` | bool | No | True | Canonical signature parameter |
-| `limit` | int | No | 0 | Canonical signature parameter |
-
-### test_create_editmode
-Create an EditMode test script template and return a compile-monitor job.
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `testName` | string | Yes | - | Canonical signature parameter |
-| `folder` | string | No | "Assets/Tests/Editor" | Canonical signature parameter |
-
-### test_create_playmode
-Create a PlayMode test script template and return a compile-monitor job.
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `testName` | string | Yes | - | Canonical signature parameter |
-| `folder` | string | No | "Assets/Tests/Runtime" | Canonical signature parameter |
-
-### test_get_summary
-Get aggregated test summary across all runs
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| - | - | - | - | No parameters |
+Exact names, parameters, defaults, and returns are defined by `GET /skills/schema` or `unity_skills.get_skill_schema()`, not by this file.

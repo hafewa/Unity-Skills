@@ -223,7 +223,8 @@ namespace UnitySkills.Tests.Core
                 category: "Test",
                 executeReadOnly: false,
                 includeMutating: false,
-                limit: 20);
+                limit: 20,
+                runAsync: false);
             var json = ToJObject(result);
 
             Assert.IsTrue(json["success"]?.Value<bool>() ?? false);
