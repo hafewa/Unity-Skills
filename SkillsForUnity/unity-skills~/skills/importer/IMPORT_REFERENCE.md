@@ -131,7 +131,8 @@ unity_skills.call_skill("texture_set_settings_batch", items=[
 |-------|-----|
 | `asset_reimport` | Reimport one asset by path |
 | `asset_reimport_batch` | Reimport many assets by search filter |
-| `asset_set_labels` | Add labels for asset organization |
+| `asset_set_labels` | Set labels on an asset (comma-separated string) |
+| `asset_get_labels` | Get labels of an asset → `{ assetPath, labels }` |
 
 ## Best Practices
 

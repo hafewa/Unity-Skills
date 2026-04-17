@@ -118,6 +118,24 @@ No parameters.
 **Returns:** `{ success, totalRuns, completedRuns, totalPassed, totalFailed, totalSkipped, totalInconclusive, totalOther, allFailedTests }`
 
 ---
+## Minimal Example
+
+```python
+import unity_skills, time
+
+# Run tests and poll for result (async pattern required)
+result = unity_skills.call_skill("test_run", testMode="EditMode")
+job_id = result["jobId"]
+
+# Poll until done (test_* skills are async)
+for _ in range(30):
+    status = unity_skills.call_skill("test_get_result", jobId=job_id)
+    if status.get("status") == "Completed":
+        print(f"Passed: {status['totalPassed']}, Failed: {status['totalFailed']}")
+        break
+    time.sleep(2)
+```
+
 ## Exact Signatures
 
 Exact names, parameters, defaults, and returns are defined by `GET /skills/schema` or `unity_skills.get_skill_schema()`, not by this file.

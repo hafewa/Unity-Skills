@@ -7,7 +7,7 @@ description: "Index of all Unity Skills modules — 40 functional modules (SA/FA
 
 Module docs. Start with [../SKILL.md](../SKILL.md) for mode switching and schema-first rules.
 
-> **Multi-instance**: If the user specifies `Unity 6`, `2022.3`, or another version, call `unity_skills.set_unity_version(...)` first.
+> **Multi-instance**: For version-specific projects, call `unity_skills.set_unity_version(...)` first.
 > **Schema-first**: Use `GET /skills/schema` or `unity_skills.get_skill_schema()` for exact signatures. Load module docs for workflow guidance and guardrails.
 
 ## Modules
@@ -85,5 +85,5 @@ When a Full-Auto task touches `2+` objects, prefer `*_batch` skills over repeate
 
 Skills follow `<module>_<action>` or `<module>_<action>_batch`.
 Use schema to verify the exact prefix list.
-Special cases: many analysis-oriented `scene_*`, `script_*`, and `project_stack_detect` skills route to `perception`; `job_*` belongs to `batch`.
+Special: `scene_analyze`, `hierarchy_describe`, `project_stack_detect` → `perception`; `job_*` → `batch`.
 If a skill name does not match a valid prefix or a schema result, do not invent it.

@@ -48,7 +48,7 @@ Common texture decisions:
 | Skill | Use | Key parameters |
 |-------|-----|----------------|
 | `audio_get_settings` | Read audio importer settings | `assetPath` |
-| `audio_set_settings` | Set audio importer settings | `assetPath`, `forceToMono?`, `loadInBackground?`, `preloadAudioData?`, `loadType?`, `compressionFormat?`, `quality?` |
+| `audio_set_settings` | Set audio importer settings | `assetPath`, `forceToMono?`, `loadInBackground?`, `loadType?`, `compressionFormat?`, `quality?` |
 | `audio_set_settings_batch` | Batch audio settings | `items` |
 | `audio_set_import_settings` | Alternative audio import bridge | similar audio fields |
 

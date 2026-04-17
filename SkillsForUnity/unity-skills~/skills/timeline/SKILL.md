@@ -13,7 +13,6 @@ Create and modify Unity Timelines.
 
 **DO NOT** (common hallucinations):
 - `timeline_create_animation` does not exist → use `timeline_add_track` with track type "AnimationTrack"
-- `timeline_play` does not exist → use `timeline_set_time` for scrubbing, or `editor_play` for runtime playback
 - `timeline_add_keyframe` does not exist → Timeline uses clips, not direct keyframes; use `timeline_add_clip`
 - `timeline_set_duration` sets the Timeline asset duration, not individual clip duration
 
@@ -168,3 +167,7 @@ Set the binding object for a track.
 | bindingObjectName | string | No | - | Name of the object to bind |
 
 **Returns:** `{ success, trackName, boundTo }`
+
+## Exact Signatures
+
+Exact names, parameters, defaults, and returns are defined by `GET /skills/schema` or `unity_skills.get_skill_schema()`, not by this file.

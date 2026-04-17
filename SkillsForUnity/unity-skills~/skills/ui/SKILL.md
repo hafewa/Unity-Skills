@@ -36,7 +36,7 @@ Use this module for Unity UGUI / Canvas workflows. It is separate from UI Toolki
 | `ui_create_panel` | Create panel container | `name?`, `parent?`, `r/g/b/a?` |
 | `ui_create_button` | Create button | `name?`, `parent?`, `text?`, `width/height?` |
 | `ui_create_text` | Create text label | `name?`, `parent?`, `text?`, `fontSize?`, `r/g/b?` |
-| `ui_create_image` | Create image | `name?`, `parent?`, `spritePath?`, `r/g/b/a?`, `width/height?` |
+| `ui_create_image` | Create image | `name?`, `parent?`, `spritePath?`, `width/height?` |
 | `ui_create_inputfield` | Create input field | `name?`, `parent?`, `placeholder?`, `width/height?` |
 | `ui_create_slider` | Create slider | `name?`, `parent?`, `minValue?`, `maxValue?`, `value?` |
 | `ui_create_toggle` | Create toggle | `name?`, `parent?`, `label?`, `isOn?` |
@@ -52,7 +52,7 @@ Use this module for Unity UGUI / Canvas workflows. It is separate from UI Toolki
 |-------|-----|----------------|
 | `ui_find_all` | Find scene UI elements | `uiType?`, `limit?` |
 | `ui_set_text` | Update text content | `name`, `text` |
-| `ui_set_rect` | Set RectTransform size/offsets | target, `width`, `height`, `x`, `y`, `left/right/top/bottom?` |
+| `ui_set_rect` | Set RectTransform size/offsets | target, `width`, `height`, `posX`, `posY`, `left/right/top/bottom?` |
 | `ui_set_anchor` | Apply anchor preset | target, `preset?`, `setPivot?` |
 | `ui_layout_children` | Vertical/Horizontal/Grid layout | target, `layoutType?`, `spacing?` |
 | `ui_align_selected` | Align current selection | `alignment?` |

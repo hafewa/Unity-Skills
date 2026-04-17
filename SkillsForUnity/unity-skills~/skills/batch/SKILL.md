@@ -7,6 +7,22 @@ description: "Batch query, preview, execute, and async job orchestration for Uni
 
 Batch workflow orchestration for query, preview, execution, reports, and async jobs.
 
+## Guardrails
+
+**Mode**: Full-Auto required
+
+**DO NOT** (common hallucinations):
+- Always call a `batch_preview_*` skill first — `batch_execute` requires a `confirmToken` from a preview, it cannot be called directly
+- `batch_run` does not exist → use `batch_execute(confirmToken)`
+- `job_poll` / `job_result` do not exist → use `job_status` to check and retrieve async job results
+- `batch_delete` / `batch_move` do not exist → use `asset` module for asset-level operations
+
+**Routing**:
+- For asset-level bulk operations (move, copy, delete) → `asset` module
+- For workflow session/task undo tracking → `workflow` module
+- For scene object validation → `batch_validate_scene_objects` (this module)
+- For async job polling → `job_status` / `job_wait` (this module)
+
 ## Skills
 
 ### batch_query_gameobjects
@@ -175,3 +191,7 @@ Preview deleting temporary helper objects by common temp-name patterns. Execute 
 | `queryJson` | string | No | null | JSON query filter envelope |
 | `patternsCsv` | string | No | null | Comma-separated temp-name patterns |
 | `sampleLimit` | int | No | DefaultSampleLimit | Max preview items |
+
+## Exact Signatures
+
+Exact names, parameters, defaults, and returns are defined by `GET /skills/schema` or `unity_skills.get_skill_schema()`, not by this file.

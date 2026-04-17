@@ -108,3 +108,7 @@ Get information about all loaded AssetBundles.
 **Parameters:** None.
 
 **Returns:** `{ success, count, bundles: [{ name, isStreamedSceneAssetBundle }] }`
+
+## Exact Signatures
+
+Exact names, parameters, defaults, and returns are defined by `GET /skills/schema` or `unity_skills.get_skill_schema()`, not by this file.

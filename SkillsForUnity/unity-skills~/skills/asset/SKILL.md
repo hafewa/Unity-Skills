@@ -177,18 +177,12 @@ Reimport multiple assets matching a pattern.
 
 ---
 
-## Example: Efficient Asset Organization
+## Minimal Example
 
 ```python
 import unity_skills
 
-# BAD: 4 API calls
-unity_skills.call_skill("asset_move", sourcePath="Assets/tex1.png", destinationPath="Assets/Textures/tex1.png")
-unity_skills.call_skill("asset_move", sourcePath="Assets/tex2.png", destinationPath="Assets/Textures/tex2.png")
-unity_skills.call_skill("asset_move", sourcePath="Assets/tex3.png", destinationPath="Assets/Textures/tex3.png")
-unity_skills.call_skill("asset_move", sourcePath="Assets/tex4.png", destinationPath="Assets/Textures/tex4.png")
-
-# GOOD: 1 API call
+# GOOD: 1 API call instead of 4
 unity_skills.call_skill("asset_move_batch", items=[
     {"sourcePath": "Assets/tex1.png", "destinationPath": "Assets/Textures/tex1.png"},
     {"sourcePath": "Assets/tex2.png", "destinationPath": "Assets/Textures/tex2.png"},

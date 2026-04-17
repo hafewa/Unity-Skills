@@ -186,6 +186,16 @@ Configure Noise settings (Basic Multi Channel Perlin).
 - `frequencyGain` (float): Noise Frequency.
 
 ---
+## Minimal Example
+
+```python
+import unity_skills
+
+# Create a vcam that follows and looks at the player
+unity_skills.call_skill("cinemachine_create_vcam", name="PlayerCam")
+unity_skills.call_skill("cinemachine_set_targets", vcamName="PlayerCam", followName="Player", lookAtName="Player")
+```
+
 ## Exact Signatures
 
 Exact names, parameters, defaults, and returns are defined by `GET /skills/schema` or `unity_skills.get_skill_schema()`, not by this file.

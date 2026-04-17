@@ -259,43 +259,19 @@ Delete a task from history (does not revert changes, just removes the record).
 
 **Returns:** `{ success, deletedId }`
 
-## Recommended Usage Pattern
-
-### Session-Level (Conversation Undo)
+## Minimal Example
 
 ```python
-# At the START of each conversation
-unity_skills.call_skill("workflow_session_start", tag="Build Player Character")
+import unity_skills
 
-# ... perform multiple operations ...
+# Session-level: wrap entire conversation for bulk undo
+unity_skills.call_skill("workflow_session_start", tag="Build Player")
 unity_skills.call_skill("gameobject_create", name="Player", primitiveType="Capsule")
 unity_skills.call_skill("component_add", name="Player", componentType="Rigidbody")
-unity_skills.call_skill("component_add", name="Player", componentType="CapsuleCollider")
-unity_skills.call_skill("material_create", name="PlayerMaterial", shaderName="Standard")
-
-# At the END of the conversation
 unity_skills.call_skill("workflow_session_end")
-
-# Later: Undo the ENTIRE conversation
-result = unity_skills.call_skill("workflow_session_list")
-session_id = result['sessions'][0]['sessionId']
-unity_skills.call_skill("workflow_session_undo", sessionId=session_id)
-```
-
-### Task-Level (Fine-Grained Undo)
-
-```python
-# 1. Start Task
-unity_skills.call_skill("workflow_task_start", tag="Adjust Player Speed", description="Set speed to 10")
-
-# 2. Snapshot target object(s) before modification
-unity_skills.call_skill("workflow_snapshot_object", name="Player")
-
-# 3. Perform modifications
-unity_skills.call_skill("component_set_property", name="Player", componentType="PlayerController", propertyName="speed", value=10)
-
-# 4. End Task
-unity_skills.call_skill("workflow_task_end")
+# Later: undo entire session
+sessions = unity_skills.call_skill("workflow_session_list")
+unity_skills.call_skill("workflow_session_undo", sessionId=sessions["sessions"][0]["sessionId"])
 ```
 
 ## Auto-Tracked Operations
@@ -313,3 +289,7 @@ The following operations are **automatically tracked** for undo when a session/t
 - `cinemachine_create_vcam`
 
 For **modification operations**, the system auto-snapshots target objects before changes when possible.
+
+## Exact Signatures
+
+Exact names, parameters, defaults, and returns are defined by `GET /skills/schema` or `unity_skills.get_skill_schema()`, not by this file.

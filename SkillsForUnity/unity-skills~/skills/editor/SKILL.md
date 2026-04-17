@@ -164,3 +164,7 @@ unity_skills.call_skill("editor_execute_menu", menuPath="File/Save")
 3. Use undo for safe experimentation
 4. Use `editor_get_context` to get instanceId for batch operations
 5. Menu commands must match exact paths
+
+## Exact Signatures
+
+Exact names, parameters, defaults, and returns are defined by `GET /skills/schema` or `unity_skills.get_skill_schema()`, not by this file.

@@ -41,3 +41,7 @@ List all saved bookmarks.
 Delete a saved bookmark.
 **Parameters:**
 - `bookmarkName` (string): Bookmark name.
+
+## Exact Signatures
+
+Exact names, parameters, defaults, and returns are defined by `GET /skills/schema` or `unity_skills.get_skill_schema()`, not by this file.
