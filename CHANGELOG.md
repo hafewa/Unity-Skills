@@ -2,6 +2,24 @@
 
 All notable changes to **UnitySkills** will be documented in this file.
 
+## [1.7.2] - 2026-04-18
+
+### Changed
+- **SkillRouter 热路径性能优化** — `SkillInfo` 注册时预计算并缓存 `ParameterNames` 与 `AllowedParameterSet`，`Execute`/`DryRun` 的未知参数校验不再每次分配新的数组/`HashSet`；`GetSchema()` 新增结果缓存 `_cachedSchema`，避免每次调用都重新序列化 manifest,多次访问时开销降为常量。
+- **BatchExecutor 反射结果缓存** — `BatchExecutor` 新增 `ConcurrentDictionary<Type, bool>` 缓存 `HasErrorMember` 反射结果，大规模批量操作时避免对每个 item 重复执行 `GetProperty("error")` / `GetField("error")`。
+- **AsyncJobService 代码去重** — 将 Test 作业 filter 构建逻辑抽取为私有 `BuildTestFilter` 方法，消除 `StartTestRun` 与 Job reconnect 分支之间的重复块，修改测试过滤规则时只需改一处。
+- **BatchJobService 日志写入统一** — 取消 Job 的日志写入改用现有 `AddLog()` 辅助方法，使所有日志落盘逻辑走同一条路径，便于后续统一格式或注入遥测。
+- **SkillsHttpServer 清理冗余字段** — 移除 `RequestJob.ResponseDispatched` 与所有对它的赋值。该字段自引入以来从未被读取，删除后 request pool 状态更精简。
+
+### Fixed
+- **SKILL.md 幽灵引用修复** — skillcheck 审计发现 11 个模块（cinemachine/cleaner/optimization/profiler/project/scriptableobject/smart/terrain/timeline/batch 及 Routing 区块）的 `DO NOT` 章节指向了不存在的"纠正后 Skill"，AI 被误导后仍会调用 404 路由。统一替换为真实 Skill 名（例如 `optimize_compress_textures`→`optimize_compress_texture`、`terrain_set_heights`→`terrain_set_heights_batch`、`smart_query`→`smart_scene_query` 等）。
+- **SKILL.md 反向错误修复** — `shader/SKILL.md` 将 `shader_get_properties` 错误标为"不存在"，实际该 Skill 存在且返回 shader 属性定义；`navmesh/SKILL.md` 同样把实际存在的 `navmesh_set_agent`、`navmesh_add_obstacle` 标记为幻觉。改为说明它们与 `component_*` 的分工关系，避免 AI 绕开真实 Skill。
+
+### Docs
+- **batch 模块补齐 Skill 文档** — `batch/SKILL.md` 新增 `batch_query_assets`（6 个参数含 `searchFilter`/`folder`/`typeFilter`/`namePattern`/`labelFilter`/`maxResults`）与 `batch_retry_failed`（`reportId`/`runAsync`/`chunkSize`）的完整表格，此前这两个 Skill 仅存在于 C# 但未在文档中暴露。
+- **agent.md 目录结构同步** — `Editor/Skills/` 由 55 更新为 61 个 C# 文件；`unity-skills~/skills/` 由 54 更新为 53 个模块文档（40 functional + 13 advisory），匹配 v1.7.0 以来的 importer/workflow 目录合并结果。
+- **版本号更新** — `SkillsLogger.Version`、`package.json`、Python helper 和文档同步提升到 `1.7.2`。
+
 ## [1.7.1] - 2026-04-17
 
 ### Added
